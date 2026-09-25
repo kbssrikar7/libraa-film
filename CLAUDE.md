@@ -1,0 +1,121 @@
+# Libraa Group brand film - handover for Claude agents
+
+Read this first. It records what has been built, what the client thinks of it,
+and the rules learned the hard way. Setup is in README.md
+(`bash scripts/cloud-setup.sh`).
+
+## The project
+
+A 2:00 corporate brand film for **Libraa Group** (Chennai, India, since 2009):
+ship management, crew management and marine services, with work in India and
+West Africa. Uses: website, trade-show booth loop, sharing.
+
+- Built with **Remotion** (React video). 1920x1080, 30 fps, exactly 120.000 s.
+- Company facts and photos come from the sibling repo **libraa-website**
+  (`../libraa-website/src/data.ts`, `public/site` -> its `public/photos`).
+  That site is live at https://libraa-website.vercel.app.
+- Voice-over: **Sarvam AI Bulbul v3, Indian English, speaker "anand"**
+  (chosen by the client). Key in the `SARVAM_API_KEY` environment variable -
+  never commit it.
+- Music: "Cinematic Open Future" (Pixabay licence), ducked ~13 dB under voice.
+
+## CLIENT STATUS: NOT HAPPY - read before touching anything
+
+The latest render (v6) was rejected. The client's complaints, in their words
+and ours:
+
+1. **Font** - "the font at many places looks off". Everything uses Plus
+   Jakarta Sans (the website font); at huge sizes with wide letter-spacing
+   (LIBRAA GROUP, KOUNDINYA, "11 vessels") it looks generic/cramped.
+2. **Text placement** - titles and captions sit awkwardly on the footage.
+3. **Audio-video sync** - "at some places there is no sync". Voice is placed
+   per scene, not per word, so pictures/titles don't land on the words that
+   name them (e.g. "Koundinya", "toolbox talk").
+4. **Transcript / script** - rejected.
+5. **Bluntly following the website** - the old script was website copy read
+   aloud (fact after fact). They want a film with a narrative, not the site
+   narrated.
+
+Also: "you can still use better stock footage" - only 4 calm-water stock
+clips are used; there is no energy (yard, engine room, crew, port at night).
+
+**Do not re-render the old script with small tweaks. The fix is a rebuild on
+the new script (below) with new typography, word-level sync, and better
+footage.**
+
+## What has been done so far (history)
+
+1. v1 draft - script from website copy, ElevenLabs free voice "Eric".
+2. Reviews (external, frame-by-frame) drove fixes: removed a 6.6 s frozen
+   certification slide, fixed text overlaps at transitions, removed a repeated
+   JHANSI RANI shot, removed blank flash frames, stopped repeating
+   "11 vessels" on every fleet shot, bigger ship names, one colour grade for
+   all photos, hard cuts into/out of KOUNDINYA, trimmed audio to exactly 2:00,
+   BT.709 colour tags.
+3. v5 - client demanded an Indian voice. ElevenLabs free API blocks library
+   voices; client would not pay. Switched to **Sarvam** free credits; client
+   picked **anand**.
+4. v6 - ocean sound effects removed entirely (client disliked them), pacing
+   tightened, client logos normalised by visual area, contact text enlarged.
+5. Client rejected v6 (complaints above).
+6. Proposed (not yet decided): four typeface options rendered on the
+   KOUNDINYA frame - A Plus Jakarta (current), **B Barlow Condensed + Barlow
+   (recommended, industrial/maritime signage)**, C Cormorant Garamond + Inter,
+   D Archivo Expanded. The client has not chosen.
+7. **New script v2 written - `SCRIPT-v2-draft.md` - currently with the
+   company for review.** Wait for their edits before recording.
+8. Repo created (private) and prepared for cloud agents.
+
+The website side (separate repo) has also moved on since the film's last
+render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,
+tagline "Ship Management, Crew Management and Marine Services since 2009.",
+Leadership is three people (MD, GM, CFO). The film's current facts are
+therefore out of date.
+
+## Rules (from the client - follow them)
+
+- **No vessel count** anywhere in the film (the fleet keeps changing).
+- **No list of cities/offices** as a tagline or summary - the company works
+  worldwide (Gabon, Cameroon, Singapore...). Do not box it into
+  Chennai/Kakinada/Port Blair.
+- Closing line / tagline: **"Ship Management, Crew Management and Marine
+  Services."** (website: "...since 2009.").
+- **No ocean / sound-effect ambience.**
+- **Indian voice only** - Sarvam "anand".
+- **No paid services.** The client will not spend money. Free tiers and
+  open-source tools only.
+- Only claim facts that are on the website or that the client supplied.
+  Stock footage may only illustrate general lines - never pass stock off as
+  a Libraa vessel, yard or crew.
+- Never use AI upscaling/editing on photos of people (it alters faces).
+- Show work locally first; the user approves before anything is published.
+- Raise inconsistencies immediately when you spot them, not at the end.
+- Writing style: never use the em dash character; use a plain hyphen.
+
+## Next steps (in order)
+
+1. Get the company's edits to `SCRIPT-v2-draft.md` (the user will relay
+   them). Confirm the open points listed at the bottom of that file.
+2. Put the approved lines into `src/script.ts`; `npm run voice` records only
+   changed lines with anand (Sarvam credits are limited - don't re-record
+   unchanged lines).
+3. **Word-level sync**: Sarvam speech-to-text (`saarika:v2.5`,
+   `with_timestamps`) returns only segment-level times. The working method
+   so far: find natural pauses with ffmpeg `silencedetect`, split the clip at
+   them, transcribe each piece, and store the offsets as `cues` in
+   `src/script.ts` (see the services scene). Extend this so every key word
+   (names, "toolbox talk", certificates) triggers its picture/title.
+4. New typography (get the client's pick from options A-D; B recommended).
+5. Better stock footage for the general lines only (Pexels/Pixabay, free
+   licences; record each in CREDITS.md).
+6. Update facts from the website (fleet photos incl. new vessels).
+7. `npm run render`, then check: exactly 3600 frames, no freezes
+   (`ffmpeg -vf freezedetect`), loudness about -18 LUFS, no text overlaps at
+   transitions (render stills at each cut).
+
+## Useful commands
+
+    npm run timeline   # scene start/end + voice placement, without rendering
+    npm run dev        # Remotion Studio preview
+    npx remotion still LibraaFilm out/f.jpg --frame=1300 --scale=0.5
+    npm run render     # final master -> out/libraa-group-film.mp4

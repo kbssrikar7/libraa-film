@@ -50,7 +50,7 @@ const seconds = (file) =>
 
 loadEnv();
 const key = process.env.SARVAM_API_KEY;
-if (!key) throw new Error("SARVAM_API_KEY missing - add it to libraa-film/.env");
+if (!key) throw new Error("SARVAM_API_KEY missing - set it as an environment variable (cloud agents: environment secret) or put it in libraa-film/.env");
 
 const { SCENES } = await loadScript();
 mkdirSync(VOICE_DIR, { recursive: true });

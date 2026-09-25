@@ -18,6 +18,24 @@ Then, in libraa-film:
     npm install
     echo "SARVAM_API_KEY=..." > .env     # never committed
 
+## Running with Claude cloud agents
+
+Agents read **CLAUDE.md** first: full history, the client's feedback (they
+are not happy with v6), the rules, and next steps.
+
+Environment settings for the cloud agent:
+
+- **Setup script:** `bash scripts/cloud-setup.sh` (installs ffmpeg, clones
+  libraa-website next to this repo, runs `npm install`). The agent needs
+  GitHub access to both private repos: kbssrikar7/libraa-film and
+  kbssrikar7/libraa-website.
+- **Environment variable (secret):** `SARVAM_API_KEY=<your key>` - set it in
+  the environment's settings, never in the repo. Only `npm run voice` needs
+  it; previews and renders work without it.
+- **Network access:** api.sarvam.ai (voice), github.com, registry.npmjs.org,
+  and Remotion's headless-Chrome download on the first render; pexels.com /
+  pixabay.com if the agent is sourcing stock footage.
+
 ## Commands
 
     npm run voice      # record new/changed lines with Sarvam "anand" (reuses the rest)
