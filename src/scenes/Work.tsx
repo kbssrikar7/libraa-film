@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { INDIA_MAP_VIEWBOX, INDIA_PATH, LOCATION_COUNT, OFFICE_COUNT, OFFICES, PORTS, ship, sitePhoto } from "../facts";
 import { beatsBetween, type TimedScene } from "../timing";
-import { C, Clip, FadeIn, FONT, Headline, Kicker, LowerThird, Photo, Rise, Scrim, useIn, XF } from "../ui";
+import { C, Clip, FadeIn, FONT, Headline, LowerThird, Sub, Photo, Rise, Scrim, useIn, XF } from "../ui";
 
 type P = { d: number; at: number };
 
@@ -60,7 +60,7 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
               <Scrim side="bottom" strength={b.media.clip ? 0.95 : 0.85} />
               {/* the caption eases out just before the dissolve, so two
                   captions never share the screen */}
-              <LowerThird kicker="What we do" title={b.label} at={4} out={last ? len - 16 : len - 10} size={120} />
+              <LowerThird title={b.label} at={4} out={last ? len - 16 : len - 10} />
             </FadeIn>
           </Sequence>
         );
@@ -84,7 +84,7 @@ export const MapScene: React.FC<P> = ({ d }) => {
     >
       <AbsoluteFill style={{ justifyContent: "center", padding: "0 0 0 140px", width: "52%" }}>
         <Rise at={4}>
-          <Kicker>Where we work</Kicker>
+          <Sub color={C.mint}>Where we work</Sub>
         </Rise>
         <Rise at={10} dur={22} style={{ marginTop: 34 }}>
           <Headline size={120}>
@@ -112,30 +112,11 @@ export const MapScene: React.FC<P> = ({ d }) => {
 };
 
 const Pin: React.FC<{ name: string; office: boolean; x: number; y: number; at: number }> = ({ name, office, x, y, at }) => {
-  const f = useCurrentFrame();
   const p = useIn(at, 16);
-  const ring = interpolate((f - at) % 45, [0, 45], [0, 1], { extrapolateLeft: "clamp" });
   const size = office ? 28 : 20;
   const labelLeft = x > 60 ? -1 : 1; // Port Blair label to the left
   return (
     <div style={{ position: "absolute", left: `${x}%`, top: `${y}%`, transform: "translate(-50%,-50%)", opacity: p }}>
-      {f > at && (
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            width: size * 3.2,
-            height: size * 3.2,
-            marginLeft: -size * 1.6,
-            marginTop: -size * 1.6,
-            borderRadius: "50%",
-            border: `2px solid ${C.mint}`,
-            transform: `scale(${0.3 + ring * 0.9})`,
-            opacity: 1 - ring,
-          }}
-        />
-      )}
       <div
         style={{
           width: size,
@@ -143,7 +124,6 @@ const Pin: React.FC<{ name: string; office: boolean; x: number; y: number; at: n
           borderRadius: "50%",
           background: office ? C.white : C.mint,
           border: `3px solid ${office ? C.green : C.navy}`,
-          boxShadow: `0 0 0 4px rgba(143,224,172,0.35)`,
           transform: `scale(${0.4 + 0.6 * p})`,
         }}
       />

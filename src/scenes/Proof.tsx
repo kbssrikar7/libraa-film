@@ -2,9 +2,9 @@ import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 import { wordAt } from "../script";
 import type { TimedScene } from "../timing";
-import { CERT_COUNT, CERTIFICATIONS, CLIENT_SECTORS, CLIENTS, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
+import { numberWord, CERTIFICATIONS, CLIENT_SECTORS, CLIENTS, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
 import LOGO_DIMS from "../logo-dims.json";
-import { C, Clip, DS, px, FONT, Headline, Kicker, Rise, SAFE, useIn, useTrack } from "../ui";
+import { C, Clip, DS, FONT, Headline, px, Rise, SAFE, Sub, useIn, useTrack } from "../ui";
 
 type P = { d: number; at: number };
 
@@ -13,51 +13,40 @@ const SHORT: Record<string, string> = {
   "RPSL Licence": "RPSL licence",
 };
 
-// Scene 8 - both headings land at once (so the viewer never reads a half-built
-// layout), the three companies and four certificates build within ~3s, then
-// the composition holds with restrained micro-motion: a slow camera push, a
-// soft light sweep across the cards and a gentle glow on the seals. Alive,
-// never frozen - and never bouncing.
+// Scene 8 - the three companies on the left, the four certificates on the
+// right, built in the order the narrator names them. Plain type and the
+// real seals on a dark ground - no cards, borders, glows or light sweeps.
+// A very slow push keeps the frame from sitting dead still.
 export const Companies: React.FC<P> = ({ d }) => {
   const f = useCurrentFrame();
-  const push = interpolate(f, [0, d], [1.0, 1.035]);
+  const push = interpolate(f, [0, d], [1.0, 1.03]);
   const certsAt = 26;
   return (
     <AbsoluteFill style={{ background: C.navy, overflow: "hidden" }}>
-      {/* slow-drifting light keeps the background alive */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(70% 90% at ${interpolate(f, [0, d], [18, 32])}% ${interpolate(f, [0, d], [30, 45])}%, ${C.navyMid} 0%, ${C.navy} 72%)`,
-        }}
-      />
       {/* content clears before the clients scene washes in - no text-on-text */}
-      <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "60% 55%", opacity: interpolate(f, [d - 9, d - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
-        <AbsoluteFill style={{ padding: "120px 120px", flexDirection: "row", gap: 80 }}>
-          <div style={{ width: 620, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <Rise at={0} dur={16}>
-              <Kicker>{COMPANY_COUNT} group companies</Kicker>
+      <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 9, d - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
+        <AbsoluteFill style={{ padding: `0 ${SAFE.x}px`, flexDirection: "row", alignItems: "center", gap: 120 }}>
+          <div style={{ width: 640 }}>
+            <Rise at={0}>
+              <Sub color={C.mint}>{cap(numberWord(COMPANY_COUNT))} group companies</Sub>
             </Rise>
-            <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: 30 }}>
+            <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 34 }}>
               {GROUP_COMPANIES.map((c, i) => (
-                <Rise key={c.name} at={6 + i * 7} dur={18}>
-                  <div style={{ ...DS, fontSize: px(54), color: C.white, lineHeight: 1.05 }}>{c.name}</div>
-                  <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 30, color: C.mint, marginTop: 6 }}>{c.role}</div>
+                <Rise key={c.name} at={6 + i * 7}>
+                  <div style={{ ...DS, fontSize: px(56), color: C.white, lineHeight: 1.05 }}>{c.name}</div>
+                  <Sub size={30}>{c.role}</Sub>
                 </Rise>
               ))}
             </div>
           </div>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <Rise at={2} dur={18}>
-              <Headline size={72}>
-                {CERT_COUNT} certifications
-                <br />& licences
-              </Headline>
+          <div style={{ flex: 1 }}>
+            <Rise at={2}>
+              <Sub color={C.mint}>Certified and licensed</Sub>
             </Rise>
-            <div style={{ marginTop: 50, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 26, position: "relative" }}>
+            <div style={{ marginTop: 36, display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: 50, rowGap: 44 }}>
               {CERTIFICATIONS.map((c, i) => (
                 <Seal key={c.number} at={certsAt + i * 10} seal={sitePhoto(c.seal)} label={SHORT[c.standard] ?? c.standard} org={c.org} />
               ))}
-              <Sweep start={certsAt + 50} period={d} />
             </div>
           </div>
         </AbsoluteFill>
@@ -66,62 +55,21 @@ export const Companies: React.FC<P> = ({ d }) => {
   );
 };
 
-/** One soft highlight gliding across the cards, once, after they settle. */
-const Sweep: React.FC<{ start: number; period: number }> = ({ start, period }) => {
-  const f = useCurrentFrame();
-  const x = interpolate(f, [start, start + Math.max(90, period - start - 20)], [-40, 140], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        borderRadius: 18,
-        background: `linear-gradient(100deg, rgba(255,255,255,0) ${x - 18}%, rgba(255,255,255,0.10) ${x}%, rgba(255,255,255,0) ${x + 18}%)`,
-      }}
-    />
-  );
-};
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
-const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> = ({ at, seal, label, org }) => {
-  const f = useCurrentFrame();
-  const p = useIn(at, 22);
-  const glow = 0.25 + 0.2 * Math.sin((f - at) / 22); // slow breathing glow
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 22,
-        padding: "22px 24px",
-        borderRadius: 18,
-        background: "rgba(255,255,255,0.06)",
-        border: "1px solid rgba(255,255,255,0.14)",
-        opacity: p,
-        transform: `translateY(${(1 - p) * 16}px) scale(${1.03 - 0.03 * p})`,
-      }}
-    >
-      <div
-        style={{
-          width: 88,
-          height: 88,
-          borderRadius: "50%",
-          background: C.white,
-          display: "grid",
-          placeItems: "center",
-          flexShrink: 0,
-          boxShadow: `0 0 ${18 + 10 * glow}px rgba(143,224,172,${p > 0.99 ? glow : 0})`,
-        }}
-      >
-        <Img src={staticFile(seal)} style={{ width: 72, height: 72, objectFit: "contain" }} />
+const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> = ({ at, seal, label, org }) => (
+  <Rise at={at}>
+    <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+      <div style={{ width: 84, height: 84, borderRadius: "50%", background: C.white, display: "grid", placeItems: "center", flexShrink: 0 }}>
+        <Img src={staticFile(seal)} style={{ width: 70, height: 70, objectFit: "contain" }} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ ...DS, fontSize: px(44), color: C.white, whiteSpace: "nowrap" }}>{label}</div>
-        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 22, color: C.soft, marginTop: 4, whiteSpace: "nowrap" }}>{org.replace(" Pvt Ltd", "")}</div>
+        <div style={{ ...DS, fontSize: px(46), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
+        <Sub size={26}>{org.replace(" Pvt Ltd", "")}</Sub>
       </div>
     </div>
-  );
-};
+  </Rise>
+);
 
 // Logos trimmed of their built-in padding (public/logos-trim, generated from
 // the website's logos) and then sized by visual area rather than by box: a
@@ -163,15 +111,12 @@ export const Clients: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) =
       <AbsoluteFill style={{ background: C.paper, opacity: wash }} />
       {/* 1 - the three named clients, each on its word */}
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", opacity: featuredOut }}>
-        <Rise at={4} dur={18}>
-          <Kicker color={C.green}>Proud to serve</Kicker>
-        </Rise>
-        <div style={{ display: "flex", gap: 56, marginTop: 50 }}>
+        <div style={{ display: "flex", gap: 56 }}>
           {FEATURED.map((c) => {
             const client = CLIENTS.find((x) => x.name === c.name)!;
             return (
               <Rise key={c.name} at={onWord(c.word)} dur={18} distance={26}>
-                <div style={{ width: 420, height: 270, background: C.white, display: "grid", placeItems: "center", boxShadow: "0 18px 50px rgba(10,14,42,0.12)" }}>
+                <div style={{ width: 420, height: 270, background: C.white, display: "grid", placeItems: "center" }}>
                   <Img src={staticFile(trimmed(client.logo))} style={{ ...logoSize(trimmed(client.logo), 26000, 200, 330), objectFit: "contain" }} />
                 </div>
                 <div style={{ ...DS, fontSize: px(46), color: C.navy, marginTop: 24, textAlign: "center" }}>{c.name}</div>
@@ -187,9 +132,6 @@ export const Clients: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) =
             <Headline size={120} style={{ color: C.navy, textShadow: "none" }}>
               Our clients
             </Headline>
-          </Rise>
-          <Rise at={6} dur={20} style={{ marginTop: 12 }}>
-            <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 38, color: "rgba(10,14,42,0.62)" }}>Navy · Ports · Energy · Shipping</div>
           </Rise>
         </AbsoluteFill>
         {/* a static, centred grid - nothing crosses the frame edge */}
@@ -222,7 +164,6 @@ const Tile: React.FC<{ at: number; children: React.ReactNode }> = ({ at, childre
         width: TILE_W,
         height: TILE_H,
         background: C.white,
-        boxShadow: "0 8px 24px rgba(10,14,42,0.08)",
         display: "grid",
         placeItems: "center",
         opacity: p,
@@ -260,7 +201,7 @@ export const End: React.FC<P> = ({ d }) => {
           textShadow: "0 2px 24px rgba(6,9,26,0.55)",
         }}
       >
-        <div style={{ width: 170, height: 140, background: C.white, display: "grid", placeItems: "center", boxShadow: "0 30px 80px rgba(0,0,0,0.45)" }}>
+        <div style={{ width: 170, height: 140, background: C.white, display: "grid", placeItems: "center" }}>
           <Img src={staticFile("libraa/logo.webp")} style={{ width: 134 }} />
         </div>
         <div style={{ ...DS, fontSize: px(130), lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>

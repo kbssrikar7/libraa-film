@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
-import { FLAGS_ADJ, SHIPS, ship, sitePhoto } from "../facts";
-import { C, DS, px, FadeIn, FONT, Headline, Kicker, LowerThird, Photo, Rise, Rule, SAFE, Scrim, useTrack, XF } from "../ui";
+import { SHIPS, ship, sitePhoto } from "../facts";
+import { C, DS, FadeIn, FONT, LowerThird, Photo, px, Rise, SAFE, Scrim, useTrack, XF } from "../ui";
 import { beatCuts } from "./Work";
 
 type P = { d: number; at: number };
@@ -19,25 +19,20 @@ const MONTAGE = [
 
 export const Fleet: React.FC<P> = ({ d, at }) => {
   // the title shot runs a little longer; every ship after it gets an equal share
-  const weights = MONTAGE.map((_, i) => (i === 0 ? 1.8 : 1));
+  const weights = MONTAGE.map(() => 1);
   const cuts = beatCuts(at, d, MONTAGE.length, weights);
   return (
     <AbsoluteFill>
       {MONTAGE.map((s, i) => {
         const len = cuts[i + 1] - cuts[i];
         const last = i === MONTAGE.length - 1;
+        // a fast montage cuts hard on the beat - no dissolves, no fleet title
+        // and no vessel count (client rule): the ships carry their names only
         return (
-          <Sequence key={s.id} from={cuts[i]} durationInFrames={len + (last ? 0 : XF)}>
-            <FadeIn on={i > 0}>
-              <Photo src={sitePhoto(s.photo)} to={len + XF} zoom={i % 2 ? [1.1, 1.03] : [1.03, 1.1]} pan={i % 2 ? [1.5, -1.5] : [-1.5, 1.5]} grade={0.1} />
-              <Scrim side="bottom" strength={0.8} />
-              {i === 0 ? (
-                // no vessel count anywhere (client rule) - the fleet is named, not counted
-                <LowerThird kicker="Selected vessels" title={s.name} sub={`${FLAGS_ADJ.join(" & ")} flags`} at={8} out={len - 12} size={130} />
-              ) : (
-                <ShipName name={s.name} flag={s.flagName} out={last ? len - 16 : len - 8} />
-              )}
-            </FadeIn>
+          <Sequence key={s.id} from={cuts[i]} durationInFrames={len}>
+            <Photo src={sitePhoto(s.photo)} to={len} zoom={i % 2 ? [1.08, 1.03] : [1.03, 1.08]} pan={i % 2 ? [1, -1] : [-1, 1]} grade={0.1} />
+            <Scrim side="bottom" strength={0.7} />
+            <ShipName name={s.name} flag={s.flagName} out={last ? len - 16 : len - 8} />
           </Sequence>
         );
       })}
@@ -70,10 +65,7 @@ export const Hero: React.FC<P> = ({ d }) => {
       <Photo src={sitePhoto(k.photo)} to={d} zoom={[1.02, 1.2]} pan={[1.5, -2.5]} position="45% 55%" grade={lift} />
       <Scrim side="bottom" strength={0.85} />
       <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px`, opacity: textOut }}>
-        <Rise at={26} dur={20}>
-          <Rule at={26} width={90} />
-        </Rise>
-        <Rise at={30} dur={34} style={{ marginTop: 24 }}>
+        <Rise at={30} dur={34}>
           <div style={{ ...DS, fontSize: px(220), letterSpacing: `${track}em`, color: C.white, lineHeight: 0.9, textShadow: "0 2px 30px rgba(6,9,26,0.5)" }}>{k.name}</div>
         </Rise>
         <Rise at={56} dur={24} style={{ marginTop: 22 }}>

@@ -50,7 +50,6 @@ export const Brand: React.FC<P> = ({ d }) => {
             background: C.white,
             display: "grid",
             placeItems: "center",
-            boxShadow: "0 30px 80px rgba(0,0,0,0.45)",
             opacity: logo,
             transform: `scale(${0.86 + 0.14 * logo})`,
           }}
@@ -63,11 +62,7 @@ export const Brand: React.FC<P> = ({ d }) => {
           </div>
         </Rise>
         <Rise at={34} dur={22} distance={30}>
-          <div style={{ display: "flex", alignItems: "center", gap: 22, fontFamily: FONT, fontWeight: 600, fontSize: 32, letterSpacing: "0.26em", color: C.mint, textTransform: "uppercase" }}>
-            <span style={{ width: 70, height: 2, background: C.mint }} />
-            Since {COMPANY.founded}
-            <span style={{ width: 70, height: 2, background: C.mint }} />
-          </div>
+          <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, color: C.soft }}>Since {COMPANY.founded}</div>
         </Rise>
       </AbsoluteFill>
     </AbsoluteFill>

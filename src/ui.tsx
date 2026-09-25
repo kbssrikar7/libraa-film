@@ -224,10 +224,9 @@ export const Scrim: React.FC<{ side?: "bottom" | "left" | "full"; strength?: num
  *  the way an editor's lower-third template does. */
 export const SAFE = { x: 160, bottom: 140 };
 
-/** Text that eases up into place with a short defocus, like a lens pulling
- *  focus. No clipping mask: a mask cut letters mid-reveal (the bottom bar of
- *  "E" vanished, so "WHERE" read "WHFRF"). `out` (frame) eases it away again
- *  before a cut, so outgoing text never sits on top of the next shot. */
+/** Text fades in with a small lift and fades out again before a cut
+ *  (`out`, in frames). Nothing else: no blur, no mask, no bounce - the
+ *  plain move an editor's title template makes. */
 export const Rise: React.FC<{
   at: number;
   dur?: number;
@@ -235,22 +234,13 @@ export const Rise: React.FC<{
   children: React.ReactNode;
   style?: React.CSSProperties;
   distance?: number;
-}> = ({ at, dur = 24, out, children, style, distance = 22 }) => {
+}> = ({ at, dur = 18, out, children, style, distance = 10 }) => {
   const f = useCurrentFrame();
   const p = useIn(at, dur);
-  const q = out === undefined ? 0 : interpolate(f, [out, out + 12], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
-  const blur = (1 - p) * 6 + q * 4;
+  const q = out === undefined ? 0 : interpolate(f, [out, out + 10], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <div style={style}>
-      <div
-        style={{
-          transform: `translateY(${(1 - p) * distance - q * 12}px)`,
-          opacity: p * (1 - q),
-          filter: blur > 0.05 ? `blur(${blur}px)` : undefined,
-        }}
-      >
-        {children}
-      </div>
+      <div style={{ transform: `translateY(${(1 - p) * distance}px)`, opacity: p * (1 - q) }}>{children}</div>
     </div>
   );
 };
@@ -281,14 +271,9 @@ export const FadeIn: React.FC<{ dur?: number; children: React.ReactNode; on?: bo
   return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
 };
 
-/** Short accent rule that draws itself in from the left. */
-export const Rule: React.FC<{ at: number; width?: number; color?: string }> = ({ at, width = 64, color = C.mint }) => {
-  const p = useIn(at, 22);
-  return <div style={{ width, height: 3, background: color, transform: `scaleX(${p})`, transformOrigin: "0 50%" }} />;
-};
-
-export const Kicker: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = C.mint }) => (
-  <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 28, letterSpacing: "0.22em", textTransform: "uppercase", color }}>{children}</div>
+/** Small supporting line under a title: plain, no tracking, no eyebrow. */
+export const Sub: React.FC<{ children: React.ReactNode; color?: string; size?: number }> = ({ children, color = C.soft, size = 38 }) => (
+  <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: size, color }}>{children}</div>
 );
 
 export const Headline: React.FC<{ children: React.ReactNode; size?: number; style?: React.CSSProperties }> = ({ children, size = 110, style }) => (
@@ -308,31 +293,22 @@ export const Headline: React.FC<{ children: React.ReactNode; size?: number; styl
   </div>
 );
 
-/** Lower-third caption: rule, kicker, title - one template for the whole
- *  film. `out` is the frame (in this sequence) where it eases away. */
-export const LowerThird: React.FC<{ kicker?: string; title: React.ReactNode; at?: number; out?: number; size?: number; sub?: string }> = ({
-  kicker,
+/** Lower-third title: the words, and at most one plain line under them.
+ *  No rules, eyebrows or boxes. `out` is the frame where it fades away. */
+export const LowerThird: React.FC<{ title: React.ReactNode; at?: number; out?: number; size?: number; sub?: string }> = ({
   title,
   at = 4,
   out,
-  size = 110,
+  size = 96,
   sub,
 }) => (
   <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px` }}>
-    <Rise at={at} out={out} dur={20}>
-      <Rule at={at} />
-    </Rise>
-    {kicker && (
-      <Rise at={at + 4} out={out} style={{ marginTop: 22 }}>
-        <Kicker>{kicker}</Kicker>
-      </Rise>
-    )}
-    <Rise at={at + 8} out={out} style={{ marginTop: kicker ? 14 : 22 }}>
+    <Rise at={at} out={out}>
       <Headline size={size}>{title}</Headline>
     </Rise>
     {sub && (
-      <Rise at={at + 16} out={out} style={{ marginTop: 16 }}>
-        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, color: C.soft }}>{sub}</div>
+      <Rise at={at + 8} out={out} style={{ marginTop: 14 }}>
+        <Sub>{sub}</Sub>
       </Rise>
     )}
   </AbsoluteFill>
