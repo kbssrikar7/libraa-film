@@ -74,6 +74,19 @@ footage.**
    GROUP); moving film grain; vessel count removed from the fleet titles;
    end card carries the approved tagline. The "01 / 05" counters are gone.
    Stock B-roll still to come - see STOCK-SHOTLIST.md.
+10. Client feedback on v7 preview: logo box must be square (no rounded
+    corners - done, client logo tiles too); still unhappy with the font
+    (Barlow) - five options are now switchable in src/ui.tsx
+    (`TYPE_OPTIONS`; preview with --props='{"type":"montserrat"}'), set
+    `TYPE_OPTION` once the client picks; no zoom on the India map (done);
+    no vessel count at all - the film shows only some of the many vessels
+    Libraa has worked on (fleet line rewritten, kicker "Selected vessels");
+    name the Indian Navy properly and add Adani and JSW (clients line
+    rewritten; the three logos land on their words, then the full wall,
+    no client count). The fleet and clients lines are NOT yet re-recorded:
+    run `npm run voice` in a session that has SARVAM_API_KEY, then
+    measure `marks` for "Indian Navy", "Adani", "JSW", "port authorities"
+    in the clients scene (until then `wordAt` estimates them).
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

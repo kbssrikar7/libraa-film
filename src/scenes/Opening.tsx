@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Img, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 import { COMPANY } from "../facts";
-import { C, Clip, DISPLAY, FONT, Rise, useIn, useTrack } from "../ui";
+import { C, Clip, DS, px, FONT, Rise, useIn, useTrack } from "../ui";
 
 type P = { d: number };
 
@@ -47,7 +47,6 @@ export const Brand: React.FC<P> = ({ d }) => {
           style={{
             width: 220,
             height: 180,
-            borderRadius: 34,
             background: C.white,
             display: "grid",
             placeItems: "center",
@@ -59,7 +58,7 @@ export const Brand: React.FC<P> = ({ d }) => {
           <Img src={staticFile("libraa/logo.webp")} style={{ width: 174 }} />
         </div>
         <Rise at={16} dur={24}>
-          <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 150, lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>
+          <div style={{ ...DS, fontSize: px(150), lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>
             LIBRAA GROUP
           </div>
         </Rise>

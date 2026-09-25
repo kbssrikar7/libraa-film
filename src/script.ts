@@ -19,11 +19,9 @@
 // ============================================================================
 import {
   CERT_COUNT,
-  CLIENT_COUNT,
   COMPANY,
   COMPANY_COUNT,
   FLAGS_ADJ,
-  FLEET_COUNT,
   LOCATION_COUNT,
   numberWord,
 } from "./facts";
@@ -58,7 +56,21 @@ export type Scene = {
    *  pauses, each piece transcribed to see which words it holds. Re-measure
    *  if the services line is re-recorded. */
   cues?: number[];
+  /** Seconds into this scene's voice-over where a named word is spoken,
+   *  e.g. { "Indian Navy": 1.2 }. Measured from the recording; until it is
+   *  measured, `wordAt` estimates from the word's place in the line. */
+  marks?: Record<string, number>;
 };
+
+/** When `phrase` is spoken, in seconds from the start of the scene's line. */
+export function wordAt(scene: Scene, phrase: string, lineSeconds: number): number {
+  const m = scene.marks?.[phrase];
+  if (m !== undefined) return m;
+  const text = scene.say ?? scene.line ?? "";
+  const i = text.indexOf(phrase);
+  if (i < 0) throw new Error(`"${phrase}" is not in the ${scene.id} line`);
+  return (lineSeconds * i) / text.length;
+}
 
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 const and = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
@@ -105,7 +117,9 @@ export const SCENES: Scene[] = [
   {
     id: "fleet",
     kind: "fleet",
-    line: `Our fleet spans ${numberWord(FLEET_COUNT)} vessels under ${and(FLAGS_ADJ)} flags: tugs, dredgers and passenger vessels.`,
+    // no vessel count (client): the fleet keeps changing and the film shows
+    // only some of the many vessels Libraa has worked on
+    line: `We have managed and worked on vessels of every kind: tugs, dredgers and passenger ferries, under ${and(FLAGS_ADJ)} flags. Here are just a few.`,
     lead: 0.8,
     tail: 3.5,
     flex: 3.2,
@@ -137,7 +151,9 @@ export const SCENES: Scene[] = [
   {
     id: "clients",
     kind: "clients",
-    line: `We have worked with ${numberWord(CLIENT_COUNT)} clients, from the Indian Navy and port authorities to energy groups and shipping houses.`,
+    // the Indian Navy, Adani and JSW are named first, each logo landing on
+    // its name (client, Sept 2026); no client count
+    line: "We are proud to serve the Indian Navy, Adani Ports and JSW, alongside port authorities, energy groups and shipping houses.",
     lead: 0.6,
     tail: 2.6,
     flex: 0.6,

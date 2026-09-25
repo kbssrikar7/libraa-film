@@ -73,11 +73,8 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
 // India map (Government of India boundary), offices labelled.
 export const MapScene: React.FC<P> = ({ d }) => {
   const f = useCurrentFrame();
-  // a slow, continuous camera push and drift toward the southern coast, plus
-  // drifting background light - the map never settles into a still frame
-  const zoom = interpolate(f, [0, d], [1.0, 1.14]);
-  const driftX = interpolate(f, [0, d], [0, -30]);
-  const driftY = interpolate(f, [0, d], [0, -40]);
+  // no camera move on the map (client): it holds still and the pins bring
+  // it to life; only the background light drifts
   const order = [...PORTS].sort((a, b) => (a.tag ? 0 : 1) - (b.tag ? 0 : 1)); // offices first
   return (
     <AbsoluteFill
@@ -102,7 +99,7 @@ export const MapScene: React.FC<P> = ({ d }) => {
           </div>
         </Rise>
       </AbsoluteFill>
-      <div style={{ position: "absolute", right: 110, top: 70, width: 900, height: 940, transform: `translate(${driftX}px, ${driftY}px) scale(${zoom})`, transformOrigin: "60% 75%" }}>
+      <div style={{ position: "absolute", right: 110, top: 70, width: 900, height: 940, }}>
         <svg viewBox={INDIA_MAP_VIEWBOX} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
           <path d={INDIA_PATH} fill="rgba(255,255,255,0.2)" stroke="rgba(143,224,172,0.9)" strokeWidth={2} />
         </svg>

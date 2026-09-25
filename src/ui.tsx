@@ -5,6 +5,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Easing,
+  getInputProps,
   Img,
   interpolate,
   OffthreadVideo,
@@ -23,25 +24,115 @@ export const C = {
   soft: "rgba(255,255,255,0.78)",
 };
 
-// Type: Barlow Condensed for titles and names (industrial / maritime
-// signage feel, holds up at very large sizes without wide tracking), Barlow
-// for kickers and supporting lines. Both SIL Open Font License (fontsource).
-export const DISPLAY = "'Barlow Condensed', system-ui, sans-serif";
-export const FONT = "Barlow, system-ui, sans-serif";
+// Type. The client rejected Plus Jakarta Sans and then Barlow, so the look
+// is one switchable option: render with --props='{"type":"montserrat"}' to
+// compare. `TYPE_OPTION` is the default once the client picks. Every font
+// is SIL Open Font License (fontsource on npm), free for commercial use.
+type Face = { family: string; file: string; weights: number[] } | { family: string; variable: string; stretch: string };
+type TypeOption = {
+  label: string;
+  faces: Face[];
+  display: string;
+  /** weight + width for titles and names */
+  displayWeight: number;
+  displayStretch?: string;
+  /** base tracking for big titles, in em */
+  tracking: number;
+  body: string;
+  bodyWeight: number;
+  /** title size relative to Barlow Condensed (wide faces need less) */
+  scale: number;
+};
 
-const FACES: [string, string, number[]][] = [
-  ["Barlow Condensed", "barlow-condensed", [400, 500, 600, 700]],
-  ["Barlow", "barlow", [400, 500, 600]],
-];
+export const TYPE_OPTIONS: Record<string, TypeOption> = {
+  barlow: {
+    label: "Barlow Condensed + Barlow",
+    faces: [
+      { family: "Barlow Condensed", file: "barlow-condensed", weights: [400, 500, 600, 700] },
+      { family: "Barlow", file: "barlow", weights: [400, 500, 600] },
+    ],
+    display: "'Barlow Condensed'",
+    displayWeight: 600,
+    tracking: 0.02,
+    body: "Barlow",
+    bodyWeight: 500,
+    scale: 1,
+  },
+  montserrat: {
+    label: "Montserrat",
+    faces: [{ family: "Montserrat", file: "montserrat", weights: [500, 600, 700] }],
+    display: "Montserrat",
+    displayWeight: 700,
+    tracking: 0.01,
+    body: "Montserrat",
+    bodyWeight: 500,
+    scale: 0.72,
+  },
+  cormorant: {
+    label: "Cormorant Garamond + Inter",
+    faces: [
+      { family: "Cormorant Garamond", file: "cormorant-garamond", weights: [500, 600, 700] },
+      { family: "Inter", file: "inter", weights: [400, 500, 600] },
+    ],
+    display: "'Cormorant Garamond'",
+    displayWeight: 600,
+    tracking: 0.04,
+    body: "Inter",
+    bodyWeight: 500,
+    scale: 0.95,
+  },
+  archivo: {
+    label: "Archivo Expanded + Inter",
+    faces: [
+      { family: "Archivo", variable: "archivo-variable", stretch: "62% 125%" },
+      { family: "Inter", file: "inter", weights: [400, 500, 600] },
+    ],
+    display: "Archivo",
+    displayWeight: 700,
+    displayStretch: "125%",
+    tracking: 0.0,
+    body: "Inter",
+    bodyWeight: 500,
+    scale: 0.6,
+  },
+  intertight: {
+    label: "Inter Tight + Inter",
+    faces: [
+      { family: "Inter Tight", file: "inter-tight", weights: [500, 600, 700] },
+      { family: "Inter", file: "inter", weights: [400, 500, 600] },
+    ],
+    display: "'Inter Tight'",
+    displayWeight: 600,
+    tracking: -0.01,
+    body: "Inter",
+    bodyWeight: 500,
+    scale: 0.82,
+  },
+};
+
+const TYPE_OPTION = "barlow";
+const chosen = String((getInputProps() as { type?: string }).type ?? TYPE_OPTION);
+export const TYPE = TYPE_OPTIONS[chosen] ?? TYPE_OPTIONS[TYPE_OPTION];
+
+export const DISPLAY = `${TYPE.display}, system-ui, sans-serif`;
+export const FONT = `${TYPE.body}, system-ui, sans-serif`;
+/** Spread into any title or name style: family, weight and width together. */
+export const DS: React.CSSProperties = { fontFamily: DISPLAY, fontWeight: TYPE.displayWeight, fontStretch: TYPE.displayStretch };
+
+/** Title size in px, adjusted for the chosen face's width. */
+export const px = (n: number) => Math.round(n * TYPE.scale);
 
 export const Fonts: React.FC = () => (
   <style>
-    {FACES.flatMap(([family, file, weights]) =>
-      weights.map(
-        (w) =>
-          `@font-face{font-family:'${family}';font-weight:${w};font-display:block;src:url(${staticFile(`fonts/${file}-${w}.woff2`)}) format("woff2");}`
+    {TYPE.faces
+      .flatMap((f) =>
+        "variable" in f
+          ? [`@font-face{font-family:'${f.family}';font-weight:100 900;font-stretch:${f.stretch};font-display:block;src:url(${staticFile(`fonts/${f.variable}.woff2`)}) format("woff2");}`]
+          : f.weights.map(
+              (w) => `@font-face{font-family:'${f.family}';font-weight:${w};font-display:block;src:url(${staticFile(`fonts/${f.file}-${w}.woff2`)}) format("woff2");}`
+            )
       )
-    ).join("")}
+      .join("")}
   </style>
 );
 
@@ -203,11 +294,10 @@ export const Kicker: React.FC<{ children: React.ReactNode; color?: string }> = (
 export const Headline: React.FC<{ children: React.ReactNode; size?: number; style?: React.CSSProperties }> = ({ children, size = 110, style }) => (
   <div
     style={{
-      fontFamily: DISPLAY,
-      fontWeight: 600,
-      fontSize: size,
-      lineHeight: 0.98,
-      letterSpacing: "0.005em",
+      ...DS,
+      fontSize: px(size),
+      lineHeight: 1,
+      letterSpacing: `${TYPE.tracking}em`,
       textTransform: "uppercase",
       color: C.white,
       textShadow: "0 2px 24px rgba(6,9,26,0.5)",

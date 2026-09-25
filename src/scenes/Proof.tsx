@@ -1,8 +1,10 @@
 import React from "react";
-import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { CERT_COUNT, CERTIFICATIONS, CLIENT_COUNT, CLIENT_SECTORS, CLIENTS, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
+import { AbsoluteFill, Easing, Img, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { wordAt } from "../script";
+import type { TimedScene } from "../timing";
+import { CERT_COUNT, CERTIFICATIONS, CLIENT_SECTORS, CLIENTS, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
 import LOGO_DIMS from "../logo-dims.json";
-import { C, Clip, DISPLAY, FONT, Headline, Kicker, Rise, useIn, useTrack } from "../ui";
+import { C, Clip, DS, px, FONT, Headline, Kicker, Rise, SAFE, useIn, useTrack } from "../ui";
 
 type P = { d: number; at: number };
 
@@ -38,7 +40,7 @@ export const Companies: React.FC<P> = ({ d }) => {
             <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: 30 }}>
               {GROUP_COMPANIES.map((c, i) => (
                 <Rise key={c.name} at={6 + i * 7} dur={18}>
-                  <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 54, color: C.white, lineHeight: 1.05 }}>{c.name}</div>
+                  <div style={{ ...DS, fontSize: px(54), color: C.white, lineHeight: 1.05 }}>{c.name}</div>
                   <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 30, color: C.mint, marginTop: 6 }}>{c.role}</div>
                 </Rise>
               ))}
@@ -114,7 +116,7 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
         <Img src={staticFile(seal)} style={{ width: 72, height: 72, objectFit: "contain" }} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 44, color: C.white, whiteSpace: "nowrap" }}>{label}</div>
+        <div style={{ ...DS, fontSize: px(44), color: C.white, whiteSpace: "nowrap" }}>{label}</div>
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 22, color: C.soft, marginTop: 4, whiteSpace: "nowrap" }}>{org.replace(" Pvt Ltd", "")}</div>
       </div>
     </div>
@@ -127,66 +129,80 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
 // logo reads as much bigger or smaller than its neighbours.
 const trimmed = (logo: string) => logo.replace(/^\/photos\/logos\//, "logos-trim/");
 const LOGO_AREA = 4200; // px^2 at 1080p, per tile
-function logoSize(src: string) {
+function logoSize(src: string, area = LOGO_AREA, maxH = 72, maxW = 148) {
   const [w, h] = (LOGO_DIMS as Record<string, number[]>)[src] ?? [2, 1];
   const aspect = w / h;
-  let height = Math.sqrt(LOGO_AREA / aspect);
+  let height = Math.sqrt(area / aspect);
   let width = height * aspect;
-  if (height > 72) { height = 72; width = height * aspect; }
-  if (width > 148) { width = 148; height = width / aspect; }
+  if (height > maxH) { height = maxH; width = height * aspect; }
+  if (width > maxW) { width = maxW; height = width / aspect; }
   return { width, height };
 }
 
-// Scene 9 - client logos flow past in three sector rows. The scene dissolves
-// in over the previous one with its title already in place (never an empty
-// cream frame), and the rows fade at the screen edges so logos enter and
-// leave deliberately rather than being clipped.
-export const Clients: React.FC<P> = ({ d }) => {
+// Scene 9 - clients. The Indian Navy, Adani Ports and JSW come first: each
+// logo lands, large, on the word that names it. On "port authorities" they
+// clear and the full client wall builds - no client count. The scene
+// washes from navy to warm cream so it never shows an empty frame.
+const FEATURED: { name: string; word: string }[] = [
+  { name: "Indian Navy", word: "Indian Navy" },
+  { name: "Adani Ports & SEZ", word: "Adani" },
+  { name: "JSW Group", word: "JSW" },
+];
+const PICTURE_LEAD = 4; // frames a logo arrives ahead of its word
+
+export const Clients: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
   const f = useCurrentFrame();
-  // navy -> warm cream wash, with the title and rows emerging in the same move
-  // ~0.27s wash, eased so it races through the grey midpoint and the cream
-  // settles almost at once; the title and rows come in right behind it
   const wash = interpolate(f, [0, 8], [0, 1], { extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
-  const content = interpolate(f, [5, 16], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const voiceAt = (scene.voice?.from ?? at) - at;
+  const lineSec = (scene.voice?.durationInFrames ?? 0) / 30;
+  const onWord = (w: string) => voiceAt + Math.round(wordAt(scene, w, lineSec) * 30) - PICTURE_LEAD;
+  const wallAt = Math.max(onWord(FEATURED[2].word) + 36, onWord("port authorities"));
+  const featuredOut = interpolate(f, [wallAt - 8, wallAt + 6], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ background: C.navy }}>
       <AbsoluteFill style={{ background: C.paper, opacity: wash }} />
-      <AbsoluteFill style={{ opacity: content }}>
-      <AbsoluteFill style={{ padding: "90px 0 0 140px" }}>
-        <Rise at={-20}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 36 }}>
-            <Headline size={130} style={{ color: C.navy, textShadow: "none" }}>
-              {CLIENT_COUNT} clients
-            </Headline>
-          </div>
+      {/* 1 - the three named clients, each on its word */}
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", opacity: featuredOut }}>
+        <Rise at={4} dur={18}>
+          <Kicker color={C.green}>Proud to serve</Kicker>
         </Rise>
-        <Rise at={-10} dur={20} style={{ marginTop: 10 }}>
-          <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 40, color: "rgba(10,14,42,0.62)" }}>Navy · Ports · Energy · Shipping</div>
-        </Rise>
-      </AbsoluteFill>
-      {/* a static, centred grid - nothing crosses the frame edge. Logos fade
-          in one after another, then the whole grid pushes in very slowly */}
-      <div
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          top: 400,
-          display: "flex",
-          justifyContent: "center",
-          transform: `scale(${interpolate(f, [0, d], [1, 1.04])})`,
-          transformOrigin: "50% 40%",
-        }}
-      >
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLS}, ${TILE_W}px)`, gap: 20, justifyContent: "center" }}>
-          {ORDERED.map((c, i) => (
-            <Tile key={c.name} at={14 + i * 2}>
-              <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo)), objectFit: "contain" }} />
-            </Tile>
-          ))}
+        <div style={{ display: "flex", gap: 56, marginTop: 50 }}>
+          {FEATURED.map((c) => {
+            const client = CLIENTS.find((x) => x.name === c.name)!;
+            return (
+              <Rise key={c.name} at={onWord(c.word)} dur={18} distance={26}>
+                <div style={{ width: 420, height: 270, background: C.white, display: "grid", placeItems: "center", boxShadow: "0 18px 50px rgba(10,14,42,0.12)" }}>
+                  <Img src={staticFile(trimmed(client.logo))} style={{ ...logoSize(trimmed(client.logo), 26000, 200, 330), objectFit: "contain" }} />
+                </div>
+                <div style={{ ...DS, fontSize: px(46), color: C.navy, marginTop: 24, textAlign: "center" }}>{c.name}</div>
+              </Rise>
+            );
+          })}
         </div>
-      </div>
       </AbsoluteFill>
+      {/* 2 - the full client wall */}
+      <Sequence from={wallAt} layout="none">
+        <AbsoluteFill style={{ padding: `90px 0 0 ${SAFE.x}px` }}>
+          <Rise at={0} dur={20}>
+            <Headline size={120} style={{ color: C.navy, textShadow: "none" }}>
+              Our clients
+            </Headline>
+          </Rise>
+          <Rise at={6} dur={20} style={{ marginTop: 12 }}>
+            <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 38, color: "rgba(10,14,42,0.62)" }}>Navy · Ports · Energy · Shipping</div>
+          </Rise>
+        </AbsoluteFill>
+        {/* a static, centred grid - nothing crosses the frame edge */}
+        <div style={{ position: "absolute", left: 0, right: 0, top: 400, display: "flex", justifyContent: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLS}, ${TILE_W}px)`, gap: 20, justifyContent: "center" }}>
+            {ORDERED.map((c, i) => (
+              <Tile key={c.name} at={8 + i * 2}>
+                <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo)), objectFit: "contain" }} />
+              </Tile>
+            ))}
+          </div>
+        </div>
+      </Sequence>
     </AbsoluteFill>
   );
 };
@@ -205,7 +221,6 @@ const Tile: React.FC<{ at: number; children: React.ReactNode }> = ({ at, childre
       style={{
         width: TILE_W,
         height: TILE_H,
-        borderRadius: 14,
         background: C.white,
         boxShadow: "0 8px 24px rgba(10,14,42,0.08)",
         display: "grid",
@@ -245,10 +260,10 @@ export const End: React.FC<P> = ({ d }) => {
           textShadow: "0 2px 24px rgba(6,9,26,0.55)",
         }}
       >
-        <div style={{ width: 170, height: 140, borderRadius: 30, background: C.white, display: "grid", placeItems: "center", boxShadow: "0 30px 80px rgba(0,0,0,0.45)" }}>
+        <div style={{ width: 170, height: 140, background: C.white, display: "grid", placeItems: "center", boxShadow: "0 30px 80px rgba(0,0,0,0.45)" }}>
           <Img src={staticFile("libraa/logo.webp")} style={{ width: 134 }} />
         </div>
-        <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 130, lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>
+        <div style={{ ...DS, fontSize: px(130), lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>
         {/* the approved closing tagline, word for word */}
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, letterSpacing: "0.02em", color: C.mint }}>Ship Management, Crew Management and Marine Services.</div>
         <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: 600, fontSize: 60, color: C.white, letterSpacing: "0.03em" }}>libraa.com</div>

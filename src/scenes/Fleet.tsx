@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { FLAGS_ADJ, SHIPS, ship, sitePhoto } from "../facts";
-import { C, DISPLAY, FadeIn, FONT, Headline, Kicker, LowerThird, Photo, Rise, Rule, SAFE, Scrim, useTrack, XF } from "../ui";
+import { C, DS, px, FadeIn, FONT, Headline, Kicker, LowerThird, Photo, Rise, Rule, SAFE, Scrim, useTrack, XF } from "../ui";
 import { beatCuts } from "./Work";
 
 type P = { d: number; at: number };
@@ -33,7 +33,7 @@ export const Fleet: React.FC<P> = ({ d, at }) => {
               <Scrim side="bottom" strength={0.8} />
               {i === 0 ? (
                 // no vessel count anywhere (client rule) - the fleet is named, not counted
-                <LowerThird kicker="Our fleet" title={s.name} sub={`${FLAGS_ADJ.join(" & ")} flags`} at={8} out={len - 12} size={130} />
+                <LowerThird kicker="Selected vessels" title={s.name} sub={`${FLAGS_ADJ.join(" & ")} flags`} at={8} out={len - 12} size={130} />
               ) : (
                 <ShipName name={s.name} flag={s.flagName} out={last ? len - 16 : len - 8} />
               )}
@@ -49,7 +49,7 @@ export const Fleet: React.FC<P> = ({ d, at }) => {
 const ShipName: React.FC<{ name: string; flag: string; out: number }> = ({ name, flag, out }) => (
   <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px` }}>
     <Rise at={3} out={out} dur={16} distance={16}>
-      <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 92, lineHeight: 1, letterSpacing: "0.02em", color: C.white, textShadow: "0 2px 24px rgba(6,9,26,0.5)" }}>{name}</div>
+      <div style={{ ...DS, fontSize: px(92), lineHeight: 1, letterSpacing: "0.02em", color: C.white, textShadow: "0 2px 24px rgba(6,9,26,0.5)" }}>{name}</div>
     </Rise>
     <Rise at={7} out={out} dur={16} distance={12} style={{ marginTop: 12 }}>
       <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 26, letterSpacing: "0.24em", textTransform: "uppercase", color: C.mint }}>{flag}</div>
@@ -74,7 +74,7 @@ export const Hero: React.FC<P> = ({ d }) => {
           <Rule at={26} width={90} />
         </Rise>
         <Rise at={30} dur={34} style={{ marginTop: 24 }}>
-          <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 220, letterSpacing: `${track}em`, color: C.white, lineHeight: 0.9, textShadow: "0 2px 30px rgba(6,9,26,0.5)" }}>{k.name}</div>
+          <div style={{ ...DS, fontSize: px(220), letterSpacing: `${track}em`, color: C.white, lineHeight: 0.9, textShadow: "0 2px 30px rgba(6,9,26,0.5)" }}>{k.name}</div>
         </Rise>
         <Rise at={56} dur={24} style={{ marginTop: 22 }}>
           <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 44, color: C.mint }}>{k.status}</div>
