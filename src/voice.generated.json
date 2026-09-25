@@ -1,0 +1,42 @@
+{
+  "open": {
+    "file": "voice/open-47b948e0d5.mp3",
+    "seconds": 3.291
+  },
+  "brand": {
+    "file": "voice/brand-0fbd5f7bd4.mp3",
+    "seconds": 3.527
+  },
+  "services": {
+    "file": "voice/services-d285dd2dcc.mp3",
+    "seconds": 8.908
+  },
+  "map": {
+    "file": "voice/map-8efdf24f20.mp3",
+    "seconds": 7.367
+  },
+  "fleet": {
+    "file": "voice/fleet-579c01f92a.mp3",
+    "seconds": 6.087
+  },
+  "hero": {
+    "file": "voice/hero-2196d88cbe.mp3",
+    "seconds": 4.127
+  },
+  "field": {
+    "file": "voice/field-97db1aab9c.mp3",
+    "seconds": 6.792
+  },
+  "companies": {
+    "file": "voice/companies-0f81c8e8e5.mp3",
+    "seconds": 6.348
+  },
+  "clients": {
+    "file": "voice/clients-dfc7dd7778.mp3",
+    "seconds": 6.008
+  },
+  "end": {
+    "file": "voice/end-267d5658bc.mp3",
+    "seconds": 3.448
+  }
+}

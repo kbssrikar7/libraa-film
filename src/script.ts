@@ -1,0 +1,167 @@
+// ============================================================================
+// THE SCRIPT - the one file that controls the film.
+//
+// Each scene lists its voice-over line and what's on screen. Nothing here
+// holds a frame number: every scene lasts as long as its voice-over plus
+// its `lead` (silence before the line) and `tail` (breathing room after),
+// and any time left over in the 2:00 is shared out by `flex`. Change a
+// line, reorder scenes, add or remove one - the timing re-flows by itself.
+//
+//   npm run voice    re-records only the lines whose text changed
+//   npm run dev      opens Remotion Studio to preview
+//   npm run render   renders out/libraa-group-film.mp4 (exactly 2:00)
+//
+// `say` (optional) is what the narrator reads, if it needs to differ from
+// `line` - e.g. a phonetic spelling. The Indian narrator (Sarvam "anand")
+// reads Libraa, Koundinya and 2009 correctly as written, so none is used.
+// `line` is the plain-English version, for reading and review.
+// Numbers and names come from facts.ts (the website's data), not typed in.
+// ============================================================================
+import {
+  CERT_COUNT,
+  CLIENT_COUNT,
+  COMPANY,
+  COMPANY_COUNT,
+  FLAGS_ADJ,
+  FLEET_COUNT,
+  LOCATION_COUNT,
+  numberWord,
+} from "./facts";
+
+export type SceneKind =
+  | "open"
+  | "brand"
+  | "services"
+  | "map"
+  | "fleet"
+  | "hero"
+  | "field"
+  | "companies"
+  | "clients"
+  | "end";
+
+export type Scene = {
+  id: string;
+  kind: SceneKind;
+  /** Plain version of the voice-over, as the viewer hears it. */
+  line?: string;
+  /** Exactly what the narrator reads. Defaults to `line`. */
+  say?: string;
+  /** Seconds of picture before the voice-over starts. */
+  lead: number;
+  /** Seconds of picture after the voice-over ends. */
+  tail: number;
+  /** Share of any spare time in the 2:00 this scene absorbs (0 = none). */
+  flex: number;
+  /** Seconds into this scene's voice-over where each visual beat should land
+   *  (services only). Measured from the recording: split at Anand's natural
+   *  pauses, each piece transcribed to see which words it holds. Re-measure
+   *  if the services line is re-recorded. */
+  cues?: number[];
+};
+
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
+const and = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
+
+export const FILM_SECONDS = 120;
+export const FPS = 30;
+
+export const SCENES: Scene[] = [
+  {
+    id: "open",
+    kind: "open",
+    line: "A reliable voyage begins long before a vessel leaves port.",
+    lead: 1.6,
+    tail: 0.6,
+    flex: 0.7,
+  },
+  {
+    id: "brand",
+    kind: "brand",
+    line: `For Libraa, that work has been our business since ${COMPANY.founded}.`,
+    lead: 0.4,
+    tail: 1.4,
+    flex: 0.3,
+  },
+  {
+    id: "services",
+    kind: "services",
+    line: "From ship management and surveys to repairs, new-build supervision and offshore services, we support vessels from shore to sea, and recruit the seafarers who operate them.",
+    //     "ship management" 0.0 | "surveys to repairs" ~1.0 | "new-build supervision" 2.26
+    //     | "offshore services ... shore to sea" ~3.4 | "recruit the seafarers" 6.63
+    cues: [0, 1.0, 2.26, 3.41, 6.63],
+    lead: 0.8,
+    tail: 1.4,
+    flex: 0,
+  },
+  {
+    id: "map",
+    kind: "map",
+    line: `From our head office in Chennai and offices in Kakinada and Port Blair, we work across ${numberWord(LOCATION_COUNT)} locations around India's coasts.`,
+    lead: 0.6,
+    tail: 2.2,
+    flex: 0.2,
+  },
+  {
+    id: "fleet",
+    kind: "fleet",
+    line: `Our fleet spans ${numberWord(FLEET_COUNT)} vessels under ${and(FLAGS_ADJ)} flags: tugs, dredgers and passenger vessels.`,
+    lead: 0.8,
+    tail: 3.5,
+    flex: 3.2,
+  },
+  {
+    id: "hero",
+    kind: "hero",
+    line: "And one of them, Koundinya, we built from scratch, in our own yard.",
+    lead: 1.2,
+    tail: 1.5,
+    flex: 0,
+  },
+  {
+    id: "field",
+    kind: "field",
+    line: "From Indian ports to West Africa, every job starts the same way: a toolbox talk, and the right safety gear for everyone.",
+    lead: 0.6,
+    tail: 1.8,
+    flex: 0.3,
+  },
+  {
+    id: "companies",
+    kind: "companies",
+    line: `${cap(numberWord(COMPANY_COUNT))} group companies, each responsible for its own part of the business, backed by ${numberWord(CERT_COUNT)} certifications and licences.`,
+    lead: 0.6,
+    tail: 2.2,
+    flex: 0.2,
+  },
+  {
+    id: "clients",
+    kind: "clients",
+    line: `We have worked with ${numberWord(CLIENT_COUNT)} clients, from the Indian Navy and port authorities to energy groups and shipping houses.`,
+    lead: 0.6,
+    tail: 2.6,
+    flex: 0.6,
+  },
+  {
+    id: "end",
+    kind: "end",
+    line: "Libraa Group. Shipbuilding, ship management and marine services.",
+    lead: 1.0,
+    tail: 3.8,
+    flex: 0,
+  },
+];
+
+/** Music: "Cinematic Open Future" by RoyaltyFreeMusicStudio (Pixabay Content
+ *  License - free for commercial use, no attribution required). Measured
+ *  66.66 BPM, first beat at 0.145s; montage cuts snap to this grid. */
+export const MUSIC = {
+  // loudness-normalised to -16 LUFS, the same level as the voice-over
+  file: "music/cinematic-open-future-16lufs.mp3",
+  bpm: 66.66,
+  firstBeat: 0.145,
+  /** Music on its own: ~3 dB under the voice level. */
+  volume: 0.7,
+  /** Music while the narrator speaks: ~13 dB under him, so every word is clear. */
+  duckedVolume: 0.22,
+};

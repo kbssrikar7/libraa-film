@@ -1,0 +1,30 @@
+{
+  "name": "libraa-film",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Libraa Group 2-minute brand film (Remotion)",
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio",
+    "voice": "node scripts/voice.mjs",
+    "check": "tsc --noEmit",
+    "render": "node scripts/master.mjs",
+    "still": "remotion still LibraaFilm",
+    "timeline": "node scripts/timeline.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.522",
+    "@remotion/media-utils": "4.0.522",
+    "remotion": "4.0.522",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "typescript": "5.9.3",
+    "esbuild": "0.28.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  }
+}

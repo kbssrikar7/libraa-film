@@ -1,0 +1,6 @@
+node_modules/
+out/
+.env
+voice-raw/
+.venv/
+kokoro-models/
