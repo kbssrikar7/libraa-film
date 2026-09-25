@@ -85,7 +85,7 @@ export const SCENES: Scene[] = [
     line: "A reliable voyage begins long before a vessel leaves port.",
     lead: 1.6,
     tail: 0.6,
-    flex: 0.75,
+    flex: 0.2,
   },
   {
     id: "brand",
@@ -116,7 +116,7 @@ export const SCENES: Scene[] = [
     // words placed by speaking rate either side of it
     marks: { Chennai: 1.3, Kakinada: 2.6, "Port Blair": 3.25, locations: 5.6 },
     lead: 0.6,
-    tail: 0.7,
+    tail: 0.2,
     flex: 0,
   },
   {
@@ -129,7 +129,7 @@ export const SCENES: Scene[] = [
     // the line starts on ANTIGOON, the first ship, and the montage runs on
     // under the music after it
     tail: 5.5,
-    flex: 1.0,
+    flex: 0.95,
   },
   {
     id: "hero",
@@ -137,15 +137,15 @@ export const SCENES: Scene[] = [
     line: "And one of them, Koundinya, we built from scratch, in our own yard.",
     lead: 1.2,
     tail: 2.2,
-    flex: 0.3,
+    flex: 0.2,
   },
   {
     id: "field",
     kind: "field",
     line: "From Indian ports to West Africa, every job starts the same way: a toolbox talk, and the right safety gear for everyone.",
     lead: 0.6,
-    tail: 1.8,
-    flex: 0.45,
+    tail: 1.2,
+    flex: 0.2,
   },
   {
     id: "companies",
@@ -161,16 +161,19 @@ export const SCENES: Scene[] = [
     // the Indian Navy, Adani and JSW are named first, each logo landing on
     // its name (client, Sept 2026); no client count
     line: "We are proud to serve the Indian Navy, Adani Ports and JSW, alongside port authorities, energy groups and shipping houses.",
+    // measured on the recording: pauses after "Navy," (1.68s), "JSW," (3.73s)
+    // and "authorities," (5.45s); words placed by speaking rate between them
+    marks: { "Indian Navy": 0.95, Adani: 1.95, JSW: 3.3, "port authorities": 4.55 },
     lead: 0.6,
     tail: 1.8,
-    flex: 0,
+    flex: 0.05,
   },
   {
     id: "end",
     kind: "end",
     // the approved closing line, word for word
     line: "Libraa Group. Ship Management, Crew Management and Marine Services.",
-    lead: 1.0,
+    lead: 4.6,
     tail: 5.0,
     flex: 0.2,
   },

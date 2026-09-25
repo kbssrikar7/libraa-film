@@ -49,8 +49,12 @@ function musicVolume(scenes: TimedScene[]) {
         v = Math.min(v, MUSIC.volume - (MUSIC.volume - MUSIC.duckedVolume) * k);
       }
     }
+    // the music eases back ~2.5 dB under KOUNDINYA, so the hero shot lands as
+    // a pause after the fleet montage (existing track only - no effects)
+    const hero = scenes.find((s) => s.kind === "hero");
+    const hush = hero ? interpolate(f, [hero.from - 6, hero.from + 24, hero.from + hero.durationInFrames - 24, hero.from + hero.durationInFrames], [1, 0.75, 0.75, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1;
     const fadeOut = interpolate(f, [TOTAL_FRAMES - 45, TOTAL_FRAMES], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-    return v * fadeOut;
+    return v * hush * fadeOut;
   };
 }
 

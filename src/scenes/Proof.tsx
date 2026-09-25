@@ -1,7 +1,9 @@
 import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { numberWord, CERTIFICATIONS, CLIENT_SECTORS, CLIENTS, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
+import { numberWord, CERTIFICATIONS, CLIENT_COUNT, CLIENT_SECTORS, CLIENTS, CLIENTS_TEXT_ONLY, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
 import LOGO_DIMS from "../logo-dims.json";
+import { wordAt } from "../script";
+import type { TimedScene } from "../timing";
 import { TYPE, C, Clip, DS, FONT, Headline, px, Rise, SAFE, Sub, useIn, useTrack } from "../ui";
 
 type P = { d: number; at: number };
@@ -64,7 +66,7 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
         <Img src={staticFile(seal)} style={{ width: 70, height: 70, objectFit: "contain" }} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ ...DS, fontSize: px(64), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
+        <div style={{ ...DS, fontSize: px(72), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
         <div style={{ whiteSpace: "nowrap" }}><Sub size={28}>{org.replace(" Pvt Ltd", "")}</Sub></div>
       </div>
     </div>
@@ -87,40 +89,67 @@ function logoSize(src: string, area = LOGO_AREA, maxH = 84, maxW = 160) {
   return { width, height };
 }
 
-// Scene 9 - clients: the cream wall dissolves in over the certificates (see
-// DISSOLVE in Film.tsx) and the
-// full client wall builds, Indian Navy first. No separate featured screen
-// (client) and no client count.
-export const Clients: React.FC<P> = () => {
+// Scene 9 - clients, one screen that keeps changing while the line plays.
+// The cream wall dissolves in over the certificates (DISSOLVE in Film.tsx)
+// under "31 clients" (the website's own count). The Indian Navy, Adani Ports
+// and JSW take double-width tiles in the top row, each arriving as the
+// narrator names it; the other logos follow on "port authorities", then the
+// five clients without a logo are named, as on the website. A very slow push
+// keeps the finished wall alive.
+const LEAD = ["Indian Navy", "Adani Ports & SEZ", "JSW Group"];
+const LEAD_WORD: Record<string, string> = { "Indian Navy": "Indian Navy", "Adani Ports & SEZ": "Adani", "JSW Group": "JSW" };
+
+export const Clients: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
   const f = useCurrentFrame();
+  const voiceAt = (scene.voice?.from ?? at) - at;
+  const lineSec = (scene.voice?.durationInFrames ?? 0) / 30;
+  const onWord = (w: string) => voiceAt + Math.round(wordAt(scene, w, lineSec) * 30) - 4;
+  const restAt = onWord("port authorities");
+  const push = interpolate(f, [0, d], [1, 1.025]);
   return (
     <AbsoluteFill style={{ background: C.paper }}>
-      <AbsoluteFill style={{ padding: `100px 0 0 ${SAFE.x}px` }}>
-        <Rise at={6} dur={20}>
-          <Headline size={120} style={{ color: C.navy, textShadow: "none" }}>
-            Our clients
-          </Headline>
-        </Rise>
-      </AbsoluteFill>
-      {/* a static, centred grid - nothing crosses the frame edge */}
-      <div style={{ position: "absolute", left: 0, right: 0, top: 340, display: "flex", justifyContent: "center" }}>
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLS}, ${TILE_W}px)`, gap: 20, justifyContent: "center" }}>
-          {ORDERED.map((c, i) => (
-            <Tile key={c.name} at={14 + i * 2}>
-              {ICON_ONLY[c.name] ? (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                  <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo), 2600, 58, 130), objectFit: "contain" }} />
-                  <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 20, color: C.navy, lineHeight: 1 }}>{ICON_ONLY[c.name]}</div>
-                </div>
-              ) : (
-                <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo)), objectFit: "contain" }} />
-              )}
-            </Tile>
-          ))}
+      <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 45%" }}>
+        <AbsoluteFill style={{ padding: `84px 0 0 ${SAFE.x}px` }}>
+          <Rise at={6} dur={20}>
+            <Headline size={120} style={{ color: C.navy, textShadow: "none" }}>
+              {CLIENT_COUNT} clients
+            </Headline>
+          </Rise>
+        </AbsoluteFill>
+        <div style={{ position: "absolute", left: 0, right: 0, top: 270, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLS}, ${TILE_W}px)`, gap: 18, alignItems: "center" }}>
+            {ORDERED.map((c, i) => {
+              const lead = LEAD.includes(c.name);
+              const at = lead ? onWord(LEAD_WORD[c.name]) : restAt + (i - LEAD.length) * 2;
+              return (
+                <Tile key={c.name} at={at} wide={lead}>
+                  <Logo client={c} big={lead} />
+                </Tile>
+              );
+            })}
+          </div>
+          <Rise at={restAt + (ORDERED.length - LEAD.length) * 2 + 6} dur={20} style={{ marginTop: 26 }}>
+            <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 34, color: "rgba(10,14,42,0.72)" }}>Plus {and(CLIENTS_TEXT_ONLY)}.</div>
+          </Rise>
         </div>
-      </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
+};
+
+const and = (xs: readonly string[]) => `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`;
+
+const Logo: React.FC<{ client: (typeof CLIENTS)[number]; big: boolean }> = ({ client, big }) => {
+  const src = trimmed(client.logo);
+  const name = ICON_ONLY[client.name];
+  if (name)
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: big ? 8 : 6 }}>
+        <Img src={staticFile(src)} style={{ ...(big ? logoSize(src, 11000, 112, 300) : logoSize(src, 2600, 58, 130)), objectFit: "contain" }} />
+        <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: big ? 30 : 20, color: C.navy, lineHeight: 1 }}>{name}</div>
+      </div>
+    );
+  return <Img src={staticFile(src)} style={{ ...(big ? logoSize(src, 17000, 146, 340) : logoSize(src)), objectFit: "contain" }} />;
 };
 
 // Logos that are only an emblem (the website shows their name beside them) -
@@ -135,21 +164,21 @@ const ICON_ONLY: Record<string, string> = {
 const GRID_COLS = 9;
 const TILE_W = 180;
 const TILE_H = 116;
-// grouped by sector (navy/government/ports, energy/industry, shipping) so
-// similar organisations sit together
-const LEAD = ["Indian Navy", "Adani Ports & SEZ", "JSW Group"];
+// the three named clients first, then grouped by sector (navy/government/
+// ports, energy/industry, shipping) so similar organisations sit together
 const ORDERED = [
   ...LEAD.map((n) => CLIENTS.find((c) => c.name === n)!),
   ...CLIENT_SECTORS.flatMap((sec) => CLIENTS.filter((c) => c.sector === sec.id && !LEAD.includes(c.name))),
 ];
 
-const Tile: React.FC<{ at: number; children: React.ReactNode }> = ({ at, children }) => {
+const Tile: React.FC<{ at: number; wide?: boolean; children: React.ReactNode }> = ({ at, wide, children }) => {
   const p = useIn(at, 18);
   return (
     <div
       style={{
-        width: TILE_W,
-        height: TILE_H,
+        gridColumn: wide ? "span 2" : undefined,
+        width: wide ? TILE_W * 2 + 18 : TILE_W,
+        height: wide ? 176 : TILE_H,
         background: C.white,
         display: "grid",
         placeItems: "center",
@@ -163,9 +192,10 @@ const Tile: React.FC<{ at: number; children: React.ReactNode }> = ({ at, childre
 };
 
 // Scene 10 - dusk sea, then the end card holds to 2:00.
-export const End: React.FC<P> = ({ d }) => {
+export const End: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
   const f = useCurrentFrame();
-  const cardAt = 40;
+  // the sunset plays on its own first; the card arrives with "Libraa Group..."
+  const cardAt = Math.max(20, (scene.voice?.from ?? at + 40) - at - 8);
   const card = useIn(cardAt, 30);
   const track = useTrack(cardAt, TYPE.tracking + 0.06, TYPE.tracking, 120);
   return (
@@ -193,7 +223,7 @@ export const End: React.FC<P> = ({ d }) => {
         </div>
         <div style={{ ...DS, fontSize: px(130), lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>
         {/* the approved closing tagline, word for word */}
-        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, letterSpacing: "0.02em", color: C.mint }}>Ship Management, Crew Management and Marine Services.</div>
+        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 46, letterSpacing: "0.02em", color: C.mint }}>Ship Management, Crew Management and Marine Services.</div>
         <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: TYPE.bodyWeight, fontSize: 96, color: C.white, letterSpacing: "0.02em" }}>libraa.com</div>
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 68, color: C.soft, letterSpacing: "0.02em" }}>{COMPANY.email}</div>
       </AbsoluteFill>

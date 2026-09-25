@@ -13,7 +13,6 @@ re-encoded. Clips with readable company names (MSC, Maersk, Evergreen,
 Hapag-Lloyd, terminal signage) or landmarks were rejected. Used only on
 general lines or with no line at all, never shown as a Libraa vessel.
 - public/stock/px-tanker-sunset-aerial.mp4 - https://www.pexels.com/video/an-oil-tanker-in-the-sea-4911815/ (Esteban M)
-- public/stock/px-tanker-bow-at-sea.mp4 - https://www.pexels.com/video/an-oil-tanker-traveling-across-the-sea-9654558/ (Zahid Nisar)
 - public/stock/px-ship-headon-drone.mp4 - https://www.pexels.com/video/drone-video-of-cargo-ships-on-a-river-15148911/ (Stephen Pierce)
 - public/stock/px-ship-silhouette-sunset.mp4 - https://www.pexels.com/video/silhouette-of-a-tugboat-towing-a-cargo-ship-at-sunrise-13379259/ (Engin Akyurt)
 - public/stock/px-welding-sparks.mp4 - https://www.pexels.com/video/professional-welding-steel-6046358/ (K)

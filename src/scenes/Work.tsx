@@ -9,7 +9,7 @@ type P = { d: number; at: number };
 
 /** Split a scene into parts whose cut points land on music beats. `weights`
  *  (default all 1) lets one part run longer, e.g. an opening title shot. */
-export function beatCuts(at: number, d: number, n: number, weights?: number[]): number[] {
+export function beatCuts(at: number, d: number, n: number, weights?: number[], minLen = 15): number[] {
   const beats = beatsBetween(at, at + d).map((b) => b - at);
   const w = weights ?? Array(n).fill(1);
   const wTotal = w.reduce((a, b) => a + b, 0);
@@ -17,9 +17,13 @@ export function beatCuts(at: number, d: number, n: number, weights?: number[]): 
   let acc = 0;
   for (let i = 1; i < n; i++) {
     acc += w[i - 1];
-    const ideal = (d * acc) / wTotal;
-    const b = beats.reduce((best, x) => (Math.abs(x - ideal) < Math.abs(best - ideal) ? x : best), beats[0] ?? ideal);
-    cuts.push(b > cuts[cuts.length - 1] + 15 ? b : Math.round(ideal));
+    const prev = cuts[cuts.length - 1];
+    const ideal = Math.max((d * acc) / wTotal, prev + minLen);
+    // nearest beat that still leaves the previous shot at least minLen
+    // frames, so snapping never produces a shot that flashes past
+    const ok = beats.filter((x) => x >= prev + minLen);
+    const b = ok.reduce((best, x) => (Math.abs(x - ideal) < Math.abs(best - ideal) ? x : best), ok[0] ?? ideal);
+    cuts.push(Math.round(Math.abs(b - ideal) < 30 ? b : ideal));
   }
   cuts.push(d);
   return cuts;

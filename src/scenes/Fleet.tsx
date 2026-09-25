@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
-import { ship, sitePhoto } from "../facts";
+import { SHIPS, ship, sitePhoto } from "../facts";
 import { TYPE, C, Clip, DS, FadeIn, FONT, LowerThird, Photo, px, Rise, SAFE, Scrim, useTrack, XF } from "../ui";
 import { beatCuts } from "./Work";
 import TONE from "../photo-tone.json";
@@ -30,13 +30,24 @@ const MONTAGE = [
   "capstar-1",
   "sanvi-69",
   "awala",
+  "bitam",
   "kalindi",
   "supreme-diamond",
 ].map(ship);
+
+// Every vessel on the website appears exactly once, by name: the montage
+// plus KOUNDINYA's own scene. Fails the build if the website's fleet
+// changes and this list isn't updated.
+{
+  const shown = [...MONTAGE.map((s) => s.id), "koundinya"];
+  const missing = SHIPS.filter((s) => !shown.includes(s.id)).map((s) => s.name);
+  const twice = shown.filter((id, i) => shown.indexOf(id) !== i);
+  if (missing.length || twice.length) throw new Error(`Fleet list out of step with the website - missing: ${missing.join(", ") || "none"}; repeated: ${twice.join(", ") || "none"}`);
+}
 const POSITION: Record<string, string> = { antigoon: "50% 60%", kango: "50% 45%", "jhansi-rani": "50% 55%" };
 
 export const Fleet: React.FC<P> = ({ d, at }) => {
-  const cuts = beatCuts(at, d, MONTAGE.length, MONTAGE.map((s) => (s.id === "antigoon" ? 1.6 : 1)));
+  const cuts = beatCuts(at, d, MONTAGE.length, MONTAGE.map((s) => (s.id === "antigoon" ? 1.6 : 1)), 36);
   return (
     <AbsoluteFill>
       {MONTAGE.map((s, i) => {
@@ -85,7 +96,7 @@ export const Hero: React.FC<P> = ({ d }) => {
           <div style={{ ...DS, fontSize: px(220), letterSpacing: `${track}em`, color: C.white, lineHeight: 0.9, textShadow: "0 2px 30px rgba(6,9,26,0.5)" }}>{k.name}</div>
         </Rise>
         <Rise at={56} dur={24} style={{ marginTop: 22 }}>
-          <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 44, color: C.mint }}>{k.status}</div>
+          <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 52, color: C.mint }}>{k.status}</div>
         </Rise>
       </AbsoluteFill>
     </AbsoluteFill>
@@ -100,11 +111,10 @@ const FIELD: { src: string; text: string; sub?: string; position: string; clip?:
   // stock, on the general safety line only: a supervisor briefing a crew in
   // hard hats - an actual toolbox talk, not just someone in safety gear
   { src: "stock/px-toolbox-talk.mp4", clip: true, text: "Every job starts with a toolbox talk", position: "50% 50%" },
-  { src: sitePhoto(ship("bitam").photo), text: "Every job starts with a toolbox talk", position: "50% 72%" },
 ];
 
 export const Field: React.FC<P> = ({ d, at }) => {
-  const cuts = beatCuts(at, d, FIELD.length, [1.2, 1, 0.8, 1.2]);
+  const cuts = beatCuts(at, d, FIELD.length, [1.1, 1, 1.3]);
   return (
     <AbsoluteFill>
       {FIELD.map((b, i) => {

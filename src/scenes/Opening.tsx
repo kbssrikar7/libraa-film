@@ -6,20 +6,19 @@ import { TYPE, C, Clip, DS, FONT, px, Reel, Rise, type Shot, useIn, useTrack } f
 
 type P = { d: number };
 
-// Scene 1 - a cold open on three strong shots, cut on the music: a tanker at
-// sunset from the air, the view over a bow at sea, then a ship coming
-// head-on at the drone. Stock (Pexels licence) on a
+// Scene 1 - a short cold open on two strong shots, cut on the music: a
+// tanker at sunset from the air, then a ship coming head-on at the drone -
+// into the Libraa name within about six seconds. Stock (Pexels licence) on a
 // general line - "a voyage begins long before a vessel leaves port" -
 // never shown as a Libraa vessel.
 const OPEN: Shot[] = [
   { src: "stock/px-tanker-sunset-aerial.mp4", from: 0, zoom: [1.0, 1.04] },
-  { src: "stock/px-tanker-bow-at-sea.mp4", from: 1, zoom: [1.04, 1.0] },
   { src: "stock/px-ship-headon-drone.mp4", from: 2, zoom: [1.02, 1.06] },
 ];
 
 export const Open: React.FC<P & { at: number }> = ({ d, at }) => {
   const f = useCurrentFrame();
-  const cuts = beatCuts(at, d, OPEN.length, [1.3, 1, 1.2]);
+  const cuts = beatCuts(at, d, OPEN.length, [1, 1]);
   const fadeIn = interpolate(f, [0, 24], [0, 1], { extrapolateRight: "clamp" });
   // ease down toward navy before the logo, so the brand dissolve never flickers
   const dusk = interpolate(f, [d - 30, d], [0, 0.55], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });

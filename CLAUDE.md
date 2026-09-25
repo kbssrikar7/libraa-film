@@ -167,6 +167,26 @@ footage.**
     The review claimed the voice says "eleven vessels" - it does not (the
     fleet line was re-recorded, item 14); its "16 VESSELS" title idea
     breaks the no-count rule, so no count was added.
+19. Third external review (of v16) - acted on:
+    - Fleet reconciled with the website: BITAM was only an unnamed photo
+      in the safety scene; it now sits in the fleet (slipway group) with
+      its name, so all 16 website vessels appear once, named (15 in the
+      montage + KOUNDINYA). Fleet.tsx throws at build time if the list
+      and the website ever disagree.
+    - Safety scene ends on the toolbox talk (no unrelated hull after it).
+    - Opening cut to two shots; services start at 12.7 s (was 18.1 s).
+    - beatCuts takes a minimum shot length (fleet: 1.2 s) - no shot
+      flashes past; fleet shots measure 1.8 s each, ANTIGOON 2.7 s.
+    - Clients: "31 clients" (the website's own count - the no-count rule
+      is about vessels); Indian Navy, Adani, JSW get double-width tiles in
+      the top row, each arriving on its word (measured `marks`); the rest
+      cascade on "port authorities"; the five logo-less clients named
+      beneath ("Plus ..."); a slow push keeps the wall moving.
+    - End: sunset plays alone ~4.6 s, card lands with "Libraa Group...".
+    - Music eases ~2.5 dB under KOUNDINYA (existing track, no effects).
+    - Larger KOUNDINYA subtitle, certificate names, closing tagline.
+    Still open: Kakinada wording (needs company approval); real Libraa
+    service footage; better originals for the weakest fleet photos.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,
