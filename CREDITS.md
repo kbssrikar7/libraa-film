@@ -20,3 +20,8 @@ Used only as atmosphere, never presented as a Libraa vessel or operation.
 ## Voice-over - Sarvam AI Bulbul v3, Indian English, voice "anand"
 - Generated with `npm run voice` (scripts/voice.mjs), key in .env (SARVAM_API_KEY).
 - Check Sarvam's current commercial-licensing terms before public release.
+
+## Fonts - SIL Open Font License 1.1 (free for commercial use)
+- Barlow Condensed and Barlow by The Barlow Project Authors
+  (https://github.com/jpt/barlow), woff2 files from fontsource on npm
+  (public/fonts/barlow-*.woff2). Plus Jakarta Sans files are no longer used.

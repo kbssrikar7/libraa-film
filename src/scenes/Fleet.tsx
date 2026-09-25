@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
-import { FLAGS_ADJ, FLEET_COUNT, SHIPS, ship, sitePhoto } from "../facts";
-import { C, FONT, Headline, Kicker, Photo, Rise, Scrim, useIn } from "../ui";
+import { FLAGS_ADJ, SHIPS, ship, sitePhoto } from "../facts";
+import { C, DISPLAY, FadeIn, FONT, Headline, Kicker, LowerThird, Photo, Rise, Rule, SAFE, Scrim, useTrack, XF } from "../ui";
 import { beatCuts } from "./Work";
 
 type P = { d: number; at: number };
@@ -19,69 +19,43 @@ const MONTAGE = [
 
 export const Fleet: React.FC<P> = ({ d, at }) => {
   // the title shot runs a little longer; every ship after it gets an equal share
-  const weights = MONTAGE.map((_, i) => (i === 0 ? 1.5 : 1));
+  const weights = MONTAGE.map((_, i) => (i === 0 ? 1.8 : 1));
   const cuts = beatCuts(at, d, MONTAGE.length, weights);
-  const title = useIn(6, 22);
-  const f = useCurrentFrame();
-  // the title belongs to the opening shot only and leaves with it on the cut -
-  // no fade across the cut, so it never ghosts over the next ship
-  const titleOut = f < cuts[1] ? 1 : 0;
-  const capOut = interpolate(f, [d - 12, d], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill>
       {MONTAGE.map((s, i) => {
         const len = cuts[i + 1] - cuts[i];
+        const last = i === MONTAGE.length - 1;
         return (
-          <Sequence key={s.id} from={cuts[i]} durationInFrames={len}>
-            <Photo src={sitePhoto(s.photo)} to={len} zoom={i % 2 ? [1.12, 1.04] : [1.04, 1.12]} pan={i % 2 ? [2, -2] : [-2, 2]} grade={0.1} />
-            <Scrim side="bottom" strength={0.7} />
-            {i > 0 && (
-              <AbsoluteFill
-                style={{
-                  justifyContent: "flex-end",
-                  alignItems: "flex-end",
-                  padding: "0 140px 130px",
-                  opacity: capOut,
-                  // soft dark pool behind the caption, for bright/light shots
-                  background: "radial-gradient(38% 30% at 88% 88%, rgba(10,14,42,0.62) 0%, rgba(10,14,42,0) 100%)",
-                }}
-              >
-                <Rise at={2} dur={12} distance={24}>
-                  <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 54, letterSpacing: "0.12em", color: C.white, textAlign: "right" }}>{s.name}</div>
-                  <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 34, letterSpacing: "0.18em", color: C.mint, textAlign: "right", textTransform: "uppercase", marginTop: 8 }}>
-                    {s.flagName}
-                  </div>
-                </Rise>
-              </AbsoluteFill>
-            )}
+          <Sequence key={s.id} from={cuts[i]} durationInFrames={len + (last ? 0 : XF)}>
+            <FadeIn on={i > 0}>
+              <Photo src={sitePhoto(s.photo)} to={len + XF} zoom={i % 2 ? [1.1, 1.03] : [1.03, 1.1]} pan={i % 2 ? [1.5, -1.5] : [-1.5, 1.5]} grade={0.1} />
+              <Scrim side="bottom" strength={0.8} />
+              {i === 0 ? (
+                // no vessel count anywhere (client rule) - the fleet is named, not counted
+                <LowerThird kicker="Our fleet" title={s.name} sub={`${FLAGS_ADJ.join(" & ")} flags`} at={8} out={len - 12} size={130} />
+              ) : (
+                <ShipName name={s.name} flag={s.flagName} out={last ? len - 16 : len - 8} />
+              )}
+            </FadeIn>
           </Sequence>
         );
       })}
-      {/* the headline rides over the first half of the montage */}
-      <AbsoluteFill style={{ opacity: titleOut }}>
-        <Scrim side="left" strength={0.75} />
-        <AbsoluteFill style={{ justifyContent: "center", padding: "0 140px" }}>
-          <div style={{ opacity: title }}>
-            <Kicker>Our fleet</Kicker>
-          </div>
-          <Rise at={10} dur={22} style={{ marginTop: 30 }}>
-            <Headline size={200} style={{ letterSpacing: "-0.03em" }}>
-              {FLEET_COUNT} vessels
-            </Headline>
-          </Rise>
-          <Rise at={24} dur={20} style={{ marginTop: 18 }}>
-            <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 48, color: C.soft }}>{FLAGS_ADJ.join(" & ")} flags</div>
-          </Rise>
-          <Rise at={34} dur={18} style={{ marginTop: 26 }}>
-            <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 36, letterSpacing: "0.12em", color: C.white }}>
-              {MONTAGE[0].name} <span style={{ color: C.mint, fontWeight: 600 }}>· {MONTAGE[0].flagName}</span>
-            </div>
-          </Rise>
-        </AbsoluteFill>
-      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
+
+/** Ship caption: same lower-left spot on every ship, name then flag. */
+const ShipName: React.FC<{ name: string; flag: string; out: number }> = ({ name, flag, out }) => (
+  <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px` }}>
+    <Rise at={3} out={out} dur={16} distance={16}>
+      <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 92, lineHeight: 1, letterSpacing: "0.02em", color: C.white, textShadow: "0 2px 24px rgba(6,9,26,0.5)" }}>{name}</div>
+    </Rise>
+    <Rise at={7} out={out} dur={16} distance={12} style={{ marginTop: 12 }}>
+      <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 26, letterSpacing: "0.24em", textTransform: "uppercase", color: C.mint }}>{flag}</div>
+    </Rise>
+  </AbsoluteFill>
+);
 
 // Scene 6 - everything slows down for KOUNDINYA, the ship Libraa built itself.
 export const Hero: React.FC<P> = ({ d }) => {
@@ -90,19 +64,20 @@ export const Hero: React.FC<P> = ({ d }) => {
   const lift = interpolate(f, [0, 40], [0.55, 0.12], { extrapolateRight: "clamp" }); // opens from dark
   // the title clears before the hard cut, so it never overlaps the next scene
   const textOut = interpolate(f, [d - 18, d - 6], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const track = useTrack(30, 0.22, 0.04, 110); // the name settles into place
   return (
     <AbsoluteFill>
       <Photo src={sitePhoto(k.photo)} to={d} zoom={[1.02, 1.2]} pan={[1.5, -2.5]} position="45% 55%" grade={lift} />
       <Scrim side="bottom" strength={0.85} />
-      <AbsoluteFill style={{ justifyContent: "flex-end", padding: "0 140px 150px", opacity: textOut }}>
-        <Rise at={30} dur={26}>
-          <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 168, letterSpacing: "0.16em", color: C.white, lineHeight: 1 }}>{k.name}</div>
+      <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px`, opacity: textOut }}>
+        <Rise at={26} dur={20}>
+          <Rule at={26} width={90} />
         </Rise>
-        <Rise at={52} dur={24} style={{ marginTop: 26 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 22, fontFamily: FONT, fontWeight: 600, fontSize: 46, color: C.mint }}>
-            <span style={{ width: 70, height: 3, background: C.mint }} />
-            {k.status}
-          </div>
+        <Rise at={30} dur={34} style={{ marginTop: 24 }}>
+          <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 220, letterSpacing: `${track}em`, color: C.white, lineHeight: 0.9, textShadow: "0 2px 30px rgba(6,9,26,0.5)" }}>{k.name}</div>
+        </Rise>
+        <Rise at={56} dur={24} style={{ marginTop: 22 }}>
+          <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 44, color: C.mint }}>{k.status}</div>
         </Rise>
       </AbsoluteFill>
     </AbsoluteFill>
@@ -118,38 +93,34 @@ const FIELD = [
 
 export const Field: React.FC<P> = ({ d, at }) => {
   const cuts = beatCuts(at, d, FIELD.length);
-  const f = useCurrentFrame();
   return (
     <AbsoluteFill>
       {FIELD.map((b, i) => {
         const len = cuts[i + 1] - cuts[i];
+        const last = i === FIELD.length - 1;
         const newText = i === 0 || FIELD[i - 1].text !== b.text;
+        const keepsText = !last && FIELD[i + 1].text === b.text;
         return (
-          <Sequence key={b.src} from={cuts[i]} durationInFrames={len}>
-            <Photo
-              src={b.src}
-              to={len}
-              zoom={[[1.04, 1.14], [1.14, 1.04], [1.02, 1.12]][i % 3] as [number, number]}
-              pan={[[2, -2], [-2, 2], [0, 0]][i % 3] as [number, number]}
-              position={b.position}
-              grade={0.15}
+          <Sequence key={b.src} from={cuts[i]} durationInFrames={len + (last ? 0 : XF)}>
+            <FadeIn on={i > 0}>
+              <Photo
+                src={b.src}
+                to={len + XF}
+                zoom={[[1.04, 1.12], [1.12, 1.04], [1.02, 1.1]][i % 3] as [number, number]}
+                pan={[[1.5, -1.5], [-1.5, 1.5], [0, 0]][i % 3] as [number, number]}
+                position={b.position}
+                grade={0.15}
+              />
+              <Scrim side="bottom" strength={0.9} />
+            </FadeIn>
+            {/* a line that carries across two shots stays put through the
+                dissolve instead of re-animating */}
+            <LowerThird
+              title={b.text}
+              at={newText ? 6 : -60}
+              out={keepsText ? undefined : last ? len - 16 : len - 10}
+              size={104}
             />
-            <Scrim side="bottom" strength={0.9} />
-            <AbsoluteFill
-              style={{
-                justifyContent: "flex-end",
-                padding: "0 140px 150px",
-                opacity: i === FIELD.length - 1 ? interpolate(f, [cuts[i] + len - 16, cuts[i] + len - 4], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1,
-              }}
-            >
-              {newText ? (
-                <Rise at={6} dur={20}>
-                  <Headline size={96}>{b.text}</Headline>
-                </Rise>
-              ) : (
-                <Headline size={96}>{b.text}</Headline>
-              )}
-            </AbsoluteFill>
           </Sequence>
         );
       })}

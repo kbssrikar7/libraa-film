@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Img, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 import { COMPANY } from "../facts";
-import { C, Clip, FONT, Rise, useIn } from "../ui";
+import { C, Clip, DISPLAY, FONT, Rise, useIn, useTrack } from "../ui";
 
 type P = { d: number };
 
@@ -37,6 +37,7 @@ const CrossIn: React.FC<{ children: React.ReactNode; dur?: number }> = ({ childr
 // Scene 2 - the brand lands over dark water: logo, name, "Since 2009".
 export const Brand: React.FC<P> = ({ d }) => {
   const logo = useIn(4, 26);
+  const track = useTrack(14, 0.3, 0.1, 90); // the name settles as it lands
   return (
     <AbsoluteFill>
       <Clip src="stock/dark-water.mp4" grade={0.45} zoom={[1.05, 1.0]} to={d} />
@@ -58,12 +59,12 @@ export const Brand: React.FC<P> = ({ d }) => {
           <Img src={staticFile("libraa/logo.webp")} style={{ width: 174 }} />
         </div>
         <Rise at={16} dur={24}>
-          <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 118, letterSpacing: "0.22em", color: C.white, paddingLeft: "0.22em" }}>
+          <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 150, lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>
             LIBRAA GROUP
           </div>
         </Rise>
         <Rise at={34} dur={22} distance={30}>
-          <div style={{ display: "flex", alignItems: "center", gap: 22, fontFamily: FONT, fontWeight: 500, fontSize: 38, letterSpacing: "0.3em", color: C.mint, textTransform: "uppercase" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 22, fontFamily: FONT, fontWeight: 600, fontSize: 32, letterSpacing: "0.26em", color: C.mint, textTransform: "uppercase" }}>
             <span style={{ width: 70, height: 2, background: C.mint }} />
             Since {COMPANY.founded}
             <span style={{ width: 70, height: 2, background: C.mint }} />

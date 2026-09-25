@@ -65,6 +65,15 @@ footage.**
 7. **New script v2 written - `SCRIPT-v2-draft.md` - currently with the
    company for review.** Wait for their edits before recording.
 8. Repo created (private) and prepared for cloud agents.
+9. Editing pass (v7 look, on the old v6 voice as a preview): typography
+   switched to option B (Barlow Condensed titles, Barlow text); one
+   lower-left title-safe grid and one lower-third template for every
+   caption (`LowerThird`, `SAFE` in src/ui.tsx); text now eases in with a
+   short defocus and eases out before each cut; every montage cut is a
+   12-frame dissolve (`FadeIn`, `XF`); names track in (KOUNDINYA, LIBRAA
+   GROUP); moving film grain; vessel count removed from the fleet titles;
+   end card carries the approved tagline. The "01 / 05" counters are gone.
+   Stock B-roll still to come - see STOCK-SHOTLIST.md.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,
@@ -112,6 +121,18 @@ therefore out of date.
 7. `npm run render`, then check: exactly 3600 frames, no freezes
    (`ffmpeg -vf freezedetect`), loudness about -18 LUFS, no text overlaps at
    transitions (render stills at each cut).
+
+## Cloud environment notes
+
+- Pexels, Pixabay, api.sarvam.ai and the live website were blocked by the
+  environment's network policy (Sept 2026); npm works. Ask the user to
+  allow those hosts, or to add clips to public/stock/ themselves.
+- ffmpeg is not installable with apt here. Remotion ships a minimal
+  ffmpeg/ffprobe in node_modules/@remotion/compositor-linux-x64-gnu/ (no
+  xstack; check for silencedetect before relying on it).
+- Remotion's own Chrome download is blocked; pass
+  `--browser-executable=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell`
+  to `remotion still` / `remotion render`.
 
 ## Useful commands
 

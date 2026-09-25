@@ -23,18 +23,25 @@ export const C = {
   soft: "rgba(255,255,255,0.78)",
 };
 
-export const FONT = "Jakarta, system-ui, sans-serif";
+// Type: Barlow Condensed for titles and names (industrial / maritime
+// signage feel, holds up at very large sizes without wide tracking), Barlow
+// for kickers and supporting lines. Both SIL Open Font License (fontsource).
+export const DISPLAY = "'Barlow Condensed', system-ui, sans-serif";
+export const FONT = "Barlow, system-ui, sans-serif";
+
+const FACES: [string, string, number[]][] = [
+  ["Barlow Condensed", "barlow-condensed", [400, 500, 600, 700]],
+  ["Barlow", "barlow", [400, 500, 600]],
+];
 
 export const Fonts: React.FC = () => (
   <style>
-    {[400, 500, 600, 700]
-      .map(
+    {FACES.flatMap(([family, file, weights]) =>
+      weights.map(
         (w) =>
-          `@font-face{font-family:Jakarta;font-weight:${w};font-display:block;src:url(${staticFile(
-            `fonts/plus-jakarta-sans-${w}.woff2`
-          )}) format("woff2");}`
+          `@font-face{font-family:'${family}';font-weight:${w};font-display:block;src:url(${staticFile(`fonts/${file}-${w}.woff2`)}) format("woff2");}`
       )
-      .join("")}
+    ).join("")}
   </style>
 );
 
@@ -121,22 +128,48 @@ export const Scrim: React.FC<{ side?: "bottom" | "left" | "full"; strength?: num
   />
 );
 
-/** Text that fades up into place. No clipping mask: a mask cut letters
- *  mid-reveal (the bottom bar of "E" vanished, so "WHERE" read "WHFRF"). */
-export const Rise: React.FC<{ at: number; dur?: number; children: React.ReactNode; style?: React.CSSProperties; distance?: number }> = ({
-  at,
-  dur = 20,
-  children,
-  style,
-  distance = 28,
-}) => {
+/** Title-safe margins at 1080p: every caption and title in the film sits on
+ *  this grid (lower-left), so text lands in the same place shot after shot,
+ *  the way an editor's lower-third template does. */
+export const SAFE = { x: 160, bottom: 140 };
+
+/** Text that eases up into place with a short defocus, like a lens pulling
+ *  focus. No clipping mask: a mask cut letters mid-reveal (the bottom bar of
+ *  "E" vanished, so "WHERE" read "WHFRF"). `out` (frame) eases it away again
+ *  before a cut, so outgoing text never sits on top of the next shot. */
+export const Rise: React.FC<{
+  at: number;
+  dur?: number;
+  out?: number;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+  distance?: number;
+}> = ({ at, dur = 24, out, children, style, distance = 22 }) => {
+  const f = useCurrentFrame();
   const p = useIn(at, dur);
+  const q = out === undefined ? 0 : interpolate(f, [out, out + 12], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
+  const blur = (1 - p) * 6 + q * 4;
   return (
     <div style={style}>
-      <div style={{ transform: `translateY(${(1 - p) * distance}px)`, opacity: p }}>{children}</div>
+      <div
+        style={{
+          transform: `translateY(${(1 - p) * distance - q * 12}px)`,
+          opacity: p * (1 - q),
+          filter: blur > 0.05 ? `blur(${blur}px)` : undefined,
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 };
+
+/** Letter-spacing that settles as the word arrives - the classic title move
+ *  for a single name (KOUNDINYA, LIBRAA GROUP). */
+export function useTrack(at: number, from: number, to: number, dur = 60) {
+  const f = useCurrentFrame();
+  return interpolate(f, [at, at + dur], [from, to], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
+}
 
 /** Fades a whole layer out over the last `dur` frames of its sequence. */
 export const FadeOut: React.FC<{ total: number; dur?: number; children: React.ReactNode }> = ({ total, dur = 14, children }) => {
@@ -145,20 +178,90 @@ export const FadeOut: React.FC<{ total: number; dur?: number; children: React.Re
   return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
 };
 
+/** Cross-dissolve length for picture cuts inside a montage (frames). */
+export const XF = 12;
+
+/** Fades its picture in over the shot underneath. A montage shot's Sequence
+ *  runs XF frames past its cut, and the next shot fades in on top of it, so
+ *  every cut is a short dissolve instead of a jump. */
+export const FadeIn: React.FC<{ dur?: number; children: React.ReactNode; on?: boolean }> = ({ dur = XF, children, on = true }) => {
+  const f = useCurrentFrame();
+  const o = on ? interpolate(f, [0, dur], [0, 1], { extrapolateRight: "clamp", easing: Easing.inOut(Easing.sin) }) : 1;
+  return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
+};
+
+/** Short accent rule that draws itself in from the left. */
+export const Rule: React.FC<{ at: number; width?: number; color?: string }> = ({ at, width = 64, color = C.mint }) => {
+  const p = useIn(at, 22);
+  return <div style={{ width, height: 3, background: color, transform: `scaleX(${p})`, transformOrigin: "0 50%" }} />;
+};
+
 export const Kicker: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = C.mint }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 18, fontFamily: FONT, fontWeight: 600, fontSize: 30, letterSpacing: "0.28em", textTransform: "uppercase", color }}>
-    <span style={{ width: 56, height: 2, background: color }} />
+  <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 28, letterSpacing: "0.22em", textTransform: "uppercase", color }}>{children}</div>
+);
+
+export const Headline: React.FC<{ children: React.ReactNode; size?: number; style?: React.CSSProperties }> = ({ children, size = 110, style }) => (
+  <div
+    style={{
+      fontFamily: DISPLAY,
+      fontWeight: 600,
+      fontSize: size,
+      lineHeight: 0.98,
+      letterSpacing: "0.005em",
+      textTransform: "uppercase",
+      color: C.white,
+      textShadow: "0 2px 24px rgba(6,9,26,0.5)",
+      ...style,
+    }}
+  >
     {children}
   </div>
 );
 
-export const Headline: React.FC<{ children: React.ReactNode; size?: number; style?: React.CSSProperties }> = ({ children, size = 96, style }) => (
-  <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: size, lineHeight: 1.04, letterSpacing: "-0.02em", color: C.white, textShadow: "0 2px 30px rgba(6,9,26,0.45)", ...style }}>
-    {children}
-  </div>
+/** Lower-third caption: rule, kicker, title - one template for the whole
+ *  film. `out` is the frame (in this sequence) where it eases away. */
+export const LowerThird: React.FC<{ kicker?: string; title: React.ReactNode; at?: number; out?: number; size?: number; sub?: string }> = ({
+  kicker,
+  title,
+  at = 4,
+  out,
+  size = 110,
+  sub,
+}) => (
+  <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px` }}>
+    <Rise at={at} out={out} dur={20}>
+      <Rule at={at} />
+    </Rise>
+    {kicker && (
+      <Rise at={at + 4} out={out} style={{ marginTop: 22 }}>
+        <Kicker>{kicker}</Kicker>
+      </Rise>
+    )}
+    <Rise at={at + 8} out={out} style={{ marginTop: kicker ? 14 : 22 }}>
+      <Headline size={size}>{title}</Headline>
+    </Rise>
+    {sub && (
+      <Rise at={at + 16} out={out} style={{ marginTop: 16 }}>
+        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, color: C.soft }}>{sub}</div>
+      </Rise>
+    )}
+  </AbsoluteFill>
 );
 
-/** Subtle film grain + vignette so stills and footage share one texture. */
-export const Finish: React.FC = () => (
-  <AbsoluteFill style={{ pointerEvents: "none", background: "radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.38) 100%)" }} />
-);
+/** Film grain + vignette so stills and footage share one texture. The grain
+ *  is fine and moves every frame (a still frame of grain reads as dirt). */
+export const Finish: React.FC = () => {
+  const f = useCurrentFrame();
+  return (
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
+      <AbsoluteFill style={{ background: "radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.38) 100%)" }} />
+      <svg width="100%" height="100%" style={{ position: "absolute", inset: 0, opacity: 0.07, mixBlendMode: "overlay" }}>
+        <filter id="grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves={2} seed={f % 24} stitchTiles="stitch" />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain)" />
+      </svg>
+    </AbsoluteFill>
+  );
+};

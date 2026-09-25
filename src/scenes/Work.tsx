@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { INDIA_MAP_VIEWBOX, INDIA_PATH, LOCATION_COUNT, OFFICE_COUNT, OFFICES, PORTS, ship, sitePhoto } from "../facts";
 import { beatsBetween, type TimedScene } from "../timing";
-import { C, Clip, FONT, Headline, Kicker, Photo, Rise, Scrim, useIn } from "../ui";
+import { C, Clip, FadeIn, FONT, Headline, Kicker, LowerThird, Photo, Rise, Scrim, useIn, XF } from "../ui";
 
 type P = { d: number; at: number };
 
@@ -47,24 +47,21 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
     <AbsoluteFill>
       {SERVICE_BEATS.map((b, i) => {
         const len = cuts[i + 1] - cuts[i];
+        const last = i === SERVICE_BEATS.length - 1;
+        // each shot runs on under the next one's dissolve
         return (
-          <Sequence key={b.label} from={cuts[i]} durationInFrames={len}>
-            {b.media.clip ? (
-              <Clip src={b.media.clip} grade={0.2} zoom={[1.02, 1.1]} to={len} />
-            ) : (
-              <Photo src={b.media.photo!} to={len} zoom={i % 2 ? [1.14, 1.04] : [1.04, 1.14]} pan={i % 2 ? [1.5, -1.5] : [-1.5, 1.5]} position={b.position} grade={0.12} />
-            )}
-            <Scrim side="bottom" strength={b.media.clip ? 0.97 : 0.9} />
-            <AbsoluteFill style={{ justifyContent: "flex-end", padding: "0 140px 150px" }}>
-              <Rise at={3} dur={16}>
-                <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 30, letterSpacing: "0.24em", color: C.mint, marginBottom: 14 }}>
-                  0{i + 1} / 0{SERVICE_BEATS.length}
-                </div>
-              </Rise>
-              <Rise at={6} dur={18}>
-                <Headline size={112}>{b.label}</Headline>
-              </Rise>
-            </AbsoluteFill>
+          <Sequence key={b.label} from={cuts[i]} durationInFrames={len + (last ? 0 : XF)}>
+            <FadeIn on={i > 0}>
+              {b.media.clip ? (
+                <Clip src={b.media.clip} grade={0.2} zoom={[1.02, 1.1]} to={len + XF} />
+              ) : (
+                <Photo src={b.media.photo!} to={len + XF} zoom={i % 2 ? [1.12, 1.04] : [1.04, 1.12]} pan={i % 2 ? [1.5, -1.5] : [-1.5, 1.5]} position={b.position} grade={0.12} />
+              )}
+              <Scrim side="bottom" strength={b.media.clip ? 0.95 : 0.85} />
+              {/* the caption eases out just before the dissolve, so two
+                  captions never share the screen */}
+              <LowerThird kicker="What we do" title={b.label} at={4} out={last ? len - 16 : len - 10} size={120} />
+            </FadeIn>
           </Sequence>
         );
       })}
@@ -162,7 +159,7 @@ const Pin: React.FC<{ name: string; office: boolean; x: number; y: number; at: n
             transform: "translateY(-50%)",
             whiteSpace: "nowrap",
             fontFamily: FONT,
-            fontWeight: 700,
+            fontWeight: 600,
             fontSize: 30,
             color: C.white,
             textShadow: "0 2px 10px rgba(0,0,0,0.6)",

@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { CERT_COUNT, CERTIFICATIONS, CLIENT_COUNT, CLIENT_SECTORS, CLIENTS, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
 import LOGO_DIMS from "../logo-dims.json";
-import { C, Clip, FONT, Headline, Kicker, Rise, useIn } from "../ui";
+import { C, Clip, DISPLAY, FONT, Headline, Kicker, Rise, useIn, useTrack } from "../ui";
 
 type P = { d: number; at: number };
 
@@ -38,7 +38,7 @@ export const Companies: React.FC<P> = ({ d }) => {
             <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: 30 }}>
               {GROUP_COMPANIES.map((c, i) => (
                 <Rise key={c.name} at={6 + i * 7} dur={18}>
-                  <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 46, color: C.white, lineHeight: 1.15 }}>{c.name}</div>
+                  <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 54, color: C.white, lineHeight: 1.05 }}>{c.name}</div>
                   <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 30, color: C.mint, marginTop: 6 }}>{c.role}</div>
                 </Rise>
               ))}
@@ -114,7 +114,7 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
         <Img src={staticFile(seal)} style={{ width: 72, height: 72, objectFit: "contain" }} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 38, color: C.white, whiteSpace: "nowrap" }}>{label}</div>
+        <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 44, color: C.white, whiteSpace: "nowrap" }}>{label}</div>
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 22, color: C.soft, marginTop: 4, whiteSpace: "nowrap" }}>{org.replace(" Pvt Ltd", "")}</div>
       </div>
     </div>
@@ -225,6 +225,7 @@ export const End: React.FC<P> = ({ d }) => {
   const cardAt = 40;
   const card = useIn(cardAt, 30);
   const out = interpolate(f, [d - 12, d], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const track = useTrack(cardAt, 0.28, 0.12, 120);
   return (
     <AbsoluteFill style={{ opacity: out, background: "#000" }}>
       {/* the clip is 14s; slow it just enough to cover the whole scene, so it
@@ -247,9 +248,10 @@ export const End: React.FC<P> = ({ d }) => {
         <div style={{ width: 170, height: 140, borderRadius: 30, background: C.white, display: "grid", placeItems: "center", boxShadow: "0 30px 80px rgba(0,0,0,0.45)" }}>
           <Img src={staticFile("libraa/logo.webp")} style={{ width: 134 }} />
         </div>
-        <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 96, letterSpacing: "0.22em", color: C.white, paddingLeft: "0.22em" }}>LIBRAA GROUP</div>
-        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 38, letterSpacing: "0.08em", color: C.mint }}>Shipbuilding · Ship Management · Marine Services</div>
-        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: 700, fontSize: 64, color: C.white, letterSpacing: "0.03em" }}>libraa.com</div>
+        <div style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 130, lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>
+        {/* the approved closing tagline, word for word */}
+        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, letterSpacing: "0.02em", color: C.mint }}>Ship Management, Crew Management and Marine Services.</div>
+        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: 600, fontSize: 60, color: C.white, letterSpacing: "0.03em" }}>libraa.com</div>
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 44, color: C.soft, letterSpacing: "0.03em" }}>{COMPANY.email}</div>
       </AbsoluteFill>
     </AbsoluteFill>
