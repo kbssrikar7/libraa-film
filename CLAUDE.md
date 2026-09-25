@@ -154,6 +154,19 @@ footage.**
     stock with Libraa ships (client asked for stock there). Open: KOUNDINYA
     "Kakinada" wording needs the company's approval; weakest fleet photos
     and real Libraa service footage can only come from the client.
+18. Second external review (of v15) - acted on: fleet reordered so each
+    hard cut joins related shots (quay close-ups, aerial ferries, ships at
+    sea, slipways -> KOUNDINYA); ship names larger; KOUNDINYA framed
+    tighter; service titles arrive after their picture dissolves in;
+    Cameroon captions "Cameroon" + "Libraa's team at the port/shipyard";
+    icon-only client logos (JSW, V.O.C. Port, NIOT, Chandra Shipping) get
+    their names; end card holds to the last frame (booth loop) with a
+    larger libraa.com/email; music ducks ~2.8 dB deeper (0.16); fleet
+    ~25 s, spare time on moving footage rather than static screens.
+    QC: every frame scanned for flat/blank frames and single-frame spikes.
+    The review claimed the voice says "eleven vessels" - it does not (the
+    fleet line was re-recorded, item 14); its "16 VESSELS" title idea
+    breaks the no-count rule, so no count was added.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

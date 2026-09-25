@@ -85,7 +85,7 @@ export const SCENES: Scene[] = [
     line: "A reliable voyage begins long before a vessel leaves port.",
     lead: 1.6,
     tail: 0.6,
-    flex: 0.55,
+    flex: 0.75,
   },
   {
     id: "brand",
@@ -116,7 +116,7 @@ export const SCENES: Scene[] = [
     // words placed by speaking rate either side of it
     marks: { Chennai: 1.3, Kakinada: 2.6, "Port Blair": 3.25, locations: 5.6 },
     lead: 0.6,
-    tail: 1.2,
+    tail: 0.7,
     flex: 0,
   },
   {
@@ -128,8 +128,8 @@ export const SCENES: Scene[] = [
     lead: 0.8,
     // the line starts on ANTIGOON, the first ship, and the montage runs on
     // under the music after it
-    tail: 10.0,
-    flex: 1.6,
+    tail: 5.5,
+    flex: 1.0,
   },
   {
     id: "hero",
@@ -145,7 +145,7 @@ export const SCENES: Scene[] = [
     line: "From Indian ports to West Africa, every job starts the same way: a toolbox talk, and the right safety gear for everyone.",
     lead: 0.6,
     tail: 1.8,
-    flex: 0.35,
+    flex: 0.45,
   },
   {
     id: "companies",
@@ -172,7 +172,7 @@ export const SCENES: Scene[] = [
     line: "Libraa Group. Ship Management, Crew Management and Marine Services.",
     lead: 1.0,
     tail: 5.0,
-    flex: 0.25,
+    flex: 0.2,
   },
 ];
 
@@ -186,6 +186,7 @@ export const MUSIC = {
   firstBeat: 0.145,
   /** Music on its own: ~3 dB under the voice level. */
   volume: 0.7,
-  /** Music while the narrator speaks: ~13 dB under him, so every word is clear. */
-  duckedVolume: 0.22,
+  /** Music while the narrator speaks: ~13 dB below its own level, so every
+   *  word is clear on a noisy show floor. */
+  duckedVolume: 0.16,
 };

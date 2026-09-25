@@ -16,17 +16,21 @@ type P = { d: number; at: number };
 // has worked on, chosen for the best photographs. Every ship appears once:
 // BITAM belongs to the safety beat and KOUNDINYA has its own hero scene.
 const LEAD = ["antigoon", "kango", "sejal", "jhansi-rani"];
+// After the lead four, shots are grouped so each hard cut joins two related
+// images: close-ups at the quay, aerial ferries on teal water, vessels at sea
+// in grey light, then red hulls on slipways - ending in the yard, so the cut
+// to KOUNDINYA on calm water lands as a contrast.
 const MONTAGE = [
   ...LEAD,
-  "rajendra-prasad",
   "tuticorin",
+  "rajendra-prasad",
   "rani-gaidinliu",
-  "capstar-1",
-  "awala",
-  "kalindi",
   "sejal-2",
   "ganesh",
+  "capstar-1",
   "sanvi-69",
+  "awala",
+  "kalindi",
   "supreme-diamond",
 ].map(ship);
 const POSITION: Record<string, string> = { antigoon: "50% 60%", kango: "50% 45%", "jhansi-rani": "50% 55%" };
@@ -57,7 +61,7 @@ export const Fleet: React.FC<P> = ({ d, at }) => {
 const ShipName: React.FC<{ name: string; flag: string; out: number }> = ({ name, flag, out }) => (
   <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px` }}>
     <Rise at={3} out={out} dur={16} distance={16}>
-      <div style={{ ...DS, fontSize: px(92), lineHeight: 1, letterSpacing: "0.02em", color: C.white, textShadow: "0 2px 24px rgba(6,9,26,0.5)" }}>{name}</div>
+      <div style={{ ...DS, fontSize: px(104), lineHeight: 1, letterSpacing: "0.02em", color: C.white, textShadow: "0 2px 24px rgba(6,9,26,0.5)" }}>{name}</div>
     </Rise>
     <Rise at={7} out={out} dur={16} distance={12} style={{ marginTop: 12 }}>
       <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 34, color: C.soft }}>{flag}</div>
@@ -74,7 +78,7 @@ export const Hero: React.FC<P> = ({ d }) => {
   const track = useTrack(30, TYPE.tracking + 0.06, TYPE.tracking, 110); // the name settles into place
   return (
     <AbsoluteFill>
-      <Photo src={sitePhoto(k.photo)} tone={tone(k.id)} to={d} zoom={[1.02, 1.2]} pan={[1.5, -2.5]} position="45% 55%" grade={0.12} />
+      <Photo src={sitePhoto(k.photo)} tone={tone(k.id)} to={d} zoom={[1.1, 1.24]} pan={[1.5, -2.5]} position="45% 55%" grade={0.12} />
       <Scrim side="bottom" strength={0.85} />
       <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px`, opacity: textOut }}>
         <Rise at={30} dur={34}>
@@ -89,10 +93,10 @@ export const Hero: React.FC<P> = ({ d }) => {
 };
 
 // Scene 7 - people on site from India to West Africa, then safety.
-const FIELD: { src: string; text: string; position: string; clip?: boolean }[] = [
+const FIELD: { src: string; text: string; sub?: string; position: string; clip?: boolean }[] = [
   // captions as the website gives them (GALLERY in libraa-website data.ts)
-  { src: "site/cameroon-port-team.webp", text: "Libraa's team at the port in Cameroon", position: "50% 40%" },
-  { src: "site/cameroon-shipyard-team.webp", text: "Libraa's team at a shipyard in Cameroon", position: "50% 45%" },
+  { src: "site/cameroon-port-team.webp", text: "Cameroon", sub: "Libraa's team at the port", position: "50% 40%" },
+  { src: "site/cameroon-shipyard-team.webp", text: "Cameroon", sub: "Libraa's team at the shipyard", position: "50% 45%" },
   // stock, on the general safety line only: a supervisor briefing a crew in
   // hard hats - an actual toolbox talk, not just someone in safety gear
   { src: "stock/px-toolbox-talk.mp4", clip: true, text: "Every job starts with a toolbox talk", position: "50% 50%" },
@@ -106,8 +110,9 @@ export const Field: React.FC<P> = ({ d, at }) => {
       {FIELD.map((b, i) => {
         const len = cuts[i + 1] - cuts[i];
         const last = i === FIELD.length - 1;
-        const newText = i === 0 || FIELD[i - 1].text !== b.text;
-        const keepsText = !last && FIELD[i + 1].text === b.text;
+        const cap = (x: (typeof FIELD)[number]) => `${x.text}|${x.sub ?? ""}`;
+        const newText = i === 0 || cap(FIELD[i - 1]) !== cap(b);
+        const keepsText = !last && cap(FIELD[i + 1]) === cap(b);
         return (
           <Sequence key={b.src} from={cuts[i]} durationInFrames={len + (last ? 0 : XF)}>
             <FadeIn on={i > 0}>
@@ -129,6 +134,7 @@ export const Field: React.FC<P> = ({ d, at }) => {
                 dissolve instead of re-animating */}
             <LowerThird
               title={b.text}
+              sub={b.sub}
               at={newText ? 6 : -60}
               out={keepsText ? undefined : last ? len - 16 : len - 10}
               size={104}

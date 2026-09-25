@@ -340,7 +340,7 @@ export const LowerThird: React.FC<{ title: React.ReactNode; at?: number; out?: n
     </Rise>
     {sub && (
       <Rise at={at + 8} out={out} style={{ marginTop: 14 }}>
-        <Sub>{sub}</Sub>
+        <Sub size={46}>{sub}</Sub>
       </Rise>
     )}
   </AbsoluteFill>

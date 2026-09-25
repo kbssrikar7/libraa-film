@@ -62,7 +62,9 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
               <Scrim side="bottom" strength={b.media.clip ? 0.95 : 0.85} />
               {/* the caption eases out just before the dissolve, so two
                   captions never share the screen */}
-              <LowerThird title={b.label} at={4} out={last ? len - 16 : len - 10} />
+              {/* the title arrives once its picture has dissolved in, never over
+                  the outgoing shot */}
+              <LowerThird title={b.label} at={i > 0 ? XF + 2 : 4} out={last ? len - 16 : len - 10} />
             </FadeIn>
           </Sequence>
         );

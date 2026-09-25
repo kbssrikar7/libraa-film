@@ -107,13 +107,29 @@ export const Clients: React.FC<P> = () => {
         <div style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLS}, ${TILE_W}px)`, gap: 20, justifyContent: "center" }}>
           {ORDERED.map((c, i) => (
             <Tile key={c.name} at={14 + i * 2}>
-              <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo)), objectFit: "contain" }} />
+              {ICON_ONLY[c.name] ? (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo), 2600, 58, 130), objectFit: "contain" }} />
+                  <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 20, color: C.navy, lineHeight: 1 }}>{ICON_ONLY[c.name]}</div>
+                </div>
+              ) : (
+                <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo)), objectFit: "contain" }} />
+              )}
             </Tile>
           ))}
         </div>
       </div>
     </AbsoluteFill>
   );
+};
+
+// Logos that are only an emblem (the website shows their name beside them) -
+// without a name, JSW reads as a red swoosh. Short names from the website.
+const ICON_ONLY: Record<string, string> = {
+  "JSW Group": "JSW",
+  "V.O. Chidambaranar Port Authority": "V.O.C. Port",
+  "National Institute of Ocean Technology": "NIOT",
+  "Chandra Shipping": "Chandra Shipping",
 };
 
 const GRID_COLS = 9;
@@ -151,10 +167,10 @@ export const End: React.FC<P> = ({ d }) => {
   const f = useCurrentFrame();
   const cardAt = 40;
   const card = useIn(cardAt, 30);
-  const out = interpolate(f, [d - 12, d], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const track = useTrack(cardAt, TYPE.tracking + 0.06, TYPE.tracking, 120);
   return (
-    <AbsoluteFill style={{ opacity: out, background: "#000" }}>
+    // no fade-out: on a booth loop the clean end card holds to the last frame
+    <AbsoluteFill style={{ background: "#000" }}>
       {/* the clip is 12s; slow it just enough to cover the whole scene, so it
           never runs out and freezes on its last frame */}
       <Clip src="stock/px-sunset-ships-horizon.mp4" grade={0.2} zoom={[1.0, 1.06]} to={d} rate={Math.min(1, (12 * 30 - 6) / d)} />
@@ -178,8 +194,8 @@ export const End: React.FC<P> = ({ d }) => {
         <div style={{ ...DS, fontSize: px(130), lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>
         {/* the approved closing tagline, word for word */}
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, letterSpacing: "0.02em", color: C.mint }}>Ship Management, Crew Management and Marine Services.</div>
-        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: TYPE.bodyWeight, fontSize: 80, color: C.white, letterSpacing: "0.02em" }}>libraa.com</div>
-        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 58, color: C.soft, letterSpacing: "0.02em" }}>{COMPANY.email}</div>
+        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: TYPE.bodyWeight, fontSize: 96, color: C.white, letterSpacing: "0.02em" }}>libraa.com</div>
+        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 68, color: C.soft, letterSpacing: "0.02em" }}>{COMPANY.email}</div>
       </AbsoluteFill>
     </AbsoluteFill>
   );
