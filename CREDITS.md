@@ -17,11 +17,11 @@ general lines or with no line at all, never shown as a Libraa vessel.
 - public/stock/px-ship-headon-drone.mp4 - https://www.pexels.com/video/drone-video-of-cargo-ships-on-a-river-15148911/ (Stephen Pierce)
 - public/stock/px-red-cargo-ship-aerial.mp4 - https://www.pexels.com/video/red-and-black-ship-sailing-3226072/ (Alexander Bobrov)
 - public/stock/px-ship-silhouette-sunset.mp4 - https://www.pexels.com/video/silhouette-of-a-tugboat-towing-a-cargo-ship-at-sunrise-13379259/ (Engin Akyurt)
-- public/stock/px-mooring-rope-waves.mp4 - https://www.pexels.com/video/a-rope-is-tied-to-a-boat-in-the-water-18120390/ (Seven Seil)
-- public/stock/px-tug-wake-aerial.mp4 - https://www.pexels.com/video/aerial-view-of-tugboat-navigating-river-course-36839328/ (willy one)
 - public/stock/px-welding-sparks.mp4 - https://www.pexels.com/video/professional-welding-steel-6046358/ (K)
 - public/stock/px-sunset-ships-horizon.mp4 - https://www.pexels.com/video/sunset-over-sea-12944866/ (Ahmet Kurt)
-- public/stock/px-ship-quay-night.mp4 - https://www.pexels.com/video/nighttime-cargo-ship-at-port-aerial-view-30086734/ (Reginaldo Fiuza)
+- public/stock/px-bulk-carrier-at-sea.mp4 - https://www.pexels.com/video/14888819/ - Ship management beat
+- public/stock/px-crew-mooring-line.mp4 - https://www.pexels.com/video/19539768/ - Crew management beat
+- public/stock/px-offshore-rig-sunset.mp4 - https://www.pexels.com/video/dramatic-offshore-oil-rig-at-sunset-34294261/ (Dio Hasbi Saniskoro) - Offshore services beat
 
 ## Stock footage - Pixabay Content License (free for commercial use, no attribution required)
 Found through the Pixabay API. Every clip tagged "ai generated" was

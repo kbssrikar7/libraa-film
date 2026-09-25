@@ -21,6 +21,7 @@ import {
   CERT_COUNT,
   COMPANY,
   COMPANY_COUNT,
+  LOCATION_COUNT,
   FLAGS_ADJ,
   numberWord,
 } from "./facts";
@@ -109,19 +110,20 @@ export const SCENES: Scene[] = [
   {
     id: "map",
     kind: "map",
-    // no office list in the voice (client rule: don't box the company into
-    // three cities) - the map itself names every office and port
-    line: "Our teams work out of ports along both of India's coasts, and far beyond them.",
+    // the original recording, brought back at the client's request - it
+    // names the three offices; the map names every office and port
+    line: `From our head office in Chennai and offices in Kakinada and Port Blair, we work across ${numberWord(LOCATION_COUNT)} locations around India's coasts.`,
     lead: 0.6,
     tail: 2.2,
     flex: 0.2,
   },
   {
-    // music only: a breath between chapters, on port footage cut to the beat
+    // music only: the four ships that lead the fleet - ANTIGOON, the biggest
+    // vessel Libraa works on, first and longest, then KANGO, SEJAL, JHANSI RANI
     id: "interlude",
     kind: "interlude",
     lead: 0,
-    tail: 5.4,
+    tail: 8.1,
     flex: 0,
   },
   {

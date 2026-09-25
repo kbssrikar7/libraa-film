@@ -116,6 +116,15 @@ footage.**
     NODE_USE_ENV_PROXY=1 to reach Sarvam through the session proxy, and
     ffmpeg/ffprobe from node_modules/@remotion/compositor-linux-x64-gnu
     on PATH.
+15. Client: don't show ships in Services and then leave them out of the
+    fleet. Services now all stock (bulk carrier at sea, welding sparks,
+    shipyard at dusk, offshore rig at sunset, crew on a mooring line). The
+    old 0:37 stock interlude became a ship spotlight: ANTIGOON (the
+    biggest vessel Libraa works on, held longest with type and length),
+    KANGO, SEJAL, JHANSI RANI (`Spotlight` in scenes/Fleet.tsx). The
+    original map recording naming Chennai, Kakinada and Port Blair is back
+    (restored from git). Cameroon photos captioned "Libraa's team at the
+    port in Cameroon" / "at a shipyard in Cameroon".
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,
@@ -128,7 +137,11 @@ therefore out of date.
 - **No vessel count** anywhere in the film (the fleet keeps changing).
 - **No list of cities/offices** as a tagline or summary - the company works
   worldwide (Gabon, Cameroon, Singapore...). Do not box it into
-  Chennai/Kakinada/Port Blair.
+  Chennai/Kakinada/Port Blair. Exception the user asked for (Sept 2026):
+  the map scene keeps the original voice line naming the three offices,
+  and the map labels every port.
+- **Every ship is shown once, in the fleet.** Services beats use stock
+  footage of the kind of work; Libraa's own ships are not used there.
 - Closing line / tagline: **"Ship Management, Crew Management and Marine
   Services."** (website: "...since 2009.").
 - **No ocean / sound-effect ambience.**

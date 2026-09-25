@@ -3,8 +3,8 @@ import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useCurrentFrame
 import { MUSIC, type SceneKind } from "./script";
 import { timeline, TOTAL_FRAMES, type TimedScene } from "./timing";
 import { Brand, Open } from "./scenes/Opening";
-import { Interlude, MapScene, Services } from "./scenes/Work";
-import { Field, Fleet, Hero } from "./scenes/Fleet";
+import { MapScene, Services } from "./scenes/Work";
+import { Field, Fleet, Hero, Spotlight } from "./scenes/Fleet";
 import { Clients, Companies, End } from "./scenes/Proof";
 import { C, Finish, Fonts } from "./ui";
 
@@ -13,7 +13,7 @@ const SCENE: Record<SceneKind, React.FC<{ d: number; at: number; scene: TimedSce
   brand: Brand,
   services: Services,
   map: MapScene,
-  interlude: Interlude,
+  interlude: Spotlight,
   fleet: Fleet,
   hero: Hero,
   field: Field,

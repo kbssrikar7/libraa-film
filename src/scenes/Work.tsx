@@ -24,19 +24,17 @@ export function beatCuts(at: number, d: number, n: number, weights?: number[]): 
   return cuts;
 }
 
-// Scene 3 - what Libraa does, one service per beat: Libraa's own photos,
-// plus one stock shipyard clip for new-build supervision.
+// Scene 3 - what Libraa does, one service per beat, on stock footage that
+// shows the kind of work (never presented as a Libraa ship or yard). Libraa's
+// own ships are kept for the fleet, so none is seen twice (client).
 // Labels follow the narration's word order, and each beat cuts in just ahead
-// of the words that name it (see `cues` in script.ts). KANGO on the slipway
-// covers repairs, so the BITAM crew photo appears only once, in the safety scene.
+// of the words that name it (see `cues` in script.ts).
 const SERVICE_BEATS: { label: string; media: { photo?: string; clip?: string }; position?: string }[] = [
-  { label: "Ship management", media: { photo: sitePhoto(ship("antigoon").photo) }, position: "50% 60%" },
-  { label: "Surveys & repairs", media: { photo: sitePhoto(ship("kango").photo) }, position: "50% 45%" },
-  // stock (Pixabay): a ship alongside a shipyard quay at dusk - supervision
-  // happens in shipyards, so it illustrates the service without claiming a yard
+  { label: "Ship management", media: { clip: "stock/px-bulk-carrier-at-sea.mp4" } },
+  { label: "Surveys & repairs", media: { clip: "stock/px-welding-sparks.mp4" } },
   { label: "New-build supervision", media: { clip: "stock/pb-shipyard-ship-dusk.mp4" } },
-  { label: "Offshore services", media: { photo: sitePhoto(ship("sejal").photo) } },
-  { label: "Crew management", media: { photo: sitePhoto(ship("jhansi-rani").photo) }, position: "50% 55%" },
+  { label: "Offshore services", media: { clip: "stock/px-offshore-rig-sunset.mp4" } },
+  { label: "Crew management", media: { clip: "stock/px-crew-mooring-line.mp4" } },
 ];
 
 const LEAD_PICTURE = 6; // frames the picture arrives ahead of its words
@@ -71,18 +69,6 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
     </AbsoluteFill>
   );
 };
-
-// Interlude - no voice. The work around ships, cut hard on the beat: a ship
-// at a quay at night, welding sparks, a mooring line under strain, a tug's wake. Stock
-// on no line at all, so it can't be read as a Libraa vessel or yard.
-const PORT_REEL: Shot[] = [
-  { src: "stock/px-ship-quay-night.mp4", from: 0, zoom: [1.06, 1.0] },
-  { src: "stock/px-welding-sparks.mp4", from: 1, zoom: [1.0, 1.05] },
-  { src: "stock/px-mooring-rope-waves.mp4", from: 0, zoom: [1.02, 1.07] },
-  { src: "stock/px-tug-wake-aerial.mp4", from: 1, zoom: [1.0, 1.04] },
-];
-
-export const Interlude: React.FC<P> = ({ d, at }) => <Reel shots={PORT_REEL} cuts={beatCuts(at, d, PORT_REEL.length)} xf={0} />;
 
 // Scene 4 - where: every office and operating port appears in turn on the
 // website's own India map (Government of India boundary), each with its
