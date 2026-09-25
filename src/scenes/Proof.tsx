@@ -1,10 +1,8 @@
 import React from "react";
-import { AbsoluteFill, Easing, Img, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
-import { wordAt } from "../script";
-import type { TimedScene } from "../timing";
+import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { numberWord, CERTIFICATIONS, CLIENT_SECTORS, CLIENTS, COMPANY, COMPANY_COUNT, GROUP_COMPANIES, sitePhoto } from "../facts";
 import LOGO_DIMS from "../logo-dims.json";
-import { C, Clip, DS, FONT, Headline, px, Rise, SAFE, Sub, useIn, useTrack } from "../ui";
+import { TYPE, C, Clip, DS, FONT, Headline, px, Rise, SAFE, Sub, useIn, useTrack } from "../ui";
 
 type P = { d: number; at: number };
 
@@ -23,17 +21,18 @@ export const Companies: React.FC<P> = ({ d }) => {
   const certsAt = 26;
   return (
     <AbsoluteFill style={{ background: C.navy, overflow: "hidden" }}>
+      <Clip src="stock/mk-port-cranes-wide.mp4" startFrom={90} rate={0.7} grade={0.78} zoom={[1.04, 1.0]} to={d} />
       {/* content clears before the clients scene washes in - no text-on-text */}
       <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 9, d - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
-        <AbsoluteFill style={{ padding: `0 ${SAFE.x}px`, flexDirection: "row", alignItems: "center", gap: 120 }}>
-          <div style={{ width: 640 }}>
+        <AbsoluteFill style={{ padding: `0 ${SAFE.x}px`, flexDirection: "row", alignItems: "center", gap: 90 }}>
+          <div style={{ width: 780 }}>
             <Rise at={0}>
               <Sub color={C.mint}>{cap(numberWord(COMPANY_COUNT))} group companies</Sub>
             </Rise>
             <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 34 }}>
               {GROUP_COMPANIES.map((c, i) => (
                 <Rise key={c.name} at={6 + i * 7}>
-                  <div style={{ ...DS, fontSize: px(56), color: C.white, lineHeight: 1.05 }}>{c.name}</div>
+                  <div style={{ ...DS, fontSize: px(50), color: C.white, lineHeight: 1.05, whiteSpace: "nowrap" }}>{c.name}</div>
                   <Sub size={30}>{c.role}</Sub>
                 </Rise>
               ))}
@@ -64,8 +63,8 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
         <Img src={staticFile(seal)} style={{ width: 70, height: 70, objectFit: "contain" }} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ ...DS, fontSize: px(46), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
-        <Sub size={26}>{org.replace(" Pvt Ltd", "")}</Sub>
+        <div style={{ ...DS, fontSize: px(44), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
+        <div style={{ whiteSpace: "nowrap" }}><Sub size={26}>{org.replace(" Pvt Ltd", "")}</Sub></div>
       </div>
     </div>
   </Rise>
@@ -87,64 +86,32 @@ function logoSize(src: string, area = LOGO_AREA, maxH = 72, maxW = 148) {
   return { width, height };
 }
 
-// Scene 9 - clients. The Indian Navy, Adani Ports and JSW come first: each
-// logo lands, large, on the word that names it. On "port authorities" they
-// clear and the full client wall builds - no client count. The scene
-// washes from navy to warm cream so it never shows an empty frame.
-const FEATURED: { name: string; word: string }[] = [
-  { name: "Indian Navy", word: "Indian Navy" },
-  { name: "Adani Ports & SEZ", word: "Adani" },
-  { name: "JSW Group", word: "JSW" },
-];
-const PICTURE_LEAD = 4; // frames a logo arrives ahead of its word
-
-export const Clients: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
+// Scene 9 - clients: the scene washes from navy to warm cream and the
+// full client wall builds, Indian Navy first. No separate featured screen
+// (client) and no client count.
+export const Clients: React.FC<P> = () => {
   const f = useCurrentFrame();
   const wash = interpolate(f, [0, 8], [0, 1], { extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
-  const voiceAt = (scene.voice?.from ?? at) - at;
-  const lineSec = (scene.voice?.durationInFrames ?? 0) / 30;
-  const onWord = (w: string) => voiceAt + Math.round(wordAt(scene, w, lineSec) * 30) - PICTURE_LEAD;
-  const wallAt = Math.max(onWord(FEATURED[2].word) + 36, onWord("port authorities"));
-  const featuredOut = interpolate(f, [wallAt - 8, wallAt + 6], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ background: C.navy }}>
       <AbsoluteFill style={{ background: C.paper, opacity: wash }} />
-      {/* 1 - the three named clients, each on its word */}
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", opacity: featuredOut }}>
-        <div style={{ display: "flex", gap: 56 }}>
-          {FEATURED.map((c) => {
-            const client = CLIENTS.find((x) => x.name === c.name)!;
-            return (
-              <Rise key={c.name} at={onWord(c.word)} dur={18} distance={26}>
-                <div style={{ width: 420, height: 270, background: C.white, display: "grid", placeItems: "center" }}>
-                  <Img src={staticFile(trimmed(client.logo))} style={{ ...logoSize(trimmed(client.logo), 26000, 200, 330), objectFit: "contain" }} />
-                </div>
-                <div style={{ ...DS, fontSize: px(46), color: C.navy, marginTop: 24, textAlign: "center" }}>{c.name}</div>
-              </Rise>
-            );
-          })}
-        </div>
+      <AbsoluteFill style={{ padding: `100px 0 0 ${SAFE.x}px` }}>
+        <Rise at={6} dur={20}>
+          <Headline size={120} style={{ color: C.navy, textShadow: "none" }}>
+            Our clients
+          </Headline>
+        </Rise>
       </AbsoluteFill>
-      {/* 2 - the full client wall */}
-      <Sequence from={wallAt} layout="none">
-        <AbsoluteFill style={{ padding: `90px 0 0 ${SAFE.x}px` }}>
-          <Rise at={0} dur={20}>
-            <Headline size={120} style={{ color: C.navy, textShadow: "none" }}>
-              Our clients
-            </Headline>
-          </Rise>
-        </AbsoluteFill>
-        {/* a static, centred grid - nothing crosses the frame edge */}
-        <div style={{ position: "absolute", left: 0, right: 0, top: 400, display: "flex", justifyContent: "center" }}>
-          <div style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLS}, ${TILE_W}px)`, gap: 20, justifyContent: "center" }}>
-            {ORDERED.map((c, i) => (
-              <Tile key={c.name} at={8 + i * 2}>
-                <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo)), objectFit: "contain" }} />
-              </Tile>
-            ))}
-          </div>
+      {/* a static, centred grid - nothing crosses the frame edge */}
+      <div style={{ position: "absolute", left: 0, right: 0, top: 340, display: "flex", justifyContent: "center" }}>
+        <div style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_COLS}, ${TILE_W}px)`, gap: 20, justifyContent: "center" }}>
+          {ORDERED.map((c, i) => (
+            <Tile key={c.name} at={14 + i * 2}>
+              <Img src={staticFile(trimmed(c.logo))} style={{ ...logoSize(trimmed(c.logo)), objectFit: "contain" }} />
+            </Tile>
+          ))}
         </div>
-      </Sequence>
+      </div>
     </AbsoluteFill>
   );
 };
@@ -154,7 +121,11 @@ const TILE_W = 180;
 const TILE_H = 104;
 // grouped by sector (navy/government/ports, energy/industry, shipping) so
 // similar organisations sit together
-const ORDERED = CLIENT_SECTORS.flatMap((sec) => CLIENTS.filter((c) => c.sector === sec.id));
+const LEAD = ["Indian Navy", "Adani Ports & SEZ", "JSW Group"];
+const ORDERED = [
+  ...LEAD.map((n) => CLIENTS.find((c) => c.name === n)!),
+  ...CLIENT_SECTORS.flatMap((sec) => CLIENTS.filter((c) => c.sector === sec.id && !LEAD.includes(c.name))),
+];
 
 const Tile: React.FC<{ at: number; children: React.ReactNode }> = ({ at, children }) => {
   const p = useIn(at, 18);
@@ -184,9 +155,9 @@ export const End: React.FC<P> = ({ d }) => {
   const track = useTrack(cardAt, 0.28, 0.12, 120);
   return (
     <AbsoluteFill style={{ opacity: out, background: "#000" }}>
-      {/* the clip is 14s; slow it just enough to cover the whole scene, so it
+      {/* the clip is 12s; slow it just enough to cover the whole scene, so it
           never runs out and freezes on its last frame */}
-      <Clip src="stock/dusk-sea.mp4" grade={0.2} zoom={[1.0, 1.08]} to={d} rate={Math.min(1, (14 * 30 - 6) / d)} />
+      <Clip src="stock/mk-sunset-sea.mp4" grade={0.2} zoom={[1.0, 1.06]} to={d} rate={Math.min(1, (12 * 30 - 6) / d)} />
       {/* lighter overlay so the moving sea stays visible behind the card, and a
           slow drift on the card itself - the long booth hold never goes still */}
       <AbsoluteFill style={{ background: `rgba(10,14,42,${0.25 + 0.42 * card})` }} />
@@ -207,7 +178,7 @@ export const End: React.FC<P> = ({ d }) => {
         <div style={{ ...DS, fontSize: px(130), lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>
         {/* the approved closing tagline, word for word */}
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, letterSpacing: "0.02em", color: C.mint }}>Ship Management, Crew Management and Marine Services.</div>
-        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: 600, fontSize: 60, color: C.white, letterSpacing: "0.03em" }}>libraa.com</div>
+        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: TYPE.bodyWeight, fontSize: 60, color: C.white, letterSpacing: "0.03em" }}>libraa.com</div>
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 44, color: C.soft, letterSpacing: "0.03em" }}>{COMPANY.email}</div>
       </AbsoluteFill>
     </AbsoluteFill>

@@ -9,6 +9,7 @@ import {
   Img,
   interpolate,
   OffthreadVideo,
+  Sequence,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
@@ -42,9 +43,24 @@ type TypeOption = {
   bodyWeight: number;
   /** title size relative to Barlow Condensed (wide faces need less) */
   scale: number;
+  /** set titles in capitals; a book face like CMU reads better as written */
+  upper?: boolean;
 };
 
 export const TYPE_OPTIONS: Record<string, TypeOption> = {
+  cmu: {
+    // Computer Modern (CMU Serif), the client's pick: classic roman titles,
+    // set in its regular weight - the bold cut is heavy at display sizes
+    label: "Computer Modern (CMU Serif)",
+    faces: [{ family: "CMU Serif", file: "cmu-serif", weights: [500, 700] }],
+    display: "'CMU Serif'",
+    displayWeight: 500,
+    tracking: 0.02,
+    body: "'CMU Serif'",
+    bodyWeight: 500,
+    scale: 0.92,
+    upper: false,
+  },
   barlow: {
     label: "Barlow Condensed + Barlow",
     faces: [
@@ -110,7 +126,7 @@ export const TYPE_OPTIONS: Record<string, TypeOption> = {
   },
 };
 
-const TYPE_OPTION = "barlow";
+const TYPE_OPTION = "cmu";
 const chosen = String((getInputProps() as { type?: string }).type ?? TYPE_OPTION);
 export const TYPE = TYPE_OPTIONS[chosen] ?? TYPE_OPTIONS[TYPE_OPTION];
 
@@ -283,7 +299,7 @@ export const Headline: React.FC<{ children: React.ReactNode; size?: number; styl
       fontSize: px(size),
       lineHeight: 1,
       letterSpacing: `${TYPE.tracking}em`,
-      textTransform: "uppercase",
+      textTransform: TYPE.upper === false ? "none" : "uppercase",
       color: C.white,
       textShadow: "0 2px 24px rgba(6,9,26,0.5)",
       ...style,
@@ -331,3 +347,25 @@ export const Finish: React.FC = () => {
     </AbsoluteFill>
   );
 };
+
+/** One piece of footage in a reel. `from` is seconds into the clip. */
+export type Shot = { src: string; from?: number; rate?: number; zoom?: [number, number]; grade?: number };
+
+/** Footage cut together at the given frames (`cuts` = start of each shot,
+ *  plus the reel's end). Shots overlap by `xf` frames and dissolve, or cut
+ *  hard with xf=0 - the way an editor lays B-roll on the timeline. */
+export const Reel: React.FC<{ shots: Shot[]; cuts: number[]; xf?: number }> = ({ shots, cuts, xf = 0 }) => (
+  <AbsoluteFill>
+    {shots.map((s, i) => {
+      const len = cuts[i + 1] - cuts[i];
+      const last = i === shots.length - 1;
+      return (
+        <Sequence key={i} from={cuts[i]} durationInFrames={len + (last ? 0 : xf)}>
+          <FadeIn on={i > 0 && xf > 0} dur={xf || 1}>
+            <Clip src={s.src} startFrom={Math.round((s.from ?? 0) * 30)} rate={s.rate ?? 1} grade={s.grade ?? 0.12} zoom={s.zoom ?? [1.02, 1.07]} to={len + xf} />
+          </FadeIn>
+        </Sequence>
+      );
+    })}
+  </AbsoluteFill>
+);

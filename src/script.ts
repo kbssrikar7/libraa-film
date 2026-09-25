@@ -31,6 +31,7 @@ export type SceneKind =
   | "brand"
   | "services"
   | "map"
+  | "interlude"
   | "fleet"
   | "hero"
   | "field"
@@ -115,6 +116,14 @@ export const SCENES: Scene[] = [
     flex: 0.2,
   },
   {
+    // music only: a breath between chapters, on port footage cut to the beat
+    id: "interlude",
+    kind: "interlude",
+    lead: 0,
+    tail: 5.4,
+    flex: 0,
+  },
+  {
     id: "fleet",
     kind: "fleet",
     // no vessel count (client): the fleet keeps changing and the film shows
@@ -122,7 +131,7 @@ export const SCENES: Scene[] = [
     line: `We have managed and worked on vessels of every kind: tugs, dredgers and passenger ferries, under ${and(FLAGS_ADJ)} flags. Here are just a few.`,
     lead: 0.8,
     tail: 3.5,
-    flex: 3.2,
+    flex: 2.2,
   },
   {
     id: "hero",

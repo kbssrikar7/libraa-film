@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { INDIA_MAP_VIEWBOX, INDIA_PATH, LOCATION_COUNT, OFFICE_COUNT, OFFICES, PORTS, ship, sitePhoto } from "../facts";
 import { beatsBetween, type TimedScene } from "../timing";
-import { C, Clip, FadeIn, FONT, Headline, LowerThird, Sub, Photo, Rise, Scrim, useIn, XF } from "../ui";
+import { SAFE, TYPE, C, Clip, FadeIn, FONT, Reel, type Shot, Headline, LowerThird, Sub, Photo, Rise, Scrim, useIn, XF } from "../ui";
 
 type P = { d: number; at: number };
 
@@ -69,12 +69,28 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
   );
 };
 
-// Scene 4 - where: the eight locations light up in turn on the website's own
-// India map (Government of India boundary), offices labelled.
+// Interlude - no voice. Ports at work, cut hard on the beat, between the
+// map and the fleet. Stock on no line at all, so it can't be read as a
+// Libraa vessel or yard.
+const PORT_REEL: Shot[] = [
+  { src: "stock/mk-port-cranes-ship.mp4", from: 0, zoom: [1.06, 1.0] },
+  { src: "stock/mk-container-port-aerial.mp4", from: 1, zoom: [1.0, 1.05] },
+  { src: "stock/mk-ships-in-haze.mp4", from: 2, zoom: [1.02, 1.07] },
+];
+
+export const Interlude: React.FC<P> = ({ d, at }) => <Reel shots={PORT_REEL} cuts={beatCuts(at, d, PORT_REEL.length)} xf={0} />;
+
+// Scene 4 - where: every office and operating port appears in turn on the
+// website's own India map (Government of India boundary), each with its
+// name, placed with the website's own label offsets. The map holds still
+// (client: no zoom); only the pins and the background light move.
+// The map box has the SVG's own 800x900 aspect, so pin percentages land
+// exactly on the drawn coastline.
+const MAP_H = 940;
+const MAP_W = Math.round((MAP_H * 800) / 900);
+
 export const MapScene: React.FC<P> = ({ d }) => {
   const f = useCurrentFrame();
-  // no camera move on the map (client): it holds still and the pins bring
-  // it to life; only the background light drifts
   const order = [...PORTS].sort((a, b) => (a.tag ? 0 : 1) - (b.tag ? 0 : 1)); // offices first
   return (
     <AbsoluteFill
@@ -82,69 +98,70 @@ export const MapScene: React.FC<P> = ({ d }) => {
         background: `radial-gradient(90% 90% at ${interpolate(f, [0, d], [64, 76])}% ${interpolate(f, [0, d], [42, 60])}%, ${C.navyMid} 0%, ${C.navy} 70%)`,
       }}
     >
-      <AbsoluteFill style={{ justifyContent: "center", padding: "0 0 0 140px", width: "52%" }}>
+      <AbsoluteFill style={{ justifyContent: "center", padding: `0 0 0 ${SAFE.x}px`, width: "50%" }}>
         <Rise at={4}>
           <Sub color={C.mint}>Where we work</Sub>
         </Rise>
-        <Rise at={10} dur={22} style={{ marginTop: 34 }}>
+        <Rise at={10} dur={22} style={{ marginTop: 28 }}>
           <Headline size={120}>
             {OFFICE_COUNT} offices
             <br />
             <span style={{ color: C.mint }}>{LOCATION_COUNT} locations</span>
           </Headline>
         </Rise>
-        <Rise at={30} dur={22} style={{ marginTop: 40 }}>
-          <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 42, color: C.soft, lineHeight: 1.5 }}>
-            {OFFICES.map((o) => o.city).join("  ·  ")}
-          </div>
-        </Rise>
       </AbsoluteFill>
-      <div style={{ position: "absolute", right: 110, top: 70, width: 900, height: 940, }}>
+      <div style={{ position: "absolute", right: 150, top: 70, width: MAP_W, height: MAP_H }}>
         <svg viewBox={INDIA_MAP_VIEWBOX} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-          <path d={INDIA_PATH} fill="rgba(255,255,255,0.2)" stroke="rgba(143,224,172,0.9)" strokeWidth={2} />
+          <path d={INDIA_PATH} fill="rgba(255,255,255,0.16)" stroke="rgba(143,224,172,0.85)" strokeWidth={2} />
         </svg>
         {order.map((p, i) => (
-          <Pin key={p.name} name={p.name} office={!!p.tag} x={p.x} y={p.y} at={20 + i * 14} />
+          <Pin key={p.name} port={p} at={20 + i * 10} />
         ))}
       </div>
     </AbsoluteFill>
   );
 };
 
-const Pin: React.FC<{ name: string; office: boolean; x: number; y: number; at: number }> = ({ name, office, x, y, at }) => {
+const Pin: React.FC<{ port: (typeof PORTS)[number]; at: number }> = ({ port, at }) => {
   const p = useIn(at, 16);
-  const size = office ? 28 : 20;
-  const labelLeft = x > 60 ? -1 : 1; // Port Blair label to the left
+  const office = !!port.tag;
+  const size = office ? 24 : 16;
+  const shift = port.labelAlign === "center" ? "-50%" : port.labelAlign === "right" ? "-100%" : "0%";
   return (
-    <div style={{ position: "absolute", left: `${x}%`, top: `${y}%`, transform: "translate(-50%,-50%)", opacity: p }}>
+    <>
       <div
         style={{
+          position: "absolute",
+          left: `${port.x}%`,
+          top: `${port.y}%`,
           width: size,
           height: size,
+          marginLeft: -size / 2,
+          marginTop: -size / 2,
           borderRadius: "50%",
           background: office ? C.white : C.mint,
-          border: `3px solid ${office ? C.green : C.navy}`,
+          border: `3px solid ${C.navy}`,
+          opacity: p,
           transform: `scale(${0.4 + 0.6 * p})`,
         }}
       />
-      {office && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            [labelLeft > 0 ? "left" : "right"]: size + 10,
-            transform: "translateY(-50%)",
-            whiteSpace: "nowrap",
-            fontFamily: FONT,
-            fontWeight: 600,
-            fontSize: 30,
-            color: C.white,
-            textShadow: "0 2px 10px rgba(0,0,0,0.6)",
-          }}
-        >
-          {name}
-        </div>
-      )}
-    </div>
+      <div
+        style={{
+          position: "absolute",
+          left: `${port.x + port.labelDx}%`,
+          top: `${port.y + port.labelDy}%`,
+          transform: `translate(${shift}, -50%)`,
+          whiteSpace: "nowrap",
+          fontFamily: FONT,
+          fontWeight: office ? 700 : TYPE.bodyWeight,
+          fontSize: office ? 34 : 30,
+          color: office ? C.white : C.soft,
+          textShadow: "0 2px 10px rgba(0,0,0,0.6)",
+          opacity: p,
+        }}
+      >
+        {port.name}
+      </div>
+    </>
   );
 };

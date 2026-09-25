@@ -87,6 +87,17 @@ footage.**
     run `npm run voice` in a session that has SARVAM_API_KEY, then
     measure `marks` for "Indian Navy", "Adani", "JSW", "port authorities"
     in the clients scene (until then `wordAt` estimates them).
+11. "Looks vibe coded": removed every web-design ornament (accent lines,
+    tracked eyebrow labels, lines around "Since 2009", cards, glows,
+    shadows, pulsing pins); plain fade titles.
+12. Font set to Computer Modern (CMU Serif, client's pick), titles in
+    sentence case; ship names and LIBRAA GROUP stay in capitals.
+    Map labels every port (client asked for all port names). Separate
+    "three clients" screen removed - the wall leads with Indian Navy,
+    Adani, JSW. New Mixkit footage (see CREDITS.md): opening reel,
+    behind the brand, a music-only port interlude before the fleet, a
+    welder on the safety line, behind the certificates, and the end card.
+    Fleet montage trimmed to 10 ships with no repeats.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,
@@ -137,9 +148,14 @@ therefore out of date.
 
 ## Cloud environment notes
 
-- Pexels, Pixabay, api.sarvam.ai and the live website were blocked by the
-  environment's network policy (Sept 2026); npm works. Ask the user to
-  allow those hosts, or to add clips to public/stock/ themselves.
+- Network is now open, but Pexels and Pixabay sit behind a Cloudflare
+  bot check (403 "Just a moment") for curl and headless browsers - do not
+  try to get around it; use their free API keys (PEXELS_API_KEY /
+  PIXABAY_API_KEY as environment secrets) instead. Mixkit works directly:
+  check each clip page says free licence, not "personal use only";
+  files are at https://assets.mixkit.co/videos/<id>/<id>-1080.mp4.
+- Environment secrets (SARVAM_API_KEY) only reach sessions started after
+  they were saved.
 - ffmpeg is not installable with apt here. Remotion ships a minimal
   ffmpeg/ffprobe in node_modules/@remotion/compositor-linux-x64-gnu/ (no
   xstack; check for silencedetect before relying on it).

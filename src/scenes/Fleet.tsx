@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
-import { SHIPS, ship, sitePhoto } from "../facts";
-import { C, DS, FadeIn, FONT, LowerThird, Photo, px, Rise, SAFE, Scrim, useTrack, XF } from "../ui";
+import { ship, sitePhoto } from "../facts";
+import { C, Clip, DS, FadeIn, FONT, LowerThird, Photo, px, Rise, SAFE, Scrim, useTrack, XF } from "../ui";
 import { beatCuts } from "./Work";
 
 type P = { d: number; at: number };
@@ -11,11 +11,22 @@ type P = { d: number; at: number };
 // the Services scene just before it (JHANSI RANI closes Services), and the
 // "11 vessels" title lives only on that opening shot - after it the ships
 // carry just their name + flag.
-const OPENING_SHIP = "rajendra-prasad";
+// Only some of the many vessels Libraa has worked on, chosen for the best
+// photographs (client). None repeats a ship already seen in Services
+// (ANTIGOON, KANGO, SEJAL, JHANSI RANI), BITAM belongs to the safety beat and
+// KOUNDINYA has its own hero scene.
 const MONTAGE = [
-  ...SHIPS.filter((s) => s.id === OPENING_SHIP),
-  ...SHIPS.filter((s) => s.id !== OPENING_SHIP && s.id !== "koundinya"),
-];
+  "rajendra-prasad",
+  "tuticorin",
+  "rani-gaidinliu",
+  "capstar-1",
+  "awala",
+  "kalindi",
+  "sejal-2",
+  "ganesh",
+  "sanvi-69",
+  "supreme-diamond",
+].map(ship);
 
 export const Fleet: React.FC<P> = ({ d, at }) => {
   // the title shot runs a little longer; every ship after it gets an equal share
@@ -47,7 +58,7 @@ const ShipName: React.FC<{ name: string; flag: string; out: number }> = ({ name,
       <div style={{ ...DS, fontSize: px(92), lineHeight: 1, letterSpacing: "0.02em", color: C.white, textShadow: "0 2px 24px rgba(6,9,26,0.5)" }}>{name}</div>
     </Rise>
     <Rise at={7} out={out} dur={16} distance={12} style={{ marginTop: 12 }}>
-      <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 26, letterSpacing: "0.24em", textTransform: "uppercase", color: C.mint }}>{flag}</div>
+      <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 34, color: C.soft }}>{flag}</div>
     </Rise>
   </AbsoluteFill>
 );
@@ -77,14 +88,16 @@ export const Hero: React.FC<P> = ({ d }) => {
 };
 
 // Scene 7 - people on site from India to West Africa, then safety.
-const FIELD = [
+const FIELD: { src: string; text: string; position: string; clip?: boolean }[] = [
   { src: "site/cameroon-port-team.webp", text: "From India to West Africa", position: "50% 40%" },
   { src: "site/cameroon-shipyard-team.webp", text: "From India to West Africa", position: "50% 45%" },
+  // stock, on the general safety line only - a welder gearing up, no face
+  { src: "stock/mk-welder-safety.mp4", clip: true, text: "Every job starts with a toolbox talk", position: "50% 50%" },
   { src: sitePhoto(ship("bitam").photo), text: "Every job starts with a toolbox talk", position: "50% 72%" },
 ];
 
 export const Field: React.FC<P> = ({ d, at }) => {
-  const cuts = beatCuts(at, d, FIELD.length);
+  const cuts = beatCuts(at, d, FIELD.length, [1.2, 1, 0.8, 1.2]);
   return (
     <AbsoluteFill>
       {FIELD.map((b, i) => {
@@ -95,6 +108,9 @@ export const Field: React.FC<P> = ({ d, at }) => {
         return (
           <Sequence key={b.src} from={cuts[i]} durationInFrames={len + (last ? 0 : XF)}>
             <FadeIn on={i > 0}>
+              {b.clip ? (
+                <Clip src={b.src} grade={0.15} zoom={[1.03, 1.08]} to={len + XF} />
+              ) : (
               <Photo
                 src={b.src}
                 to={len + XF}
@@ -103,6 +119,7 @@ export const Field: React.FC<P> = ({ d, at }) => {
                 position={b.position}
                 grade={0.15}
               />
+              )}
               <Scrim side="bottom" strength={0.9} />
             </FadeIn>
             {/* a line that carries across two shots stays put through the

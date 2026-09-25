@@ -1,37 +1,33 @@
 import React from "react";
-import { AbsoluteFill, Img, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { COMPANY } from "../facts";
-import { C, Clip, DS, px, FONT, Rise, useIn, useTrack } from "../ui";
+import { beatCuts } from "./Work";
+import { C, Clip, DS, FONT, px, Reel, Rise, type Shot, useIn, useTrack } from "../ui";
 
 type P = { d: number };
 
-// Scene 1 - atmosphere only: sunrise over open sea, then a hull cutting
-// through water. Stock, no identifiable vessel, no text.
-export const Open: React.FC<P> = ({ d }) => {
+// Scene 1 - a cold open on moving footage, cut on the music: a low flight
+// over the sea at sunrise, a tanker at its berth from the air, then cranes
+// working a port. Stock (Mixkit free licence) on a general line - "a
+// voyage begins long before a vessel leaves port" - never shown as Libraa's.
+const OPEN: Shot[] = [
+  { src: "stock/mk-sunrise-sea-flyover.mp4", from: 0, zoom: [1.0, 1.04] },
+  { src: "stock/mk-tanker-berth-aerial.mp4", from: 1, zoom: [1.04, 1.0] },
+  { src: "stock/mk-port-cranes-wide.mp4", from: 2, zoom: [1.0, 1.05] },
+];
+
+export const Open: React.FC<P & { at: number }> = ({ d, at }) => {
   const f = useCurrentFrame();
-  const cut = Math.round(d * 0.46);
-  const fadeIn = interpolate(f, [0, 20], [0, 1], { extrapolateRight: "clamp" });
-  // ease the sea down toward navy before the logo scene, so there's no
-  // sudden dark flicker when the brand dissolves in
+  const cuts = beatCuts(at, d, OPEN.length, [1.3, 1, 1]);
+  const fadeIn = interpolate(f, [0, 24], [0, 1], { extrapolateRight: "clamp" });
+  // ease down toward navy before the logo, so the brand dissolve never flickers
   const dusk = interpolate(f, [d - 30, d], [0, 0.55], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ opacity: fadeIn }}>
-      <AbsoluteFill style={{ background: `rgba(10,14,42,${dusk})`, zIndex: 5 }} />
-      <Sequence durationInFrames={cut + 12}>
-        <Clip src="stock/sunrise-sea.mp4" grade={0.1} zoom={[1.02, 1.1]} to={cut + 12} />
-      </Sequence>
-      <Sequence from={cut} durationInFrames={d - cut}>
-        <CrossIn>
-          <Clip src="stock/bow-water.mp4" startFrom={30} grade={0.12} zoom={[1.08, 1.0]} to={d - cut} />
-        </CrossIn>
-      </Sequence>
+      <Reel shots={OPEN} cuts={cuts} xf={14} />
+      <AbsoluteFill style={{ background: `rgba(10,14,42,${dusk})` }} />
     </AbsoluteFill>
   );
-};
-
-const CrossIn: React.FC<{ children: React.ReactNode; dur?: number }> = ({ children, dur = 12 }) => {
-  const f = useCurrentFrame();
-  return <AbsoluteFill style={{ opacity: interpolate(f, [0, dur], [0, 1], { extrapolateRight: "clamp" }) }}>{children}</AbsoluteFill>;
 };
 
 // Scene 2 - the brand lands over dark water: logo, name, "Since 2009".
@@ -40,7 +36,7 @@ export const Brand: React.FC<P> = ({ d }) => {
   const track = useTrack(14, 0.3, 0.1, 90); // the name settles as it lands
   return (
     <AbsoluteFill>
-      <Clip src="stock/dark-water.mp4" grade={0.45} zoom={[1.05, 1.0]} to={d} />
+      <Clip src="stock/mk-sea-flyover-dawn.mp4" startFrom={60} rate={0.6} grade={0.5} zoom={[1.05, 1.0]} to={d} />
       <AbsoluteFill style={{ background: "radial-gradient(60% 60% at 50% 48%, rgba(10,14,42,0.2), rgba(10,14,42,0.75))" }} />
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 34 }}>
         <div
