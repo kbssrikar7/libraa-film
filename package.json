@@ -10,7 +10,8 @@
     "check": "tsc --noEmit",
     "render": "node scripts/master.mjs",
     "still": "remotion still LibraaFilm",
-    "timeline": "node scripts/timeline.mjs"
+    "timeline": "node scripts/timeline.mjs",
+    "subtitles": "node scripts/subtitles.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.522",

@@ -128,7 +128,8 @@ export const Clients: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) =
               );
             })}
           </div>
-          <Rise at={restAt + (ORDERED.length - LEAD.length) * 2 + 6} dur={20} style={{ marginTop: 26 }}>
+          {/* after the narration ends, so it never crowds the last subtitle */}
+          <Rise at={voiceAt + Math.round(lineSec * 30) + 10} dur={20} style={{ marginTop: 26 }}>
             <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 34, color: "rgba(10,14,42,0.72)" }}>Plus {and(CLIENTS_TEXT_ONLY)}.</div>
           </Rise>
         </div>

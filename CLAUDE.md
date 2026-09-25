@@ -197,6 +197,16 @@ footage.**
     Map can't be shorter: it already ends on the first beat after its
     line (edges snap to beats). Client name timing, 16-vessel fleet and
     KOUNDINYA untouched, as the review asked.
+21. Burned-in subtitles (src/Subtitles.tsx), in the film font, bottom
+    centre on a square dark band below the lower-third titles. Timings
+    come from the recordings: `npm run subtitles` (scripts/subtitles.mjs)
+    finds the pauses with silencedetect, splits each line into short
+    chunks and places them by their share of the speech, snapped to the
+    pauses; output src/subtitles.generated.json. **Re-run it whenever a
+    line is re-recorded.** No subtitles on the end card (its words are
+    printed there). The clients "Plus ..." line now appears after the
+    narration so it never meets a subtitle. Clean version for the booth:
+    --props='{"subtitles":false}'.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

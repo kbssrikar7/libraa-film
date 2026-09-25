@@ -7,6 +7,7 @@ import { MapScene, Services } from "./scenes/Work";
 import { Field, Fleet, Hero } from "./scenes/Fleet";
 import { Clients, Companies, End } from "./scenes/Proof";
 import { C, Finish, Fonts } from "./ui";
+import { Subtitles } from "./Subtitles";
 
 const SCENE: Record<SceneKind, React.FC<{ d: number; at: number; scene: TimedScene }>> = {
   open: Open,
@@ -77,6 +78,7 @@ export const Film: React.FC = () => {
           </Sequence>
         );
       })}
+      <Subtitles scenes={scenes} />
       <Finish />
       <Audio src={staticFile(MUSIC.file)} volume={musicVolume(scenes)} />
       {scenes.map((s) =>
