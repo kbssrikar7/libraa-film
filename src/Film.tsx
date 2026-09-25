@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, Easing, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 import { MUSIC, type SceneKind } from "./script";
 import { timeline, TOTAL_FRAMES, type TimedScene } from "./timing";
 import { Brand, Open } from "./scenes/Opening";
@@ -26,14 +26,16 @@ const SCENE: Record<SceneKind, React.FC<{ d: number; at: number; scene: TimedSce
 // Outgoing titles clear before a cut (see Hero/Field), so text never overlaps.
 // clients also dissolve: navy footage straight into the cream wall, no
 // empty frame between them
-const DISSOLVE: Partial<Record<SceneKind, number>> = { brand: 22, clients: 12, end: 12 };
+const DISSOLVE: Partial<Record<SceneKind, number>> = { brand: 22, clients: 18, end: 12 };
 
 // dur 0 is a hard cut: the scene is fully visible from its first frame
 // (a 1-frame fade used to leave that frame transparent - a navy flash at
 // every cut)
 const Dissolve: React.FC<{ dur: number; children: React.ReactNode }> = ({ dur, children }) => {
   const f = useCurrentFrame();
-  const o = dur > 0 ? interpolate(f, [0, dur], [0, 1], { extrapolateRight: "clamp" }) : 1;
+  // S-curve, so a dark-to-light change (certificates -> cream clients) eases
+  // in and out instead of brightening at one steady, flash-like rate
+  const o = dur > 0 ? interpolate(f, [0, dur], [0, 1], { extrapolateRight: "clamp", easing: Easing.inOut(Easing.sin) }) : 1;
   return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
 };
 

@@ -116,7 +116,7 @@ export const SCENES: Scene[] = [
     // words placed by speaking rate either side of it
     marks: { Chennai: 1.3, Kakinada: 2.6, "Port Blair": 3.25, locations: 5.6 },
     lead: 0.6,
-    tail: 0.2,
+    tail: 0,
     flex: 0,
   },
   {

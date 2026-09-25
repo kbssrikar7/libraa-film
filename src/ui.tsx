@@ -21,7 +21,7 @@ export const C = {
   green: "#159449",
   mint: "#8fe0ac",
   white: "#ffffff",
-  paper: "#f3efe4",
+  paper: "#ebe6d9", // warm cream, a touch below white so the cut from dark footage is gentler on LED walls
   soft: "rgba(255,255,255,0.78)",
 };
 
@@ -339,7 +339,8 @@ export const LowerThird: React.FC<{ title: React.ReactNode; at?: number; out?: n
       <Headline size={size}>{title}</Headline>
     </Rise>
     {sub && (
-      <Rise at={at + 8} out={out} style={{ marginTop: 14 }}>
+      // same timing as the title: a two-line caption moves as one block
+      <Rise at={at} out={out} style={{ marginTop: 14 }}>
         <Sub size={46}>{sub}</Sub>
       </Rise>
     )}

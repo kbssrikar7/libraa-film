@@ -187,6 +187,16 @@ footage.**
     - Larger KOUNDINYA subtitle, certificate names, closing tagline.
     Still open: Kakinada wording (needs company approval); real Libraa
     service footage; better originals for the weakest fleet photos.
+20. Fourth review (of v17) - acted on: certificates -> clients now an
+    18-frame S-curve dissolve onto a slightly softer cream (#ebe6d9) -
+    measured: eases out of the dark and settles, no abrupt start/stop
+    (the only way to remove the brightness rise entirely would be a dark
+    client wall); AWALA framed tight / BITAM wide so their cut reads as a
+    scale change; ANTIGOON settles from a deeper grade over 0.5 s after
+    the dark map; two-line captions (title + sub) rise as one block.
+    Map can't be shorter: it already ends on the first beat after its
+    line (edges snap to beats). Client name timing, 16-vessel fleet and
+    KOUNDINYA untouched, as the review asked.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

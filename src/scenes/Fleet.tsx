@@ -46,7 +46,16 @@ const MONTAGE = [
 }
 const POSITION: Record<string, string> = { antigoon: "50% 60%", kango: "50% 45%", "jhansi-rani": "50% 55%" };
 
+// AWALA and BITAM are both red hulls on slipways: AWALA is framed tighter
+// and BITAM wider, so the hard cut between them reads as a change of scale,
+// not a jump cut.
+const ZOOM: Record<string, [number, number]> = { awala: [1.16, 1.2], bitam: [1.0, 1.04] };
+
 export const Fleet: React.FC<P> = ({ d, at }) => {
+  const f = useCurrentFrame();
+  // ANTIGOON follows the dark map: it settles from a slightly deeper grade
+  // over half a second, so the cut lands without a sudden brightness jump
+  const settle = interpolate(f, [0, 15], [0.32, 0.1], { extrapolateRight: "clamp" });
   const cuts = beatCuts(at, d, MONTAGE.length, MONTAGE.map((s) => (s.id === "antigoon" ? 1.6 : 1)), 36);
   return (
     <AbsoluteFill>
@@ -58,7 +67,7 @@ export const Fleet: React.FC<P> = ({ d, at }) => {
         // the ships carry their names only
         return (
           <Sequence key={s.id} from={cuts[i]} durationInFrames={len}>
-            <Photo src={sitePhoto(s.photo)} to={len} zoom={i % 2 ? [1.08, 1.03] : [1.03, 1.08]} pan={i % 2 ? [1, -1] : [-1, 1]} position={POSITION[s.id]} grade={0.1} tone={tone(s.id)} />
+            <Photo src={sitePhoto(s.photo)} to={len} zoom={ZOOM[s.id] ?? (i % 2 ? [1.08, 1.03] : [1.03, 1.08])} pan={i % 2 ? [1, -1] : [-1, 1]} position={POSITION[s.id]} grade={i === 0 ? settle : 0.1} tone={tone(s.id)} />
             <Scrim side="bottom" strength={0.7} />
             <ShipName name={s.name} flag={facts ? `${s.flagName} · ${facts}` : s.flagName} out={last ? len - 16 : len - 8} />
           </Sequence>

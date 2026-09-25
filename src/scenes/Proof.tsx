@@ -26,7 +26,7 @@ export const Companies: React.FC<P> = ({ d }) => {
       <Clip src="stock/pb-shipyard-cranes-dusk.mp4" startFrom={15} rate={0.8} grade={0.68} zoom={[1.04, 1.0]} to={d} />
       {/* text clears before the cream clients wall starts to dissolve in (12
           frames before the cut) - no text-on-text */}
-      <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 22, d - 12], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
+      <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 28, d - 18], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
         <AbsoluteFill style={{ padding: `0 ${SAFE.x}px`, flexDirection: "row", alignItems: "center", gap: 90 }}>
           <div style={{ width: 780 }}>
             <Rise at={0}>
