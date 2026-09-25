@@ -125,6 +125,9 @@ footage.**
     original map recording naming Chennai, Kakinada and Port Blair is back
     (restored from git). Cameroon photos captioned "Libraa's team at the
     port in Cameroon" / "at a shipyard in Cameroon".
+16. The spotlight was merged into the fleet scene so the fleet line starts
+    on ANTIGOON (client: the words belong with the ships they introduce).
+    The fleet now opens ANTIGOON, KANGO, SEJAL, JHANSI RANI, then the rest.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

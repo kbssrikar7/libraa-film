@@ -31,7 +31,6 @@ export type SceneKind =
   | "brand"
   | "services"
   | "map"
-  | "interlude"
   | "fleet"
   | "hero"
   | "field"
@@ -118,22 +117,15 @@ export const SCENES: Scene[] = [
     flex: 0.2,
   },
   {
-    // music only: the four ships that lead the fleet - ANTIGOON, the biggest
-    // vessel Libraa works on, first and longest, then KANGO, SEJAL, JHANSI RANI
-    id: "interlude",
-    kind: "interlude",
-    lead: 0,
-    tail: 8.1,
-    flex: 0,
-  },
-  {
     id: "fleet",
     kind: "fleet",
     // no vessel count (client): the fleet keeps changing and the film shows
     // only some of the many vessels Libraa has worked on
     line: `We have managed and worked on vessels of every kind: tugs, dredgers and passenger ferries, under ${and(FLAGS_ADJ)} flags. Here are just a few.`,
     lead: 0.8,
-    tail: 3.5,
+    // the line starts on ANTIGOON, the first ship, and the montage runs on
+    // under the music after it
+    tail: 11.6,
     flex: 2.2,
   },
   {
