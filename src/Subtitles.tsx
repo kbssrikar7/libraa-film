@@ -26,11 +26,11 @@ const Line: React.FC<{ cues: Cue[] }> = ({ cues }) => {
       <div
         style={{
           maxWidth: 1400,
-          padding: "10px 26px 12px",
+          padding: "8px 22px 10px",
           background: "rgba(10,14,42,0.66)",
           fontFamily: FONT,
           fontWeight: TYPE.bodyWeight,
-          fontSize: 42,
+          fontSize: 36,
           lineHeight: 1.3,
           color: C.white,
           textAlign: "center",

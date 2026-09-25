@@ -197,7 +197,7 @@ footage.**
     Map can't be shorter: it already ends on the first beat after its
     line (edges snap to beats). Client name timing, 16-vessel fleet and
     KOUNDINYA untouched, as the review asked.
-21. Burned-in subtitles (src/Subtitles.tsx), in the film font, bottom
+21. Burned-in subtitles (src/Subtitles.tsx), film font at 36 px, bottom
     centre on a square dark band below the lower-third titles. Timings
     come from the recordings: `npm run subtitles` (scripts/subtitles.mjs)
     finds the pauses with silencedetect, splits each line into short
