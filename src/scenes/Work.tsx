@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { INDIA_MAP_VIEWBOX, INDIA_PATH, LOCATION_COUNT, OFFICE_COUNT, OFFICES, PORTS, ship, sitePhoto } from "../facts";
 import { beatsBetween, type TimedScene } from "../timing";
+import { wordAt } from "../script";
 import { SAFE, TYPE, C, Clip, FadeIn, FONT, Reel, type Shot, Headline, LowerThird, Sub, Photo, Rise, Scrim, useIn, XF } from "../ui";
 
 type P = { d: number; at: number };
@@ -79,9 +80,16 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
 const MAP_H = 940;
 const MAP_W = Math.round((MAP_H * 800) / 900);
 
-export const MapScene: React.FC<P> = ({ d }) => {
+export const MapScene: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
   const f = useCurrentFrame();
   const order = [...PORTS].sort((a, b) => (a.tag ? 0 : 1) - (b.tag ? 0 : 1)); // offices first
+  // each office lights up as the narrator names it, the other ports on
+  // "locations" - the map keeps changing for as long as the line runs
+  const voiceAt = (scene.voice?.from ?? at) - at;
+  const lineSec = (scene.voice?.durationInFrames ?? 0) / 30;
+  const onWord = (w: string) => voiceAt + Math.round(wordAt(scene, w, lineSec) * 30) - 4;
+  const pinAt = (name: string, i: number) =>
+    scene.line?.includes(name) ? onWord(name) : onWord("locations") + (i - OFFICE_COUNT) * 8;
   return (
     <AbsoluteFill
       style={{
@@ -105,7 +113,7 @@ export const MapScene: React.FC<P> = ({ d }) => {
           <path d={INDIA_PATH} fill="rgba(255,255,255,0.16)" stroke="rgba(143,224,172,0.85)" strokeWidth={2} />
         </svg>
         {order.map((p, i) => (
-          <Pin key={p.name} port={p} at={20 + i * 10} />
+          <Pin key={p.name} port={p} at={pinAt(p.name, i)} />
         ))}
       </div>
     </AbsoluteFill>
@@ -144,7 +152,7 @@ const Pin: React.FC<{ port: (typeof PORTS)[number]; at: number }> = ({ port, at 
           whiteSpace: "nowrap",
           fontFamily: FONT,
           fontWeight: office ? 700 : TYPE.bodyWeight,
-          fontSize: office ? 34 : 30,
+          fontSize: office ? 40 : 34,
           color: office ? C.white : C.soft,
           textShadow: "0 2px 10px rgba(0,0,0,0.6)",
           opacity: p,

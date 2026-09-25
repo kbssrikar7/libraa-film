@@ -15,25 +15,19 @@ general lines or with no line at all, never shown as a Libraa vessel.
 - public/stock/px-tanker-sunset-aerial.mp4 - https://www.pexels.com/video/an-oil-tanker-in-the-sea-4911815/ (Esteban M)
 - public/stock/px-tanker-bow-at-sea.mp4 - https://www.pexels.com/video/an-oil-tanker-traveling-across-the-sea-9654558/ (Zahid Nisar)
 - public/stock/px-ship-headon-drone.mp4 - https://www.pexels.com/video/drone-video-of-cargo-ships-on-a-river-15148911/ (Stephen Pierce)
-- public/stock/px-red-cargo-ship-aerial.mp4 - https://www.pexels.com/video/red-and-black-ship-sailing-3226072/ (Alexander Bobrov)
 - public/stock/px-ship-silhouette-sunset.mp4 - https://www.pexels.com/video/silhouette-of-a-tugboat-towing-a-cargo-ship-at-sunrise-13379259/ (Engin Akyurt)
 - public/stock/px-welding-sparks.mp4 - https://www.pexels.com/video/professional-welding-steel-6046358/ (K)
 - public/stock/px-sunset-ships-horizon.mp4 - https://www.pexels.com/video/sunset-over-sea-12944866/ (Ahmet Kurt)
 - public/stock/px-bulk-carrier-at-sea.mp4 - https://www.pexels.com/video/14888819/ - Ship management beat
 - public/stock/px-crew-mooring-line.mp4 - https://www.pexels.com/video/19539768/ - Crew management beat
 - public/stock/px-offshore-rig-sunset.mp4 - https://www.pexels.com/video/dramatic-offshore-oil-rig-at-sunset-34294261/ (Dio Hasbi Saniskoro) - Offshore services beat
+- public/stock/px-toolbox-talk.mp4 - https://www.pexels.com/video/safety-briefing-for-construction-team-outdoors-36034181/ (Mh Tonmoy) - safety line
 
 ## Stock footage - Pixabay Content License (free for commercial use, no attribution required)
 Found through the Pixabay API. Every clip tagged "ai generated" was
 rejected (the film uses real footage only).
 - public/stock/pb-shipyard-ship-dusk.mp4   - https://pixabay.com/videos/id-312839/ (TatianaTz) - new-build supervision beat
 - public/stock/pb-shipyard-cranes-dusk.mp4 - https://pixabay.com/videos/id-233388/ (TatianaTz) - behind the certificates
-
-## Stock footage - Mixkit Stock Video Free License (free for commercial use, no attribution required)
-Each clip checked on its page for the free licence (not "Restricted,
-personal use only"), downloaded at 1080p, trimmed to 12 s and re-encoded.
-Used only on general lines or with no line at all, never as a Libraa vessel.
-- public/stock/mk-welder-safety.mp4        - https://mixkit.co/free-stock-video/welder-working-at-a-construction-4125/
 
 ## Music - Pixabay Content License (free for commercial use, no attribution required)
 - "Cinematic Open Future" by RoyaltyFreeMusicStudio

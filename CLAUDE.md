@@ -128,6 +128,32 @@ footage.**
 16. The spotlight was merged into the fleet scene so the fleet line starts
     on ANTIGOON (client: the words belong with the ships they introduce).
     The fleet now opens ANTIGOON, KANGO, SEJAL, JHANSI RANI, then the rest.
+17. External review of v14 (frame and audio analysis) - acted on:
+    - BUG fixed: the first frame of every hard-cut scene was solid navy
+      (Film.tsx faded non-dissolve scenes in over 1 frame). Verified by
+      rendering and measuring the first frame of every scene.
+    - Certificates -> clients is now a 12-frame dissolve straight into
+      cream (no navy stage); certificate text clears first.
+    - Tails trimmed where a scene sat still after its line (logo 6.3 ->
+      4.5 s, map, certificates, clients 13.5 -> 9.9 s); time moved to the
+      opening, KOUNDINYA and the end card.
+    - Opening cut to three shots. KOUNDINYA now a clean hard cut at full
+      brightness (it used to open from dark).
+    - Map: each office pin appears as it is named (measured `marks`), the
+      other ports on "locations"; labels larger.
+    - Safety line shows a real toolbox talk (stock briefing clip).
+    - One grade across the fleet: scripts/tone.py writes
+      src/photo-tone.json (per-photo brightness/contrast, halfway to a
+      common level); Photo takes `tone`.
+    - Bigger text for large screens: SAFE bottom 180, cert names, heading
+      "Four certifications & licences", client logos, libraa.com/email.
+    - master.mjs takes BROWSER_EXECUTABLE for cloud sessions.
+    Deliberately NOT done (conflicts with client rules/requests): ambient
+    sound design (no SFX rule), featured three-client screen (client asked
+    to remove it), a fleet title/count (no-count rule), replacing service
+    stock with Libraa ships (client asked for stock there). Open: KOUNDINYA
+    "Kakinada" wording needs the company's approval; weakest fleet photos
+    and real Libraa service footage can only come from the client.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

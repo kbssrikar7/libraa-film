@@ -22,8 +22,9 @@ export const Companies: React.FC<P> = ({ d }) => {
   return (
     <AbsoluteFill style={{ background: C.navy, overflow: "hidden" }}>
       <Clip src="stock/pb-shipyard-cranes-dusk.mp4" startFrom={15} rate={0.8} grade={0.68} zoom={[1.04, 1.0]} to={d} />
-      {/* content clears before the clients scene washes in - no text-on-text */}
-      <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 9, d - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
+      {/* text clears before the cream clients wall starts to dissolve in (12
+          frames before the cut) - no text-on-text */}
+      <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 22, d - 12], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
         <AbsoluteFill style={{ padding: `0 ${SAFE.x}px`, flexDirection: "row", alignItems: "center", gap: 90 }}>
           <div style={{ width: 780 }}>
             <Rise at={0}>
@@ -40,7 +41,7 @@ export const Companies: React.FC<P> = ({ d }) => {
           </div>
           <div style={{ flex: 1 }}>
             <Rise at={2}>
-              <Sub color={C.mint}>Certified and licensed</Sub>
+              <Sub color={C.mint}>{cap(numberWord(CERTIFICATIONS.length))} certifications & licences</Sub>
             </Rise>
             <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 30 }}>
               {CERTIFICATIONS.map((c, i) => (
@@ -63,7 +64,7 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
         <Img src={staticFile(seal)} style={{ width: 70, height: 70, objectFit: "contain" }} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ ...DS, fontSize: px(56), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
+        <div style={{ ...DS, fontSize: px(64), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
         <div style={{ whiteSpace: "nowrap" }}><Sub size={28}>{org.replace(" Pvt Ltd", "")}</Sub></div>
       </div>
     </div>
@@ -75,8 +76,8 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
 // square emblem and a long wordmark each cover roughly the same area, so no
 // logo reads as much bigger or smaller than its neighbours.
 const trimmed = (logo: string) => logo.replace(/^\/photos\/logos\//, "logos-trim/");
-const LOGO_AREA = 4200; // px^2 at 1080p, per tile
-function logoSize(src: string, area = LOGO_AREA, maxH = 72, maxW = 148) {
+const LOGO_AREA = 5600; // px^2 at 1080p, per tile - sized for a large TV
+function logoSize(src: string, area = LOGO_AREA, maxH = 84, maxW = 160) {
   const [w, h] = (LOGO_DIMS as Record<string, number[]>)[src] ?? [2, 1];
   const aspect = w / h;
   let height = Math.sqrt(area / aspect);
@@ -86,15 +87,14 @@ function logoSize(src: string, area = LOGO_AREA, maxH = 72, maxW = 148) {
   return { width, height };
 }
 
-// Scene 9 - clients: the scene washes from navy to warm cream and the
+// Scene 9 - clients: the cream wall dissolves in over the certificates (see
+// DISSOLVE in Film.tsx) and the
 // full client wall builds, Indian Navy first. No separate featured screen
 // (client) and no client count.
 export const Clients: React.FC<P> = () => {
   const f = useCurrentFrame();
-  const wash = interpolate(f, [0, 8], [0, 1], { extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
   return (
-    <AbsoluteFill style={{ background: C.navy }}>
-      <AbsoluteFill style={{ background: C.paper, opacity: wash }} />
+    <AbsoluteFill style={{ background: C.paper }}>
       <AbsoluteFill style={{ padding: `100px 0 0 ${SAFE.x}px` }}>
         <Rise at={6} dur={20}>
           <Headline size={120} style={{ color: C.navy, textShadow: "none" }}>
@@ -118,7 +118,7 @@ export const Clients: React.FC<P> = () => {
 
 const GRID_COLS = 9;
 const TILE_W = 180;
-const TILE_H = 104;
+const TILE_H = 116;
 // grouped by sector (navy/government/ports, energy/industry, shipping) so
 // similar organisations sit together
 const LEAD = ["Indian Navy", "Adani Ports & SEZ", "JSW Group"];
@@ -178,8 +178,8 @@ export const End: React.FC<P> = ({ d }) => {
         <div style={{ ...DS, fontSize: px(130), lineHeight: 1, letterSpacing: `${track}em`, color: C.white, paddingLeft: `${track}em` }}>LIBRAA GROUP</div>
         {/* the approved closing tagline, word for word */}
         <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 40, letterSpacing: "0.02em", color: C.mint }}>Ship Management, Crew Management and Marine Services.</div>
-        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: TYPE.bodyWeight, fontSize: 60, color: C.white, letterSpacing: "0.03em" }}>libraa.com</div>
-        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 44, color: C.soft, letterSpacing: "0.03em" }}>{COMPANY.email}</div>
+        <div style={{ marginTop: 30, fontFamily: FONT, fontWeight: TYPE.bodyWeight, fontSize: 80, color: C.white, letterSpacing: "0.02em" }}>libraa.com</div>
+        <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 58, color: C.soft, letterSpacing: "0.02em" }}>{COMPANY.email}</div>
       </AbsoluteFill>
     </AbsoluteFill>
   );

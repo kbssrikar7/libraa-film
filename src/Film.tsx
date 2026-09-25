@@ -24,11 +24,17 @@ const SCENE: Record<SceneKind, React.FC<{ d: number; at: number; scene: TimedSce
 // Only the brand reveal and the closing sea dissolve (briefly); everything
 // else - including into and out of KOUNDINYA - is a clean cut on the beat.
 // Outgoing titles clear before a cut (see Hero/Field), so text never overlaps.
-const DISSOLVE: Partial<Record<SceneKind, number>> = { brand: 22, end: 12 };
+// clients also dissolve: navy footage straight into the cream wall, no
+// empty frame between them
+const DISSOLVE: Partial<Record<SceneKind, number>> = { brand: 22, clients: 12, end: 12 };
 
+// dur 0 is a hard cut: the scene is fully visible from its first frame
+// (a 1-frame fade used to leave that frame transparent - a navy flash at
+// every cut)
 const Dissolve: React.FC<{ dur: number; children: React.ReactNode }> = ({ dur, children }) => {
   const f = useCurrentFrame();
-  return <AbsoluteFill style={{ opacity: interpolate(f, [0, dur], [0, 1], { extrapolateRight: "clamp" }) }}>{children}</AbsoluteFill>;
+  const o = dur > 0 ? interpolate(f, [0, dur], [0, 1], { extrapolateRight: "clamp" }) : 1;
+  return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
 };
 
 function musicVolume(scenes: TimedScene[]) {
@@ -59,7 +65,7 @@ export const Film: React.FC = () => {
         const from = Math.max(0, s.from - dis);
         return (
           <Sequence key={s.id} from={from} durationInFrames={s.durationInFrames + (s.from - from)} name={s.id}>
-            <Dissolve dur={dis || 1}>
+            <Dissolve dur={dis}>
               <Comp d={s.durationInFrames + (s.from - from)} at={from} scene={s} />
             </Dissolve>
           </Sequence>

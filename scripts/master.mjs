@@ -13,9 +13,12 @@ const AUDIO = "out/.master-audio.wav";
 const SECONDS = "120";
 
 const run = (cmd, args) => execFileSync(cmd, args, { stdio: "inherit" });
+// cloud sessions can't download Remotion's Chrome - point at a local one:
+//   BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell npm run render
+const browser = process.env.BROWSER_EXECUTABLE ? [`--browser-executable=${process.env.BROWSER_EXECUTABLE}`] : [];
 
-run("npx", ["remotion", "render", "LibraaFilm", VIDEO, "--codec=h264", "--crf=18", "--muted", "--log=error"]);
-run("npx", ["remotion", "render", "LibraaFilm", AUDIO, "--codec=wav", "--log=error"]);
+run("npx", ["remotion", "render", "LibraaFilm", VIDEO, "--codec=h264", "--crf=18", "--muted", "--log=error", ...browser]);
+run("npx", ["remotion", "render", "LibraaFilm", AUDIO, "--codec=wav", "--log=error", ...browser]);
 run("ffmpeg", [
   "-v", "error", "-y",
   "-i", VIDEO, "-i", AUDIO,

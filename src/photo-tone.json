@@ -1,0 +1,66 @@
+{
+ "koundinya": {
+  "brightness": 0.978,
+  "contrast": 1.2
+ },
+ "jhansi-rani": {
+  "brightness": 0.945,
+  "contrast": 0.97
+ },
+ "bitam": {
+  "brightness": 1.038,
+  "contrast": 0.807
+ },
+ "rajendra-prasad": {
+  "brightness": 1.046,
+  "contrast": 1.177
+ },
+ "antigoon": {
+  "brightness": 1.066,
+  "contrast": 1.2
+ },
+ "rani-gaidinliu": {
+  "brightness": 1.026,
+  "contrast": 1.2
+ },
+ "awala": {
+  "brightness": 1.033,
+  "contrast": 0.919
+ },
+ "kango": {
+  "brightness": 1.14,
+  "contrast": 0.96
+ },
+ "tuticorin": {
+  "brightness": 1.069,
+  "contrast": 0.92
+ },
+ "sejal": {
+  "brightness": 0.882,
+  "contrast": 1.096
+ },
+ "sejal-2": {
+  "brightness": 0.892,
+  "contrast": 1.006
+ },
+ "capstar-1": {
+  "brightness": 0.986,
+  "contrast": 0.881
+ },
+ "kalindi": {
+  "brightness": 0.986,
+  "contrast": 0.865
+ },
+ "ganesh": {
+  "brightness": 0.971,
+  "contrast": 1.164
+ },
+ "sanvi-69": {
+  "brightness": 0.912,
+  "contrast": 1.082
+ },
+ "supreme-diamond": {
+  "brightness": 1.066,
+  "contrast": 0.825
+ }
+}

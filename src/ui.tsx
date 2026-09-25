@@ -182,7 +182,9 @@ export const Photo: React.FC<{
   pan?: [number, number]; // horizontal drift in %, start -> end
   position?: string;
   grade?: number; // 0..1 navy grade for text legibility
-}> = ({ src, from = 0, to, zoom = [1.04, 1.14], pan = [0, 0], position = "50% 50%", grade = 0.25 }) => {
+  /** per-photo levels from src/photo-tone.json, so a set of photos matches */
+  tone?: { brightness: number; contrast: number };
+}> = ({ src, from = 0, to, zoom = [1.04, 1.14], pan = [0, 0], position = "50% 50%", grade = 0.25, tone }) => {
   const f = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const end = to ?? durationInFrames;
@@ -200,7 +202,7 @@ export const Photo: React.FC<{
           objectPosition: position,
           transform: `translateX(${x}%) scale(${s})`,
           // one shared grade so photos from different phones/days read as one film
-          filter: "contrast(1.06) saturate(0.88) brightness(0.97)",
+          filter: `contrast(${(1.06 * (tone?.contrast ?? 1)).toFixed(3)}) saturate(0.88) brightness(${(0.97 * (tone?.brightness ?? 1)).toFixed(3)})`,
         }}
       />
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(20,40,90,0.10), rgba(10,14,42,0.10))", mixBlendMode: "multiply" }} />
@@ -251,7 +253,8 @@ export const Scrim: React.FC<{ side?: "bottom" | "left" | "full"; strength?: num
 /** Title-safe margins at 1080p: every caption and title in the film sits on
  *  this grid (lower-left), so text lands in the same place shot after shot,
  *  the way an editor's lower-third template does. */
-export const SAFE = { x: 160, bottom: 140 };
+// bottom margin sized for large TVs, which can crop the frame edge
+export const SAFE = { x: 160, bottom: 180 };
 
 /** Text fades in with a small lift and fades out again before a cut
  *  (`out`, in frames). Nothing else: no blur, no mask, no bounce - the

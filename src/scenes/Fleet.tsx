@@ -3,6 +3,9 @@ import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { ship, sitePhoto } from "../facts";
 import { TYPE, C, Clip, DS, FadeIn, FONT, LowerThird, Photo, px, Rise, SAFE, Scrim, useTrack, XF } from "../ui";
 import { beatCuts } from "./Work";
+import TONE from "../photo-tone.json";
+
+const tone = (id: string) => (TONE as Record<string, { brightness: number; contrast: number }>)[id];
 
 type P = { d: number; at: number };
 
@@ -40,7 +43,7 @@ export const Fleet: React.FC<P> = ({ d, at }) => {
         // the ships carry their names only
         return (
           <Sequence key={s.id} from={cuts[i]} durationInFrames={len}>
-            <Photo src={sitePhoto(s.photo)} to={len} zoom={i % 2 ? [1.08, 1.03] : [1.03, 1.08]} pan={i % 2 ? [1, -1] : [-1, 1]} position={POSITION[s.id]} grade={0.1} />
+            <Photo src={sitePhoto(s.photo)} to={len} zoom={i % 2 ? [1.08, 1.03] : [1.03, 1.08]} pan={i % 2 ? [1, -1] : [-1, 1]} position={POSITION[s.id]} grade={0.1} tone={tone(s.id)} />
             <Scrim side="bottom" strength={0.7} />
             <ShipName name={s.name} flag={facts ? `${s.flagName} · ${facts}` : s.flagName} out={last ? len - 16 : len - 8} />
           </Sequence>
@@ -66,13 +69,12 @@ const ShipName: React.FC<{ name: string; flag: string; out: number }> = ({ name,
 export const Hero: React.FC<P> = ({ d }) => {
   const k = ship("koundinya");
   const f = useCurrentFrame();
-  const lift = interpolate(f, [0, 40], [0.55, 0.12], { extrapolateRight: "clamp" }); // opens from dark
   // the title clears before the hard cut, so it never overlaps the next scene
   const textOut = interpolate(f, [d - 18, d - 6], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const track = useTrack(30, TYPE.tracking + 0.06, TYPE.tracking, 110); // the name settles into place
   return (
     <AbsoluteFill>
-      <Photo src={sitePhoto(k.photo)} to={d} zoom={[1.02, 1.2]} pan={[1.5, -2.5]} position="45% 55%" grade={lift} />
+      <Photo src={sitePhoto(k.photo)} tone={tone(k.id)} to={d} zoom={[1.02, 1.2]} pan={[1.5, -2.5]} position="45% 55%" grade={0.12} />
       <Scrim side="bottom" strength={0.85} />
       <AbsoluteFill style={{ justifyContent: "flex-end", padding: `0 ${SAFE.x}px ${SAFE.bottom}px`, opacity: textOut }}>
         <Rise at={30} dur={34}>
@@ -91,8 +93,9 @@ const FIELD: { src: string; text: string; position: string; clip?: boolean }[] =
   // captions as the website gives them (GALLERY in libraa-website data.ts)
   { src: "site/cameroon-port-team.webp", text: "Libraa's team at the port in Cameroon", position: "50% 40%" },
   { src: "site/cameroon-shipyard-team.webp", text: "Libraa's team at a shipyard in Cameroon", position: "50% 45%" },
-  // stock, on the general safety line only - a welder gearing up, no face
-  { src: "stock/mk-welder-safety.mp4", clip: true, text: "Every job starts with a toolbox talk", position: "50% 50%" },
+  // stock, on the general safety line only: a supervisor briefing a crew in
+  // hard hats - an actual toolbox talk, not just someone in safety gear
+  { src: "stock/px-toolbox-talk.mp4", clip: true, text: "Every job starts with a toolbox talk", position: "50% 50%" },
   { src: sitePhoto(ship("bitam").photo), text: "Every job starts with a toolbox talk", position: "50% 72%" },
 ];
 
