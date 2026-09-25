@@ -66,7 +66,11 @@ for (let i = 0; i < spoken.length; i++) {
   const name = `${s.id}-${hash}.mp3`;
   const raw = join(RAW_DIR, name);
   const file = join(VOICE_DIR, name);
-  if (FORCE || !existsSync(raw)) {
+  // a finished (normalised) clip for this exact text is as good as the raw
+  // cache - voice-raw/ isn't in git, so a fresh clone would otherwise
+  // re-record every line and spend credits on unchanged text
+  const done = !FORCE && existsSync(file);
+  if (!done && (FORCE || !existsSync(raw))) {
     const res = await fetch("https://api.sarvam.ai/text-to-speech", {
       method: "POST",
       headers: { "api-subscription-key": key, "Content-Type": "application/json" },
@@ -82,7 +86,7 @@ for (let i = 0; i < spoken.length; i++) {
     chars += text.length;
     console.log(`  generated  ${s.id.padEnd(10)} ${seconds(raw).toFixed(2)}s`);
   } else {
-    console.log(`  reused     ${s.id.padEnd(10)} ${seconds(raw).toFixed(2)}s`);
+    console.log(`  reused     ${s.id.padEnd(10)} ${seconds(done ? file : raw).toFixed(2)}s`);
   }
   if (FORCE || !existsSync(file)) {
     execFileSync("ffmpeg", ["-v", "error", "-y", "-i", raw, "-af", `loudnorm=I=${TARGET_LUFS}:TP=-1.5:LRA=11`, "-ar", "44100", "-b:a", "192k", file]);

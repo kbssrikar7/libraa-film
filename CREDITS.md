@@ -3,7 +3,8 @@
 ## Libraa's own material
 - Ship, team and yard photos: libraa-website/public/photos (client-supplied)
 - Vessel launch clip (public/libraa/vessel-launch.mp4): cut from the client's
-  WhatsApp video of 2026-09-12, 1:42-1:53
+  WhatsApp video of 2026-09-12, 1:42-1:53 - no longer used (client found it
+  vague), kept as client material
 - Facts, names and numbers: libraa-website/src/data.ts
 
 ## Stock footage - Pexels License (free for commercial use, no attribution required)
@@ -16,12 +17,17 @@ general lines or with no line at all, never shown as a Libraa vessel.
 - public/stock/px-ship-headon-drone.mp4 - https://www.pexels.com/video/drone-video-of-cargo-ships-on-a-river-15148911/ (Stephen Pierce)
 - public/stock/px-red-cargo-ship-aerial.mp4 - https://www.pexels.com/video/red-and-black-ship-sailing-3226072/ (Alexander Bobrov)
 - public/stock/px-ship-silhouette-sunset.mp4 - https://www.pexels.com/video/silhouette-of-a-tugboat-towing-a-cargo-ship-at-sunrise-13379259/ (Engin Akyurt)
-- public/stock/px-ship-port-night.mp4 - https://www.pexels.com/video/aerial-view-of-cargo-ship-at-night-in-busy-port-35907892/ (willy one)
 - public/stock/px-mooring-rope-waves.mp4 - https://www.pexels.com/video/a-rope-is-tied-to-a-boat-in-the-water-18120390/ (Seven Seil)
 - public/stock/px-tug-wake-aerial.mp4 - https://www.pexels.com/video/aerial-view-of-tugboat-navigating-river-course-36839328/ (willy one)
 - public/stock/px-welding-sparks.mp4 - https://www.pexels.com/video/professional-welding-steel-6046358/ (K)
 - public/stock/px-sunset-ships-horizon.mp4 - https://www.pexels.com/video/sunset-over-sea-12944866/ (Ahmet Kurt)
 - public/stock/px-ship-quay-night.mp4 - https://www.pexels.com/video/nighttime-cargo-ship-at-port-aerial-view-30086734/ (Reginaldo Fiuza)
+
+## Stock footage - Pixabay Content License (free for commercial use, no attribution required)
+Found through the Pixabay API. Every clip tagged "ai generated" was
+rejected (the film uses real footage only).
+- public/stock/pb-shipyard-ship-dusk.mp4   - https://pixabay.com/videos/id-312839/ (TatianaTz) - new-build supervision beat
+- public/stock/pb-shipyard-cranes-dusk.mp4 - https://pixabay.com/videos/id-233388/ (TatianaTz) - behind the certificates
 
 ## Stock footage - Mixkit Stock Video Free License (free for commercial use, no attribution required)
 Each clip checked on its page for the free licence (not "Restricted,

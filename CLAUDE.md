@@ -103,6 +103,19 @@ footage.**
     "jakarta" in src/ui.tsx). Stock replaced with Pexels footage via the
     API (see CREDITS.md): opening reel, brand, interlude, certificates,
     end card. Unused stock files removed from public/stock.
+14. Pixabay footage added (API; "ai generated" tags rejected): a shipyard
+    at dusk replaces the vague vessel-launch clip on "New-build
+    supervision", and a dusk shipyard sits behind the certificates.
+    Voice re-recorded with anand for four lines: map (no office list -
+    "Our teams work out of ports along both of India's coasts, and far
+    beyond them."), fleet (no count), clients (Indian Navy, Adani Ports,
+    JSW) and end (approved tagline). Transcribed back with saarika to
+    confirm every word. Mix measures -18.6 LUFS integrated, -3.5 dBTP.
+    scripts/voice.mjs now reuses finished clips in public/voice, so a
+    fresh clone only records changed lines. Node needs
+    NODE_USE_ENV_PROXY=1 to reach Sarvam through the session proxy, and
+    ffmpeg/ffprobe from node_modules/@remotion/compositor-linux-x64-gnu
+    on PATH.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

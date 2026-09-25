@@ -24,14 +24,17 @@ export function beatCuts(at: number, d: number, n: number, weights?: number[]): 
   return cuts;
 }
 
-// Scene 3 - what Libraa does, one service per beat, all authentic material.
+// Scene 3 - what Libraa does, one service per beat: Libraa's own photos,
+// plus one stock shipyard clip for new-build supervision.
 // Labels follow the narration's word order, and each beat cuts in just ahead
 // of the words that name it (see `cues` in script.ts). KANGO on the slipway
 // covers repairs, so the BITAM crew photo appears only once, in the safety scene.
 const SERVICE_BEATS: { label: string; media: { photo?: string; clip?: string }; position?: string }[] = [
   { label: "Ship management", media: { photo: sitePhoto(ship("antigoon").photo) }, position: "50% 60%" },
   { label: "Surveys & repairs", media: { photo: sitePhoto(ship("kango").photo) }, position: "50% 45%" },
-  { label: "New-build supervision", media: { clip: "libraa/vessel-launch.mp4" } },
+  // stock (Pixabay): a ship alongside a shipyard quay at dusk - supervision
+  // happens in shipyards, so it illustrates the service without claiming a yard
+  { label: "New-build supervision", media: { clip: "stock/pb-shipyard-ship-dusk.mp4" } },
   { label: "Offshore services", media: { photo: sitePhoto(ship("sejal").photo) } },
   { label: "Crew management", media: { photo: sitePhoto(ship("jhansi-rani").photo) }, position: "50% 55%" },
 ];

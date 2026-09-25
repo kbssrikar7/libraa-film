@@ -21,7 +21,7 @@ export const Companies: React.FC<P> = ({ d }) => {
   const certsAt = 26;
   return (
     <AbsoluteFill style={{ background: C.navy, overflow: "hidden" }}>
-      <Clip src="stock/px-ship-port-night.mp4" startFrom={30} rate={0.7} grade={0.72} zoom={[1.04, 1.0]} to={d} />
+      <Clip src="stock/pb-shipyard-cranes-dusk.mp4" startFrom={15} rate={0.8} grade={0.68} zoom={[1.04, 1.0]} to={d} />
       {/* content clears before the clients scene washes in - no text-on-text */}
       <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 9, d - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
         <AbsoluteFill style={{ padding: `0 ${SAFE.x}px`, flexDirection: "row", alignItems: "center", gap: 90 }}>

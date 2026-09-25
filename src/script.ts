@@ -22,7 +22,6 @@ import {
   COMPANY,
   COMPANY_COUNT,
   FLAGS_ADJ,
-  LOCATION_COUNT,
   numberWord,
 } from "./facts";
 
@@ -110,7 +109,9 @@ export const SCENES: Scene[] = [
   {
     id: "map",
     kind: "map",
-    line: `From our head office in Chennai and offices in Kakinada and Port Blair, we work across ${numberWord(LOCATION_COUNT)} locations around India's coasts.`,
+    // no office list in the voice (client rule: don't box the company into
+    // three cities) - the map itself names every office and port
+    line: "Our teams work out of ports along both of India's coasts, and far beyond them.",
     lead: 0.6,
     tail: 2.2,
     flex: 0.2,
@@ -170,7 +171,8 @@ export const SCENES: Scene[] = [
   {
     id: "end",
     kind: "end",
-    line: "Libraa Group. Shipbuilding, ship management and marine services.",
+    // the approved closing line, word for word
+    line: "Libraa Group. Ship Management, Crew Management and Marine Services.",
     lead: 1.0,
     tail: 3.8,
     flex: 0,
