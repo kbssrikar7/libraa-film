@@ -184,6 +184,8 @@ therefore out of date.
 - Show work locally first; the user approves before anything is published.
 - Raise inconsistencies immediately when you spot them, not at the end.
 - Writing style: never use the em dash character; use a plain hyphen.
+- **Send previews at half size** (`--scale=0.5`). Only render the full
+  1080p master (`npm run render`, 20 Mbps) once the user approves a cut.
 
 ## Next steps (in order)
 
