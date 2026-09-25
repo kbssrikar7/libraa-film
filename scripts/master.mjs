@@ -1,4 +1,6 @@
-// Renders the delivery master: out/libraa-group-film.mp4
+// Renders the delivery master: out/libraa-group-film.mp4 (1080p, H.264 at a
+// fixed 20 Mbps - a large office TV / booth screen needs the headroom; the
+// film has long calm shots a quality-based encode would starve)
 //
 // Picture and sound are rendered separately (sound as uncompressed WAV), then
 // muxed with the audio cut to exactly the film length - Remotion's own AAC
@@ -17,7 +19,7 @@ const run = (cmd, args) => execFileSync(cmd, args, { stdio: "inherit" });
 //   BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell npm run render
 const browser = process.env.BROWSER_EXECUTABLE ? [`--browser-executable=${process.env.BROWSER_EXECUTABLE}`] : [];
 
-run("npx", ["remotion", "render", "LibraaFilm", VIDEO, "--codec=h264", "--crf=18", "--muted", "--log=error", ...browser]);
+run("npx", ["remotion", "render", "LibraaFilm", VIDEO, "--codec=h264", "--video-bitrate=20M", "--x264-preset=slow", "--muted", "--log=error", ...browser]);
 run("npx", ["remotion", "render", "LibraaFilm", AUDIO, "--codec=wav", "--log=error", ...browser]);
 run("ffmpeg", [
   "-v", "error", "-y",
