@@ -69,13 +69,14 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
   );
 };
 
-// Interlude - no voice. Ports at work, cut hard on the beat, between the
-// map and the fleet. Stock on no line at all, so it can't be read as a
-// Libraa vessel or yard.
+// Interlude - no voice. The work around ships, cut hard on the beat: a ship
+// at a quay at night, welding sparks, a mooring line under strain, a tug's wake. Stock
+// on no line at all, so it can't be read as a Libraa vessel or yard.
 const PORT_REEL: Shot[] = [
-  { src: "stock/mk-port-cranes-ship.mp4", from: 0, zoom: [1.06, 1.0] },
-  { src: "stock/mk-container-port-aerial.mp4", from: 1, zoom: [1.0, 1.05] },
-  { src: "stock/mk-ships-in-haze.mp4", from: 2, zoom: [1.02, 1.07] },
+  { src: "stock/px-ship-quay-night.mp4", from: 0, zoom: [1.06, 1.0] },
+  { src: "stock/px-welding-sparks.mp4", from: 1, zoom: [1.0, 1.05] },
+  { src: "stock/px-mooring-rope-waves.mp4", from: 0, zoom: [1.02, 1.07] },
+  { src: "stock/px-tug-wake-aerial.mp4", from: 1, zoom: [1.0, 1.04] },
 ];
 
 export const Interlude: React.FC<P> = ({ d, at }) => <Reel shots={PORT_REEL} cuts={beatCuts(at, d, PORT_REEL.length)} xf={0} />;

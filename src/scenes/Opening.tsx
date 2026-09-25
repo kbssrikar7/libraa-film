@@ -2,23 +2,25 @@ import React from "react";
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { COMPANY } from "../facts";
 import { beatCuts } from "./Work";
-import { C, Clip, DS, FONT, px, Reel, Rise, type Shot, useIn, useTrack } from "../ui";
+import { TYPE, C, Clip, DS, FONT, px, Reel, Rise, type Shot, useIn, useTrack } from "../ui";
 
 type P = { d: number };
 
-// Scene 1 - a cold open on moving footage, cut on the music: a low flight
-// over the sea at sunrise, a tanker at its berth from the air, then cranes
-// working a port. Stock (Mixkit free licence) on a general line - "a
-// voyage begins long before a vessel leaves port" - never shown as Libraa's.
+// Scene 1 - a cold open on moving footage, cut on the music: a tanker at
+// sunset from the air, the view over a bow at sea, a cargo ship from above,
+// then a ship coming head-on at the drone. Stock (Pexels licence) on a
+// general line - "a voyage begins long before a vessel leaves port" -
+// never shown as a Libraa vessel.
 const OPEN: Shot[] = [
-  { src: "stock/mk-sunrise-sea-flyover.mp4", from: 0, zoom: [1.0, 1.04] },
-  { src: "stock/mk-tanker-berth-aerial.mp4", from: 1, zoom: [1.04, 1.0] },
-  { src: "stock/mk-port-cranes-wide.mp4", from: 2, zoom: [1.0, 1.05] },
+  { src: "stock/px-tanker-sunset-aerial.mp4", from: 0, zoom: [1.0, 1.04] },
+  { src: "stock/px-tanker-bow-at-sea.mp4", from: 1, zoom: [1.04, 1.0] },
+  { src: "stock/px-red-cargo-ship-aerial.mp4", from: 1, zoom: [1.0, 1.05] },
+  { src: "stock/px-ship-headon-drone.mp4", from: 2, zoom: [1.02, 1.06] },
 ];
 
 export const Open: React.FC<P & { at: number }> = ({ d, at }) => {
   const f = useCurrentFrame();
-  const cuts = beatCuts(at, d, OPEN.length, [1.3, 1, 1]);
+  const cuts = beatCuts(at, d, OPEN.length, [1.4, 1, 1, 1.2]);
   const fadeIn = interpolate(f, [0, 24], [0, 1], { extrapolateRight: "clamp" });
   // ease down toward navy before the logo, so the brand dissolve never flickers
   const dusk = interpolate(f, [d - 30, d], [0, 0.55], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -33,10 +35,10 @@ export const Open: React.FC<P & { at: number }> = ({ d, at }) => {
 // Scene 2 - the brand lands over dark water: logo, name, "Since 2009".
 export const Brand: React.FC<P> = ({ d }) => {
   const logo = useIn(4, 26);
-  const track = useTrack(14, 0.3, 0.1, 90); // the name settles as it lands
+  const track = useTrack(14, TYPE.tracking + 0.06, TYPE.tracking, 90); // the name settles as it lands
   return (
     <AbsoluteFill>
-      <Clip src="stock/mk-sea-flyover-dawn.mp4" startFrom={60} rate={0.6} grade={0.5} zoom={[1.05, 1.0]} to={d} />
+      <Clip src="stock/px-ship-silhouette-sunset.mp4" startFrom={30} rate={0.7} grade={0.45} zoom={[1.05, 1.0]} to={d} />
       <AbsoluteFill style={{ background: "radial-gradient(60% 60% at 50% 48%, rgba(10,14,42,0.2), rgba(10,14,42,0.75))" }} />
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 34 }}>
         <div

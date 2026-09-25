@@ -21,7 +21,7 @@ export const Companies: React.FC<P> = ({ d }) => {
   const certsAt = 26;
   return (
     <AbsoluteFill style={{ background: C.navy, overflow: "hidden" }}>
-      <Clip src="stock/mk-port-cranes-wide.mp4" startFrom={90} rate={0.7} grade={0.78} zoom={[1.04, 1.0]} to={d} />
+      <Clip src="stock/px-ship-port-night.mp4" startFrom={30} rate={0.7} grade={0.72} zoom={[1.04, 1.0]} to={d} />
       {/* content clears before the clients scene washes in - no text-on-text */}
       <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 50%", opacity: interpolate(f, [d - 9, d - 1], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) }}>
         <AbsoluteFill style={{ padding: `0 ${SAFE.x}px`, flexDirection: "row", alignItems: "center", gap: 90 }}>
@@ -32,8 +32,8 @@ export const Companies: React.FC<P> = ({ d }) => {
             <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 34 }}>
               {GROUP_COMPANIES.map((c, i) => (
                 <Rise key={c.name} at={6 + i * 7}>
-                  <div style={{ ...DS, fontSize: px(50), color: C.white, lineHeight: 1.05, whiteSpace: "nowrap" }}>{c.name}</div>
-                  <Sub size={30}>{c.role}</Sub>
+                  <div style={{ ...DS, fontSize: px(64), color: C.white, lineHeight: 1.05, whiteSpace: "nowrap" }}>{c.name}</div>
+                  <Sub size={32}>{c.role}</Sub>
                 </Rise>
               ))}
             </div>
@@ -42,7 +42,7 @@ export const Companies: React.FC<P> = ({ d }) => {
             <Rise at={2}>
               <Sub color={C.mint}>Certified and licensed</Sub>
             </Rise>
-            <div style={{ marginTop: 36, display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: 50, rowGap: 44 }}>
+            <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 30 }}>
               {CERTIFICATIONS.map((c, i) => (
                 <Seal key={c.number} at={certsAt + i * 10} seal={sitePhoto(c.seal)} label={SHORT[c.standard] ?? c.standard} org={c.org} />
               ))}
@@ -63,8 +63,8 @@ const Seal: React.FC<{ at: number; seal: string; label: string; org: string }> =
         <Img src={staticFile(seal)} style={{ width: 70, height: 70, objectFit: "contain" }} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ ...DS, fontSize: px(44), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
-        <div style={{ whiteSpace: "nowrap" }}><Sub size={26}>{org.replace(" Pvt Ltd", "")}</Sub></div>
+        <div style={{ ...DS, fontSize: px(56), color: C.white, whiteSpace: "nowrap", lineHeight: 1.05 }}>{label}</div>
+        <div style={{ whiteSpace: "nowrap" }}><Sub size={28}>{org.replace(" Pvt Ltd", "")}</Sub></div>
       </div>
     </div>
   </Rise>
@@ -152,12 +152,12 @@ export const End: React.FC<P> = ({ d }) => {
   const cardAt = 40;
   const card = useIn(cardAt, 30);
   const out = interpolate(f, [d - 12, d], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const track = useTrack(cardAt, 0.28, 0.12, 120);
+  const track = useTrack(cardAt, TYPE.tracking + 0.06, TYPE.tracking, 120);
   return (
     <AbsoluteFill style={{ opacity: out, background: "#000" }}>
       {/* the clip is 12s; slow it just enough to cover the whole scene, so it
           never runs out and freezes on its last frame */}
-      <Clip src="stock/mk-sunset-sea.mp4" grade={0.2} zoom={[1.0, 1.06]} to={d} rate={Math.min(1, (12 * 30 - 6) / d)} />
+      <Clip src="stock/px-sunset-ships-horizon.mp4" grade={0.2} zoom={[1.0, 1.06]} to={d} rate={Math.min(1, (12 * 30 - 6) / d)} />
       {/* lighter overlay so the moving sea stays visible behind the card, and a
           slow drift on the card itself - the long booth hold never goes still */}
       <AbsoluteFill style={{ background: `rgba(10,14,42,${0.25 + 0.42 * card})` }} />

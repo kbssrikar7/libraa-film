@@ -48,6 +48,19 @@ type TypeOption = {
 };
 
 export const TYPE_OPTIONS: Record<string, TypeOption> = {
+  jakarta: {
+    // Plus Jakarta Sans, the website's own face, set the way the site sets
+    // its headings: semibold, tight tracking (-0.02em), sentence case.
+    label: "Plus Jakarta Sans (website)",
+    faces: [{ family: "Plus Jakarta Sans", file: "plus-jakarta-sans", weights: [400, 500, 600, 700] }],
+    display: "'Plus Jakarta Sans'",
+    displayWeight: 600,
+    tracking: -0.02,
+    body: "'Plus Jakarta Sans'",
+    bodyWeight: 500,
+    scale: 0.78,
+    upper: false,
+  },
   cmu: {
     // Computer Modern (CMU Serif), the client's pick: classic roman titles,
     // set in its regular weight - the bold cut is heavy at display sizes
@@ -126,7 +139,7 @@ export const TYPE_OPTIONS: Record<string, TypeOption> = {
   },
 };
 
-const TYPE_OPTION = "cmu";
+const TYPE_OPTION = "jakarta";
 const chosen = String((getInputProps() as { type?: string }).type ?? TYPE_OPTION);
 export const TYPE = TYPE_OPTIONS[chosen] ?? TYPE_OPTIONS[TYPE_OPTION];
 

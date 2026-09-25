@@ -7,25 +7,27 @@
 - Facts, names and numbers: libraa-website/src/data.ts
 
 ## Stock footage - Pexels License (free for commercial use, no attribution required)
-Used only as atmosphere, never presented as a Libraa vessel or operation.
-- public/stock/sunrise-sea.mp4 - https://www.pexels.com/video/34971572/
-- public/stock/bow-water.mp4   - https://www.pexels.com/video/33887296/
-- public/stock/dark-water.mp4  - https://www.pexels.com/video/2711110/
-- public/stock/dusk-sea.mp4    - https://www.pexels.com/video/8303108/
+Found through the Pexels API, downloaded at 1080p, trimmed to 12 s and
+re-encoded. Clips with readable company names (MSC, Maersk, Evergreen,
+Hapag-Lloyd, terminal signage) or landmarks were rejected. Used only on
+general lines or with no line at all, never shown as a Libraa vessel.
+- public/stock/px-tanker-sunset-aerial.mp4 - https://www.pexels.com/video/an-oil-tanker-in-the-sea-4911815/ (Esteban M)
+- public/stock/px-tanker-bow-at-sea.mp4 - https://www.pexels.com/video/an-oil-tanker-traveling-across-the-sea-9654558/ (Zahid Nisar)
+- public/stock/px-ship-headon-drone.mp4 - https://www.pexels.com/video/drone-video-of-cargo-ships-on-a-river-15148911/ (Stephen Pierce)
+- public/stock/px-red-cargo-ship-aerial.mp4 - https://www.pexels.com/video/red-and-black-ship-sailing-3226072/ (Alexander Bobrov)
+- public/stock/px-ship-silhouette-sunset.mp4 - https://www.pexels.com/video/silhouette-of-a-tugboat-towing-a-cargo-ship-at-sunrise-13379259/ (Engin Akyurt)
+- public/stock/px-ship-port-night.mp4 - https://www.pexels.com/video/aerial-view-of-cargo-ship-at-night-in-busy-port-35907892/ (willy one)
+- public/stock/px-mooring-rope-waves.mp4 - https://www.pexels.com/video/a-rope-is-tied-to-a-boat-in-the-water-18120390/ (Seven Seil)
+- public/stock/px-tug-wake-aerial.mp4 - https://www.pexels.com/video/aerial-view-of-tugboat-navigating-river-course-36839328/ (willy one)
+- public/stock/px-welding-sparks.mp4 - https://www.pexels.com/video/professional-welding-steel-6046358/ (K)
+- public/stock/px-sunset-ships-horizon.mp4 - https://www.pexels.com/video/sunset-over-sea-12944866/ (Ahmet Kurt)
+- public/stock/px-ship-quay-night.mp4 - https://www.pexels.com/video/nighttime-cargo-ship-at-port-aerial-view-30086734/ (Reginaldo Fiuza)
 
 ## Stock footage - Mixkit Stock Video Free License (free for commercial use, no attribution required)
 Each clip checked on its page for the free licence (not "Restricted,
 personal use only"), downloaded at 1080p, trimmed to 12 s and re-encoded.
 Used only on general lines or with no line at all, never as a Libraa vessel.
-- public/stock/mk-sunrise-sea-flyover.mp4  - https://mixkit.co/free-stock-video/sunset-in-an-aerial-shot-over-the-sea-44373/
-- public/stock/mk-sea-flyover-dawn.mp4     - https://mixkit.co/free-stock-video/flying-over-the-sea-during-sunset-44370/
-- public/stock/mk-tanker-berth-aerial.mp4  - https://mixkit.co/free-stock-video/empty-cargo-ship-waiting-at-the-port-4209/
-- public/stock/mk-port-cranes-wide.mp4     - https://mixkit.co/free-stock-video/cranes-working-on-unloading-dock-4012/
-- public/stock/mk-port-cranes-ship.mp4     - https://mixkit.co/free-stock-video/workers-moving-containers-from-a-cargo-ship-4450/
-- public/stock/mk-container-port-aerial.mp4 - https://mixkit.co/free-stock-video/top-view-of-tokyo-cargo-port-4445/
-- public/stock/mk-ships-in-haze.mp4        - https://mixkit.co/free-stock-video/ferry-boat-and-cargo-ships-4316/
 - public/stock/mk-welder-safety.mp4        - https://mixkit.co/free-stock-video/welder-working-at-a-construction-4125/
-- public/stock/mk-sunset-sea.mp4           - https://mixkit.co/free-stock-video/stunning-sunset-seen-from-the-sea-4119/
 
 ## Music - Pixabay Content License (free for commercial use, no attribution required)
 - "Cinematic Open Future" by RoyaltyFreeMusicStudio

@@ -98,6 +98,11 @@ footage.**
     behind the brand, a music-only port interlude before the fleet, a
     welder on the safety line, behind the certificates, and the end card.
     Fleet montage trimmed to 10 ships with no repeats.
+13. Client still unhappy with CMU: font is now Plus Jakarta Sans set the
+    way the website sets it (semibold, -0.02em, sentence case; option
+    "jakarta" in src/ui.tsx). Stock replaced with Pexels footage via the
+    API (see CREDITS.md): opening reel, brand, interlude, certificates,
+    end card. Unused stock files removed from public/stock.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,
@@ -150,8 +155,9 @@ therefore out of date.
 
 - Network is now open, but Pexels and Pixabay sit behind a Cloudflare
   bot check (403 "Just a moment") for curl and headless browsers - do not
-  try to get around it; use their free API keys (PEXELS_API_KEY /
-  PIXABAY_API_KEY as environment secrets) instead. Mixkit works directly:
+  try to get around it; use the Pexels API (needs PEXELS_API_KEY - ask
+  the user to store it as an environment secret, never commit it).
+  Reject clips showing shipping-line names or terminal signage. Mixkit works directly:
   check each clip page says free licence, not "personal use only";
   files are at https://assets.mixkit.co/videos/<id>/<id>-1080.mp4.
 - Environment secrets (SARVAM_API_KEY) only reach sessions started after
