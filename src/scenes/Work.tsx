@@ -87,9 +87,10 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
 const MAP_H = 940;
 const MAP_W = Math.round((MAP_H * 800) / 900);
 
-// The 3D version (default) plays a Blender render (scripts/blender/map3d.py)
-// and pins each port where Blender's camera tracking puts it, frame by
-// frame. The flat map is kept: --props='{"map3d":false}'.
+// The 3D version plays a Blender render (scripts/blender/map3d.py, encoded
+// by scripts/map3d.sh) and pins each port where Blender's camera tracking
+// puts it, frame by frame. Off until the client approves it:
+// --props='{"map3d":true}'.
 const MAP_3D = (getInputProps() as { map3d?: boolean }).map3d === true;
 
 export const MapScene: React.FC<P & { scene: TimedScene }> = (props) => (MAP_3D ? <MapScene3D {...props} /> : <MapScene2D {...props} />);
