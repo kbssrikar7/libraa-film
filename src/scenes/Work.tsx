@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
+import { AbsoluteFill, getInputProps, interpolate, OffthreadVideo, Sequence, staticFile, useCurrentFrame } from "remotion";
+import TRACK from "../map3d-track.json";
 import { INDIA_MAP_VIEWBOX, INDIA_PATH, LOCATION_COUNT, OFFICE_COUNT, OFFICES, PORTS, ship, sitePhoto } from "../facts";
 import { beatsBetween, type TimedScene } from "../timing";
 import { wordAt } from "../script";
@@ -79,47 +80,137 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
 
 // Scene 4 - where: every office and operating port appears in turn on the
 // website's own India map (Government of India boundary), each with its
-// name, placed with the website's own label offsets. The map holds still
-// (client: no zoom); only the pins and the background light move.
-// The map box has the SVG's own 800x900 aspect, so pin percentages land
-// exactly on the drawn coastline.
+// name. Flat version: the map holds still (client: no zoom), placed with
+// the website's own label offsets; the map box has the SVG's own 800x900
+// aspect, so pin percentages land exactly on the drawn coastline. 3D
+// version: the camera drifts sideways at a fixed distance (still no zoom).
 const MAP_H = 940;
 const MAP_W = Math.round((MAP_H * 800) / 900);
 
-export const MapScene: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
-  const f = useCurrentFrame();
-  const order = [...PORTS].sort((a, b) => (a.tag ? 0 : 1) - (b.tag ? 0 : 1)); // offices first
-  // each office lights up as the narrator names it, the other ports on
-  // "locations" - the map keeps changing for as long as the line runs
+// The 3D version (default) plays a Blender render (scripts/blender/map3d.py)
+// and pins each port where Blender's camera tracking puts it, frame by
+// frame. The flat map is kept: --props='{"map3d":false}'.
+const MAP_3D = (getInputProps() as { map3d?: boolean }).map3d === true;
+
+export const MapScene: React.FC<P & { scene: TimedScene }> = (props) => (MAP_3D ? <MapScene3D {...props} /> : <MapScene2D {...props} />);
+
+/** When each port lights up: offices as the narrator names them, the other
+ *  ports in turn from "locations". */
+function usePinTimes(scene: TimedScene, at: number) {
   const voiceAt = (scene.voice?.from ?? at) - at;
   const lineSec = (scene.voice?.durationInFrames ?? 0) / 30;
   const onWord = (w: string) => voiceAt + Math.round(wordAt(scene, w, lineSec) * 30) - 4;
-  const pinAt = (name: string, i: number) =>
-    scene.line?.includes(name) ? onWord(name) : onWord("locations") + (i - OFFICE_COUNT) * 8;
+  const order = [...PORTS].sort((a, b) => (a.tag ? 0 : 1) - (b.tag ? 0 : 1)); // offices first
+  return order.map((p, i) => ({
+    port: p,
+    at: scene.line?.includes(p.name) ? onWord(p.name) : onWord("locations") + (i - OFFICE_COUNT) * 8,
+  }));
+}
+
+const MapHeadline: React.FC = () => (
+  <AbsoluteFill style={{ justifyContent: "center", padding: `0 0 0 ${SAFE.x}px`, width: "50%" }}>
+    <Rise at={4}>
+      <Sub color={C.mint}>Where we work</Sub>
+    </Rise>
+    <Rise at={10} dur={22} style={{ marginTop: 28 }}>
+      <Headline size={120}>
+        {OFFICE_COUNT} offices
+        <br />
+        <span style={{ color: C.mint }}>{LOCATION_COUNT} locations</span>
+      </Headline>
+    </Rise>
+  </AbsoluteFill>
+);
+
+// label side for each port in the 3D shot: west-coast names sit inland so
+// nothing reaches toward the headline; Visakhapatnam and Kakinada, a few
+// pixels apart on screen, split above and below
+const LABEL_3D: Record<string, { dx: number; dy: number; align: "left" | "center" | "right" }> = {
+  Karwar: { dx: 22, dy: 0, align: "left" },
+  Kochi: { dx: 22, dy: 0, align: "left" },
+  Tuticorin: { dx: 0, dy: 40, align: "center" },
+  Chennai: { dx: 26, dy: 0, align: "left" },
+  Kakinada: { dx: 26, dy: 14, align: "left" },
+  Visakhapatnam: { dx: 22, dy: -22, align: "left" },
+  Paradeep: { dx: 22, dy: -6, align: "left" },
+  "Port Blair": { dx: -26, dy: 0, align: "right" },
+};
+
+const MapScene3D: React.FC<P & { scene: TimedScene }> = ({ at, scene }) => {
+  const f = useCurrentFrame();
+  const track = TRACK.ports as Record<string, number[][]>;
+  const k = Math.min(f, TRACK.frames - 1);
+  return (
+    <AbsoluteFill style={{ background: C.navy }}>
+      <OffthreadVideo src={staticFile("render/map3d.mp4")} muted />
+      <MapHeadline />
+      {usePinTimes(scene, at).map(({ port, at: pinAt }) => {
+        const [x, y] = track[port.name]?.[k] ?? [0, 0];
+        return <Pin3D key={port.name} name={port.name} office={!!port.tag} x={x} y={y} at={pinAt} />;
+      })}
+    </AbsoluteFill>
+  );
+};
+
+const Pin3D: React.FC<{ name: string; office: boolean; x: number; y: number; at: number }> = ({ name, office, x, y, at }) => {
+  const p = useIn(at, 16);
+  const size = office ? 24 : 16;
+  const l = LABEL_3D[name] ?? { dx: 22, dy: 0, align: "left" };
+  const shift = l.align === "center" ? "-50%" : l.align === "right" ? "-100%" : "0%";
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          left: `${x}%`,
+          top: `${y}%`,
+          width: size,
+          height: size,
+          marginLeft: -size / 2,
+          marginTop: -size / 2,
+          borderRadius: "50%",
+          background: office ? C.white : C.mint,
+          border: `3px solid ${C.navy}`,
+          opacity: p,
+          transform: `scale(${0.4 + 0.6 * p})`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: `calc(${x}% + ${l.dx}px)`,
+          top: `calc(${y}% + ${l.dy}px)`,
+          transform: `translate(${shift}, -50%)`,
+          whiteSpace: "nowrap",
+          fontFamily: FONT,
+          fontWeight: office ? 700 : TYPE.bodyWeight,
+          fontSize: office ? 40 : 34,
+          color: office ? C.white : C.soft,
+          textShadow: "0 2px 10px rgba(0,0,0,0.6)",
+          opacity: p,
+        }}
+      >
+        {name}
+      </div>
+    </>
+  );
+};
+
+const MapScene2D: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
+  const f = useCurrentFrame();
   return (
     <AbsoluteFill
       style={{
         background: `radial-gradient(90% 90% at ${interpolate(f, [0, d], [64, 76])}% ${interpolate(f, [0, d], [42, 60])}%, ${C.navyMid} 0%, ${C.navy} 70%)`,
       }}
     >
-      <AbsoluteFill style={{ justifyContent: "center", padding: `0 0 0 ${SAFE.x}px`, width: "50%" }}>
-        <Rise at={4}>
-          <Sub color={C.mint}>Where we work</Sub>
-        </Rise>
-        <Rise at={10} dur={22} style={{ marginTop: 28 }}>
-          <Headline size={120}>
-            {OFFICE_COUNT} offices
-            <br />
-            <span style={{ color: C.mint }}>{LOCATION_COUNT} locations</span>
-          </Headline>
-        </Rise>
-      </AbsoluteFill>
+      <MapHeadline />
       <div style={{ position: "absolute", right: 150, top: 70, width: MAP_W, height: MAP_H }}>
         <svg viewBox={INDIA_MAP_VIEWBOX} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
           <path d={INDIA_PATH} fill="rgba(255,255,255,0.16)" stroke="rgba(143,224,172,0.85)" strokeWidth={2} />
         </svg>
-        {order.map((p, i) => (
-          <Pin key={p.name} port={p} at={pinAt(p.name, i)} />
+        {usePinTimes(scene, at).map(({ port, at: pinAt }) => (
+          <Pin key={port.name} port={port} at={pinAt} />
         ))}
       </div>
     </AbsoluteFill>
