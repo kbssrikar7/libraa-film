@@ -1,0 +1,52 @@
+{
+  "open": {
+    "file": "voice/open-47b948e0d5.mp3",
+    "model": "saaras:v4",
+    "transcript": "A reliable voyage begins long before a vessel leaves port."
+  },
+  "brand": {
+    "file": "voice/brand-0fbd5f7bd4.mp3",
+    "model": "saaras:v4",
+    "transcript": "For Libraa, that work has been our business since 2009."
+  },
+  "services": {
+    "file": "voice/services-d285dd2dcc.mp3",
+    "model": "saaras:v4",
+    "transcript": "From ship management and surveys to repairs, new build supervision and offshore services, we support vessels from shore to sea and recruit the seafarers who operate them."
+  },
+  "map": {
+    "file": "voice/map-8efdf24f20.mp3",
+    "model": "saaras:v4",
+    "transcript": "From our head office in Chennai and offices in Kakinada and Port Blair, we work across 8 locations around India's coasts."
+  },
+  "fleet": {
+    "file": "voice/fleet-3296c15db3.mp3",
+    "model": "saaras:v4",
+    "transcript": "We have managed and worked on vessels of every kind, tugs, dredgers and passenger ferries under Indian and Gabonese flags. Here are just a few."
+  },
+  "hero": {
+    "file": "voice/hero-1a4b475011.mp3",
+    "model": "saaras:v4",
+    "transcript": "And one of them, Koundinya, we built from scratch in Kakinada."
+  },
+  "field": {
+    "file": "voice/field-97db1aab9c.mp3",
+    "model": "saaras:v4",
+    "transcript": "From Indian ports to West Africa, every job starts the same way: a toolbox talk and the right safety gear for everyone."
+  },
+  "companies": {
+    "file": "voice/companies-0f81c8e8e5.mp3",
+    "model": "saaras:v4",
+    "transcript": "3 group companies, each responsible for its own part of the business, backed by 4 certifications and licenses."
+  },
+  "clients": {
+    "file": "voice/clients-67fe273ccb.mp3",
+    "model": "saaras:v4",
+    "transcript": "We are proud to serve the Indian Navy, Adani Ports and JSW, alongside port authorities, energy groups and shipping houses."
+  },
+  "end": {
+    "file": "voice/end-811ea6b2b7.mp3",
+    "model": "saaras:v4",
+    "transcript": "Libra Group, ship management, crew management and marine services."
+  }
+}

@@ -3,9 +3,12 @@ import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { SHIPS, ship, sitePhoto } from "../facts";
 import { TYPE, C, Clip, DS, FadeIn, FONT, LowerThird, Photo, px, Rise, SAFE, Scrim, useTrack, XF } from "../ui";
 import { beatCuts } from "./Work";
+import { wordAt } from "../script";
+import type { TimedScene } from "../timing";
 import TONE from "../photo-tone.json";
+import { SUBTITLES_ON } from "../Subtitles";
 
-const tone = (id: string) => (TONE as Record<string, { brightness: number; contrast: number }>)[id];
+const tone = (id: string) => (TONE as Record<string, { brightness: number; contrast: number; saturate: number }>)[id];
 
 type P = { d: number; at: number };
 
@@ -51,12 +54,27 @@ const POSITION: Record<string, string> = { antigoon: "50% 60%", kango: "50% 45%"
 // not a jump cut.
 const ZOOM: Record<string, [number, number]> = { awala: [1.16, 1.2], bitam: [1.0, 1.04] };
 
-export const Fleet: React.FC<P> = ({ d, at }) => {
+/** The lead four cut on the words that describe them: ANTIGOON carries "vessels of
+ *  every kind", KANGO (a tug) lands on "tugs", SEJAL (a dredger) on "dredgers" -
+ *  held at least a second, so it never flashes past - and JHANSI RANI on "under
+ *  Indian and Gabonese flags". The rest of the montage runs on the beat. */
+function fleetCuts(d: number, at: number, scene: TimedScene) {
+  const voiceAt = (scene.voice?.from ?? at) - at;
+  const lineSec = (scene.voice?.durationInFrames ?? 0) / 30;
+  const onWord = (w: string) => voiceAt + Math.round(wordAt(scene, w, lineSec) * 30) - 3;
+  const kango = onWord("tugs");
+  const sejal = Math.max(onWord("dredgers"), kango + 30);
+  const jhansi = Math.max(onWord("under"), sejal + 30);
+  const rest = beatCuts(at + jhansi, d - jhansi, MONTAGE.length - 3, undefined, 36).map((c) => c + jhansi);
+  return [0, kango, sejal, ...rest];
+}
+
+export const Fleet: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
   const f = useCurrentFrame();
   // ANTIGOON follows the dark map: it settles from a slightly deeper grade
   // over half a second, so the cut lands without a sudden brightness jump
   const settle = interpolate(f, [0, 15], [0.32, 0.1], { extrapolateRight: "clamp" });
-  const cuts = beatCuts(at, d, MONTAGE.length, MONTAGE.map((s) => (s.id === "antigoon" ? 1.6 : 1)), 36);
+  const cuts = fleetCuts(d, at, scene);
   return (
     <AbsoluteFill>
       {MONTAGE.map((s, i) => {
@@ -95,7 +113,7 @@ export const Hero: React.FC<P> = ({ d }) => {
   const f = useCurrentFrame();
   // the title clears before the hard cut, so it never overlaps the next scene
   const textOut = interpolate(f, [d - 18, d - 6], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const track = useTrack(30, TYPE.tracking + 0.06, TYPE.tracking, 110); // the name settles into place
+  const track = useTrack(30, TYPE.tracking + 0.06, TYPE.tracking, 48); // the name settles into place
   return (
     <AbsoluteFill>
       <Photo src={sitePhoto(k.photo)} tone={tone(k.id)} to={d} zoom={[1.1, 1.24]} pan={[1.5, -2.5]} position="45% 55%" grade={0.12} />
@@ -104,9 +122,14 @@ export const Hero: React.FC<P> = ({ d }) => {
         <Rise at={30} dur={34}>
           <div style={{ ...DS, fontSize: px(220), letterSpacing: `${track}em`, color: C.white, lineHeight: 0.9, textShadow: "0 2px 30px rgba(6,9,26,0.5)" }}>{k.name}</div>
         </Rise>
-        <Rise at={56} dur={24} style={{ marginTop: 22 }}>
-          <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 52, color: C.mint }}>{k.status}</div>
-        </Rise>
+        {/* with subtitles on, the narration already says it ("...we built from
+            scratch, in Kakinada") - a third line of the same words only
+            crowds the frame; the clean booth version keeps it */}
+        {!SUBTITLES_ON && (
+          <Rise at={56} dur={24} style={{ marginTop: 22 }}>
+            <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: 52, color: C.mint }}>{k.status}</div>
+          </Rise>
+        )}
       </AbsoluteFill>
     </AbsoluteFill>
   );
@@ -122,8 +145,14 @@ const FIELD: { src: string; text: string; sub?: string; position: string; clip?:
   { src: "stock/px-toolbox-talk.mp4", clip: true, text: "Every job starts with a toolbox talk", position: "50% 50%" },
 ];
 
-export const Field: React.FC<P> = ({ d, at }) => {
-  const cuts = beatCuts(at, d, FIELD.length, [1.1, 1, 1.3]);
+export const Field: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
+  // the toolbox talk is fully in just as its words are spoken (measured
+  // `marks`); the two Cameroon team photos share the time before it, and the
+  // toolbox clip carries "...the right safety gear for everyone" to the end
+  const voiceAt = (scene.voice?.from ?? at) - at;
+  const lineSec = (scene.voice?.durationInFrames ?? 0) / 30;
+  const toolbox = voiceAt + Math.round(wordAt(scene, "a toolbox talk", lineSec) * 30) - 6 - XF;
+  const cuts = [0, Math.max(30, toolbox - 54), toolbox, d];
   return (
     <AbsoluteFill>
       {FIELD.map((b, i) => {

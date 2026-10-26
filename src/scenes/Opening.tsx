@@ -6,19 +6,18 @@ import { TYPE, C, Clip, DS, FONT, px, Reel, Rise, type Shot, useIn, useTrack } f
 
 type P = { d: number };
 
-// Scene 1 - a short cold open on two strong shots, cut on the music: a
-// tanker at sunset from the air, then a ship coming head-on at the drone -
-// into the Libraa name within about six seconds. Stock (Pexels licence) on a
-// general line - "a voyage begins long before a vessel leaves port" -
-// never shown as a Libraa vessel.
-const OPEN: Shot[] = [
-  { src: "stock/px-tanker-sunset-aerial.mp4", from: 0, zoom: [1.0, 1.04] },
-  { src: "stock/px-ship-headon-drone.mp4", from: 2, zoom: [1.02, 1.06] },
-];
+// Scene 1 - a cold open on one strong, moving shot: a tanker at sunset from
+// the air, in the same warm light as the brand reveal that follows. (A second,
+// grey daylight bulk carrier used to follow it: it broke the mood, sat on
+// screen for four seconds after the line, and repeated the ship-at-sea shot
+// that opens the services.) Stock (Pexels licence) on a general line - "a
+// voyage begins long before a vessel leaves port" - never shown as a Libraa
+// vessel.
+const OPEN: Shot[] = [{ src: "stock/px-tanker-sunset-aerial.mp4", from: 0, zoom: [1.0, 1.08] }];
 
 export const Open: React.FC<P & { at: number }> = ({ d, at }) => {
   const f = useCurrentFrame();
-  const cuts = beatCuts(at, d, OPEN.length, [1, 1]);
+  const cuts = beatCuts(at, d, OPEN.length);
   const fadeIn = interpolate(f, [0, 24], [0, 1], { extrapolateRight: "clamp" });
   // ease down toward navy before the logo, so the brand dissolve never flickers
   const dusk = interpolate(f, [d - 30, d], [0, 0.55], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -33,7 +32,7 @@ export const Open: React.FC<P & { at: number }> = ({ d, at }) => {
 // Scene 2 - the brand lands over dark water: logo, name, "Since 2009".
 export const Brand: React.FC<P> = ({ d }) => {
   const logo = useIn(4, 26);
-  const track = useTrack(14, TYPE.tracking + 0.06, TYPE.tracking, 90); // the name settles as it lands
+  const track = useTrack(14, TYPE.tracking + 0.06, TYPE.tracking, 48); // the name settles as it lands
   return (
     <AbsoluteFill>
       <Clip src="stock/px-ship-silhouette-sunset.mp4" startFrom={30} rate={0.7} grade={0.45} zoom={[1.05, 1.0]} to={d} />

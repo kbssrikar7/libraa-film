@@ -1,66 +1,82 @@
 {
  "koundinya": {
-  "brightness": 0.978,
-  "contrast": 1.2
+  "brightness": 0.957,
+  "contrast": 1.25,
+  "saturate": 1.35
  },
  "jhansi-rani": {
-  "brightness": 0.945,
-  "contrast": 0.97
+  "brightness": 0.893,
+  "contrast": 0.941,
+  "saturate": 1.35
  },
  "bitam": {
-  "brightness": 1.038,
-  "contrast": 0.807
+  "brightness": 1.078,
+  "contrast": 0.75,
+  "saturate": 1.332
  },
  "rajendra-prasad": {
-  "brightness": 1.046,
-  "contrast": 1.177
+  "brightness": 1.095,
+  "contrast": 1.25,
+  "saturate": 0.902
  },
  "antigoon": {
-  "brightness": 1.066,
-  "contrast": 1.2
+  "brightness": 1.136,
+  "contrast": 1.25,
+  "saturate": 0.85
  },
  "rani-gaidinliu": {
-  "brightness": 1.026,
-  "contrast": 1.2
+  "brightness": 1.052,
+  "contrast": 1.25,
+  "saturate": 0.976
  },
  "awala": {
-  "brightness": 1.033,
-  "contrast": 0.919
+  "brightness": 1.067,
+  "contrast": 0.845,
+  "saturate": 0.997
  },
  "kango": {
-  "brightness": 1.14,
-  "contrast": 0.96
+  "brightness": 1.25,
+  "contrast": 0.921,
+  "saturate": 1.113
  },
  "tuticorin": {
-  "brightness": 1.069,
-  "contrast": 0.92
+  "brightness": 1.144,
+  "contrast": 0.846,
+  "saturate": 0.935
  },
  "sejal": {
-  "brightness": 0.882,
-  "contrast": 1.096
+  "brightness": 0.778,
+  "contrast": 1.202,
+  "saturate": 1.35
  },
  "sejal-2": {
-  "brightness": 0.892,
-  "contrast": 1.006
+  "brightness": 0.796,
+  "contrast": 1.011,
+  "saturate": 1.35
  },
  "capstar-1": {
-  "brightness": 0.986,
-  "contrast": 0.881
+  "brightness": 0.972,
+  "contrast": 0.775,
+  "saturate": 1.35
  },
  "kalindi": {
-  "brightness": 0.986,
-  "contrast": 0.865
+  "brightness": 0.972,
+  "contrast": 0.75,
+  "saturate": 1.265
  },
  "ganesh": {
-  "brightness": 0.971,
-  "contrast": 1.164
+  "brightness": 0.943,
+  "contrast": 1.25,
+  "saturate": 1.35
  },
  "sanvi-69": {
-  "brightness": 0.912,
-  "contrast": 1.082
+  "brightness": 0.832,
+  "contrast": 1.172,
+  "saturate": 1.35
  },
  "supreme-diamond": {
-  "brightness": 1.066,
-  "contrast": 0.825
+  "brightness": 1.136,
+  "contrast": 0.75,
+  "saturate": 1.35
  }
 }

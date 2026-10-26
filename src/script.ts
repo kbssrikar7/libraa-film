@@ -84,15 +84,15 @@ export const SCENES: Scene[] = [
     kind: "open",
     line: "A reliable voyage begins long before a vessel leaves port.",
     lead: 1.6,
-    tail: 0.6,
-    flex: 0.2,
+    tail: 1.6,
+    flex: 0.12,
   },
   {
     id: "brand",
     kind: "brand",
     line: `For Libraa, that work has been our business since ${COMPANY.founded}.`,
     lead: 0.4,
-    tail: 0.6,
+    tail: 1.6,
     flex: 0,
   },
   {
@@ -115,8 +115,9 @@ export const SCENES: Scene[] = [
     // measured on the recording: one pause (3.84-4.22s) after "Port Blair,";
     // words placed by speaking rate either side of it
     marks: { Chennai: 1.3, Kakinada: 2.6, "Port Blair": 3.25, locations: 5.6 },
+    // the tail is the music-only globe turn from India to West Africa
     lead: 0.6,
-    tail: 0,
+    tail: 4.4,
     flex: 0,
   },
   {
@@ -126,33 +127,40 @@ export const SCENES: Scene[] = [
     // only some of the many vessels Libraa has worked on
     line: `We have managed and worked on vessels of every kind: tugs, dredgers and passenger ferries, under ${and(FLAGS_ADJ)} flags. Here are just a few.`,
     lead: 0.8,
-    // the line starts on ANTIGOON, the first ship, and the montage runs on
-    // under the music after it
-    tail: 5.5,
-    flex: 0.95,
+    // the line starts on ANTIGOON, the first ship; KANGO, SEJAL and JHANSI
+    // RANI cut in on "tugs", "dredgers" and "flags" (measured `marks`), and
+    // the montage runs on under the music after the line
+    // measured on the recording (silencedetect): pauses end at 2.77 s
+    // ("tugs"), 3.34 s ("dredgers ...") and 5.07 s ("under Indian ...")
+    marks: { tugs: 2.77, dredgers: 3.34, under: 5.07 },
+    tail: 0.6,
+    flex: 1.0,
   },
   {
     id: "hero",
     kind: "hero",
-    line: "And one of them, Koundinya, we built from scratch, in our own yard.",
-    lead: 1.2,
-    tail: 2.2,
-    flex: 0.2,
+    line: "And one of them, Koundinya, we built from scratch, in Kakinada.",
+    lead: 1.0,
+    tail: 2.0,
+    flex: 0.06,
   },
   {
     id: "field",
     kind: "field",
     line: "From Indian ports to West Africa, every job starts the same way: a toolbox talk, and the right safety gear for everyone.",
+    // measured on the recording: a pause ends at 3.66 s ("a toolbox talk
+    // ...") - the toolbox shot is fully in on its words
+    marks: { "a toolbox talk": 3.66 },
     lead: 0.6,
-    tail: 1.2,
-    flex: 0.2,
+    tail: 1.6,
+    flex: 0.12,
   },
   {
     id: "companies",
     kind: "companies",
     line: `${cap(numberWord(COMPANY_COUNT))} group companies, each responsible for its own part of the business, backed by ${numberWord(CERT_COUNT)} certifications and licences.`,
     lead: 0.6,
-    tail: 1.4,
+    tail: 1.2,
     flex: 0,
   },
   {
@@ -164,17 +172,17 @@ export const SCENES: Scene[] = [
     // measured on the recording: pauses after "Navy," (1.68s), "JSW," (3.73s)
     // and "authorities," (5.45s); words placed by speaking rate between them
     marks: { "Indian Navy": 0.95, Adani: 1.95, JSW: 3.3, "port authorities": 4.55 },
-    lead: 0.6,
-    tail: 1.8,
-    flex: 0.05,
+    lead: 0.3,
+    tail: 1.6,
+    flex: 0.1,
   },
   {
     id: "end",
     kind: "end",
     // the approved closing line, word for word
     line: "Libraa Group. Ship Management, Crew Management and Marine Services.",
-    lead: 4.6,
-    tail: 5.0,
+    lead: 1.2,
+    tail: 4.6,
     flex: 0.2,
   },
 ];
@@ -189,7 +197,8 @@ export const MUSIC = {
   firstBeat: 0.145,
   /** Music on its own: ~3 dB under the voice level. */
   volume: 0.7,
-  /** Music while the narrator speaks: ~13 dB below its own level, so every
-   *  word is clear on a noisy show floor. */
-  duckedVolume: 0.16,
+  /** Music while the narrator speaks: ~11 dB below its own level - every
+   *  word stays clear on a noisy show floor, without the music collapsing
+   *  under each line and pumping back between them. */
+  duckedVolume: 0.2,
 };

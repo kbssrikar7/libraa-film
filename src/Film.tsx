@@ -25,8 +25,8 @@ const SCENE: Record<SceneKind, React.FC<{ d: number; at: number; scene: TimedSce
 // Only the brand reveal and the closing sea dissolve (briefly); everything
 // else - including into and out of KOUNDINYA - is a clean cut on the beat.
 // Outgoing titles clear before a cut (see Hero/Field), so text never overlaps.
-// clients also dissolve: navy footage straight into the cream wall, no
-// empty frame between them
+// clients also dissolve in from the certificates (both dark), no empty
+// frame between them
 const DISSOLVE: Partial<Record<SceneKind, number>> = { brand: 22, clients: 18, end: 12 };
 
 // dur 0 is a hard cut: the scene is fully visible from its first frame
@@ -41,14 +41,18 @@ const Dissolve: React.FC<{ dur: number; children: React.ReactNode }> = ({ dur, c
 };
 
 function musicVolume(scenes: TimedScene[]) {
-  const ramp = 10;
+  // The music dips just ahead of each line (12 frames) and comes back up as
+  // the last word ends, over ~0.7 s with an eased curve. It used to stay down
+  // for a third of a second after every line and then jump back in 10
+  // frames, which left a near-silent hole and an audible swell.
+  const ease = Easing.inOut(Easing.sin);
   return (f: number) => {
     let v = MUSIC.volume;
     for (const s of scenes) {
       if (!s.voice) continue;
-      const a = s.voice.from - ramp, b = s.voice.from + s.voice.durationInFrames + ramp;
-      if (f > a - ramp && f < b + ramp) {
-        const k = interpolate(f, [a - ramp, a, b, b + ramp], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+      const a = s.voice.from, b = s.voice.from + s.voice.durationInFrames;
+      if (f > a - 14 && f < b + 24) {
+        const k = interpolate(f, [a - 12, a - 2, b - 2, b + 22], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: ease });
         v = Math.min(v, MUSIC.volume - (MUSIC.volume - MUSIC.duckedVolume) * k);
       }
     }

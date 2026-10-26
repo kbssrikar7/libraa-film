@@ -207,6 +207,14 @@ footage.**
     printed there). The clients "Plus ..." line now appears after the
     narration so it never meets a subtitle. Clean version for the booth:
     --props='{"subtitles":false}'.
+22. `npm run transcribe` (scripts/transcribe.mjs) transcribes every voice
+    clip back with Sarvam **saaras:v4** (keyterms: Libraa, Koundinya,
+    Kakinada...), diffs it word for word against the script (fails on a
+    mismatch) and writes TRANSCRIPT.md with each line's start time. Results
+    are cached in src/transcript.generated.json, so only re-recorded clips
+    cost credits. **Run it after `npm run voice`.** Saaras v4 gives only
+    chunk-level timestamps (one chunk per clip), so `marks` still come from
+    silencedetect splits, not from it.
 
 The website side (separate repo) has also moved on since the film's last
 render: 16 vessels (was 11), hero is now the client's own ANTIGOON photo,

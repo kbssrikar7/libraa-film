@@ -1,7 +1,7 @@
 // Burned-in subtitles, timed to the recordings (src/subtitles.generated.json,
-// built by `npm run subtitles`). Bottom-centre on a dark band - below the
-// lower-left titles, so the two never meet, and readable over bright footage
-// and the cream client wall alike. Same face as the rest of the film.
+// built by `npm run subtitles`). Bottom-centre with no background band - below
+// the lower-left titles, so the two never meet. White with a tight dark
+// shadow, so it reads over bright footage too. Same face as the rest of the film.
 // Render without them:  --props='{"subtitles":false}'
 import React from "react";
 import { AbsoluteFill, getInputProps, interpolate, Sequence, useCurrentFrame } from "remotion";
@@ -27,12 +27,12 @@ const Line: React.FC<{ cues: Cue[] }> = ({ cues }) => {
         style={{
           maxWidth: 1400,
           padding: "8px 22px 10px",
-          background: "rgba(10,14,42,0.66)",
           fontFamily: FONT,
           fontWeight: TYPE.bodyWeight,
           fontSize: 36,
           lineHeight: 1.3,
           color: C.white,
+          textShadow: "0 1px 3px rgba(0,0,0,0.85), 0 0 10px rgba(0,0,0,0.55)",
           textAlign: "center",
         }}
       >

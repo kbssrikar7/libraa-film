@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, getInputProps, interpolate, OffthreadVideo, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Easing, getInputProps, interpolate, OffthreadVideo, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { CAMEROON, CHENNAI, drawGlobe, greatCircle, LIBREVILLE, PORT_LONLAT, project, type View } from "../globe";
 import TRACK from "../map3d-track.json";
 import { INDIA_MAP_VIEWBOX, INDIA_PATH, LOCATION_COUNT, OFFICE_COUNT, OFFICES, PORTS, ship, sitePhoto } from "../facts";
 import { beatsBetween, type TimedScene } from "../timing";
@@ -84,7 +85,10 @@ export const Services: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) 
 // the website's own label offsets; the map box has the SVG's own 800x900
 // aspect, so pin percentages land exactly on the drawn coastline. 3D
 // version: the camera drifts sideways at a fixed distance (still no zoom).
-const MAP_H = 940;
+// sized so the lowest label (Tuticorin) stays clear of the burned-in subtitles
+const MAP_H = 860;
+const MAP_TOP = 60;
+const MAP_RIGHT = 150;
 const MAP_W = Math.round((MAP_H * 800) / 900);
 
 // The 3D version plays a Blender render (scripts/blender/map3d.py, encoded
@@ -108,12 +112,9 @@ function usePinTimes(scene: TimedScene, at: number) {
   }));
 }
 
-const MapHeadline: React.FC = () => (
+const MapHeadline: React.FC<{ out?: number }> = ({ out }) => (
   <AbsoluteFill style={{ justifyContent: "center", padding: `0 0 0 ${SAFE.x}px`, width: "50%" }}>
-    <Rise at={4}>
-      <Sub color={C.mint}>Where we work</Sub>
-    </Rise>
-    <Rise at={10} dur={22} style={{ marginTop: 28 }}>
+    <Rise at={10} dur={22} out={out}>
       <Headline size={120}>
         {OFFICE_COUNT} offices
         <br />
@@ -199,14 +200,16 @@ const Pin3D: React.FC<{ name: string; office: boolean; x: number; y: number; at:
 
 const MapScene2D: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
   const f = useCurrentFrame();
+  const voiceEnd = (scene.voice ? scene.voice.from + scene.voice.durationInFrames : at + d) - at;
+  const g = useGlobeTurn(voiceEnd + 4);
   return (
     <AbsoluteFill
       style={{
         background: `radial-gradient(90% 90% at ${interpolate(f, [0, d], [64, 76])}% ${interpolate(f, [0, d], [42, 60])}%, ${C.navyMid} 0%, ${C.navy} 70%)`,
       }}
     >
-      <MapHeadline />
-      <div style={{ position: "absolute", right: 150, top: 70, width: MAP_W, height: MAP_H }}>
+      <MapHeadline out={g.start} />
+      <div style={{ position: "absolute", right: MAP_RIGHT, top: MAP_TOP, width: MAP_W, height: MAP_H, opacity: 1 - g.flatOut }}>
         <svg viewBox={INDIA_MAP_VIEWBOX} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
           <path d={INDIA_PATH} fill="rgba(255,255,255,0.16)" stroke="rgba(143,224,172,0.85)" strokeWidth={2} />
         </svg>
@@ -214,7 +217,89 @@ const MapScene2D: React.FC<P & { scene: TimedScene }> = ({ d, at, scene }) => {
           <Pin key={port.name} port={port} at={pinAt} />
         ))}
       </div>
+      {f >= g.start - 1 && <WorldTurn start={g.start} />}
     </AbsoluteFill>
+  );
+};
+
+// ---------- after the line: the map becomes the world, and turns to West Africa ----------
+// The flat map crossfades into a dot globe whose first view is fitted (least
+// squares on the eight ports) to the flat map, so the coast doesn't jump; the
+// globe pulls back and a route draws from Chennai to Libreville. Music only -
+// the next line ("From Indian ports to West Africa") picks it up later.
+const START_VIEW: View = { lon: 82.87, lat: 22.5, R: 1494.9, cx: 1391.1, cy: 504.5 };
+const WORLD_VIEW: View = { lon: 50, lat: 10, R: 430, cx: 1420, cy: 540 };
+const ROUTE = greatCircle(CHENNAI, LIBREVILLE, 90);
+const inOut = Easing.bezier(0.76, 0, 0.24, 1);
+const rampF = (f: number, a: number, b: number, e = inOut) => interpolate(f, [a, b], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: e });
+
+function useGlobeTurn(start: number) {
+  const f = useCurrentFrame();
+  return { start, flatOut: rampF(f, start, start + 12, Easing.linear) };
+}
+
+const WorldTurn: React.FC<{ start: number }> = ({ start }) => {
+  const f = useCurrentFrame();
+  const ref = React.useRef<HTMLCanvasElement>(null);
+  const t = rampF(f, start + 10, start + 58);
+  const lnR = (a: number, b: number) => Math.exp(Math.log(a) + (Math.log(b) - Math.log(a)) * t);
+  const v: View = {
+    lon: START_VIEW.lon + (WORLD_VIEW.lon - START_VIEW.lon) * t,
+    lat: START_VIEW.lat + (WORLD_VIEW.lat - START_VIEW.lat) * t,
+    R: lnR(START_VIEW.R, WORLD_VIEW.R),
+    cx: START_VIEW.cx + (WORLD_VIEW.cx - START_VIEW.cx) * t,
+    cy: START_VIEW.cy + (WORLD_VIEW.cy - START_VIEW.cy) * t,
+  };
+  const route = rampF(f, start + 34, start + 80);
+  React.useLayoutEffect(() => {
+    const g = ref.current?.getContext("2d");
+    if (!g) return;
+    g.setTransform(2, 0, 0, 2, 0, 0); // 2x canvas, so dots stay sharp in a 4K master
+    const ports = Object.values(PORT_LONLAT).map((at) => ({ at, r: Math.min(8, Math.max(3, v.R * 0.006)), color: C.mint }));
+    drawGlobe(g, v, { land: [255, 255, 255], landAlpha: 0.34, rim: "rgba(143,224,172,0.55)", route: C.mint }, ROUTE, route, ports);
+  });
+  const lib = project(LIBREVILLE[0], LIBREVILLE[1], v);
+  const cam = project(CAMEROON[0], CAMEROON[1], v);
+  return (
+    <AbsoluteFill style={{ opacity: rampF(f, start, start + 12, Easing.linear) }}>
+      <canvas ref={ref} width={3840} height={2160} style={{ position: "absolute", inset: 0, width: 1920, height: 1080 }} />
+      <AbsoluteFill style={{ justifyContent: "center", padding: `0 0 0 ${SAFE.x}px`, width: "50%" }}>
+        <Rise at={start + 30} dur={22}>
+          <Headline size={120}>
+            India to
+            <br />
+            <span style={{ color: C.mint }}>West Africa</span>
+          </Headline>
+        </Rise>
+      </AbsoluteFill>
+      <WorldPin x={cam.x} y={cam.y} at={start + 84} label="Cameroon" dy={-28} />
+      <WorldPin x={lib.x} y={lib.y} at={start + 74} label="Libreville" sub="Gabon" dy={30} />
+    </AbsoluteFill>
+  );
+};
+
+const WorldPin: React.FC<{ x: number; y: number; at: number; label: string; sub?: string; dy: number }> = ({ x, y, at, label, sub, dy }) => {
+  const p = useIn(at, 16);
+  return (
+    <>
+      <div style={{ position: "absolute", left: x - 12, top: y - 12, width: 24, height: 24, borderRadius: "50%", background: C.white, border: `3px solid ${C.navy}`, opacity: p, transform: `scale(${0.4 + 0.6 * p})` }} />
+      <div
+        style={{
+          position: "absolute",
+          right: 1920 - x + 26,
+          top: y + dy,
+          transform: "translateY(-50%)",
+          textAlign: "right",
+          whiteSpace: "nowrap",
+          fontFamily: FONT,
+          textShadow: "0 2px 10px rgba(0,0,0,0.6)",
+          opacity: p,
+        }}
+      >
+        <div style={{ fontWeight: 700, fontSize: 40, color: C.white, lineHeight: 1.1 }}>{label}</div>
+        {sub ? <div style={{ fontWeight: TYPE.bodyWeight, fontSize: 30, color: C.soft }}>{sub}</div> : null}
+      </div>
+    </>
   );
 };
 

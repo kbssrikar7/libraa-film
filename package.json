@@ -11,7 +11,8 @@
     "render": "node scripts/master.mjs",
     "still": "remotion still LibraaFilm",
     "timeline": "node scripts/timeline.mjs",
-    "subtitles": "node scripts/subtitles.mjs"
+    "subtitles": "node scripts/subtitles.mjs",
+    "transcribe": "node scripts/transcribe.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.522",
