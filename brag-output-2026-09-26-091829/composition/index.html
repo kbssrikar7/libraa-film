@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Jakarta"; font-weight: 500; src: url("assets/fonts/plus-jakarta-sans-500.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Jakarta"; font-weight: 600; src: url("assets/fonts/plus-jakarta-sans-600.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Jakarta"; font-weight: 700; src: url("assets/fonts/plus-jakarta-sans-700.woff2") format("woff2"); font-display: block; }
+      :root {
+        --navy: #0a0e2a;
+        --navy-mid: #12184f;
+        --green: #159449;
+        --mint: #8fe0ac;
+        --white: #ffffff;
+        --soft: rgba(255, 255, 255, 0.82);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--navy); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Jakarta", system-ui, sans-serif; color: var(--white); background: var(--navy); }
+      .clip { position: absolute; inset: 0; overflow: hidden; }
+      .fill { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .push { position: absolute; inset: 0; transform-origin: 50% 50%; }
+      .shade-bottom { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6, 9, 32, 0.9) 0%, rgba(6, 9, 32, 0.55) 35%, rgba(6, 9, 32, 0) 65%); }
+      .shade-full { position: absolute; inset: 0; background: rgba(6, 9, 32, 0.62); }
+      .mask { overflow: hidden; padding-bottom: 0.08em; }
+      .line { display: block; will-change: transform; }
+
+      /* 1 hook */
+      #hook-text { position: absolute; left: 140px; bottom: 150px; width: 1500px; }
+      #hook-kicker { font-weight: 600; font-size: 44px; color: var(--mint); letter-spacing: -0.01em; margin-bottom: 18px; }
+      .hook-l { font-weight: 700; font-size: 112px; line-height: 1.02; letter-spacing: -0.035em; }
+
+      /* 2 brand */
+      #brand { background: radial-gradient(ellipse 70% 60% at 50% 45%, var(--navy-mid) 0%, var(--navy) 70%); }
+      #brand-stack { position: absolute; left: 0; right: 0; top: 190px; display: flex; flex-direction: column; align-items: center; }
+      #brand-logo { width: 230px; height: 230px; background: var(--white); display: flex; align-items: center; justify-content: center; }
+      #brand-logo img { width: 196px; height: auto; }
+      #brand-name { margin-top: 56px; font-weight: 700; font-size: 150px; line-height: 1; letter-spacing: -0.035em; }
+      #brand-since { margin-top: 26px; font-weight: 600; font-size: 56px; color: var(--mint); letter-spacing: -0.01em; }
+      #brand-rule { position: absolute; left: 50%; top: 905px; width: 1400px; height: 3px; margin-left: -700px; background: var(--green); transform-origin: 50% 50%; }
+
+      /* 3 services */
+      .svc-text { position: absolute; left: 140px; bottom: 160px; }
+      .svc-word { font-weight: 700; font-size: 168px; line-height: 0.98; letter-spacing: -0.04em; }
+      .svc-sub { font-weight: 700; font-size: 124px; line-height: 1; letter-spacing: -0.035em; }
+      .svc-sub .mint { color: var(--mint); }
+
+      /* 4 clients */
+      #clients { background: radial-gradient(ellipse 80% 70% at 50% 40%, var(--navy-mid) 0%, var(--navy) 75%); }
+      #clients-glow { position: absolute; left: -300px; top: -200px; width: 1400px; height: 1400px; background: radial-gradient(circle, rgba(143, 224, 172, 0.13) 0%, rgba(143, 224, 172, 0) 60%); }
+      #clients-kicker { position: absolute; left: 140px; top: 110px; font-weight: 700; font-size: 84px; letter-spacing: -0.035em; }
+      #hero-row { position: absolute; left: 0; right: 0; top: 330px; display: flex; justify-content: center; gap: 48px; }
+      .hero { display: flex; flex-direction: column; align-items: center; }
+      .hero-tile { width: 420px; height: 232px; background: var(--white); display: flex; align-items: center; justify-content: center; }
+      .hero-tile img { height: 104px; width: auto; }
+      .hero-name { margin-top: 20px; font-weight: 600; font-size: 34px; color: var(--soft); letter-spacing: -0.01em; }
+      #wall { position: absolute; left: 50%; top: 610px; width: 1472px; margin-left: -736px; display: grid; grid-template-columns: repeat(5, 280px); gap: 16px 18px; }
+      .tile { width: 280px; height: 104px; background: var(--white); display: flex; align-items: center; justify-content: center; }
+      .tile img { max-height: 76px; max-width: 236px; width: auto; height: auto; }
+
+      /* 5 end */
+      #end-stack { position: absolute; left: 0; right: 0; top: 200px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+      #end-logo { width: 176px; height: 176px; background: var(--white); display: flex; align-items: center; justify-content: center; }
+      #end-logo img { width: 150px; height: auto; }
+      #end-name { margin-top: 46px; font-weight: 700; font-size: 128px; line-height: 1; letter-spacing: -0.035em; }
+      #end-tag { margin-top: 30px; font-weight: 600; font-size: 50px; color: var(--mint); letter-spacing: -0.015em; }
+      #end-url { margin-top: 64px; font-weight: 600; font-size: 60px; letter-spacing: -0.02em; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="25" data-width="1920" data-height="1080">
+      <!-- footage: direct children of the stage (renderer requirement) -->
+      <video id="v-hook" class="clip fill" src="assets/video/px-bulk-carrier-at-sea.mp4" data-start="0" data-duration="3.7" data-media-start="1" muted playsinline></video>
+      <video id="v-svc1" class="clip fill" src="assets/video/px-ship-headon-drone.mp4" data-start="7.91" data-duration="2.1" data-media-start="2" muted playsinline></video>
+      <video id="v-svc2" class="clip fill" src="assets/video/px-crew-mooring-line.mp4" data-start="10.01" data-duration="1.05" data-media-start="3" muted playsinline></video>
+      <video id="v-svc3" class="clip fill" src="assets/video/px-welding-sparks.mp4" data-start="11.06" data-duration="1.06" data-media-start="2" muted playsinline></video>
+      <video id="v-svc4" class="clip fill" src="assets/video/px-offshore-rig-sunset.mp4" data-start="12.12" data-duration="2.1" data-media-start="1" muted playsinline></video>
+      <video id="v-end" class="clip fill" src="assets/video/px-ship-silhouette-sunset.mp4" data-start="20.02" data-duration="4.98" data-media-start="1" muted playsinline></video>
+      <!-- 1. Hook: 0.00-3.70 -->
+      <div id="hook" class="clip" data-start="0" data-duration="3.7" data-track-index="0">
+        
+        <div class="shade-bottom"></div>
+        <div id="hook-text">
+          <div class="mask"><div id="hook-kicker" class="line">Every reliable voyage</div></div>
+          <div class="mask"><div class="line hook-l">starts long before</div></div>
+          <div class="mask"><div class="line hook-l">a ship leaves port.</div></div>
+        </div>
+      </div>
+
+      <!-- 2. Brand: 3.70-7.91 (beat-locked: logo on the 3.70s strong cue) -->
+      <div id="brand" class="clip" data-start="3.7" data-duration="4.21" data-track-index="0">
+        <div id="brand-stack">
+          <div id="brand-logo"><img src="assets/img/logo.webp" alt="Libraa Group logo" /></div>
+          <div class="mask"><div id="brand-name" class="line">LIBRAA GROUP</div></div>
+          <div class="mask"><div id="brand-since" class="line">Since 2009</div></div>
+        </div>
+        <div id="brand-rule"></div>
+      </div>
+
+      <!-- 3. Services montage: 7.91-14.22, cuts on the beat grid -->
+      <div id="svc1" class="clip" data-start="7.91" data-duration="2.1" data-track-index="0">
+        
+        <div class="shade-bottom"></div>
+        <div class="svc-text"><div class="mask"><div class="line svc-word" id="svc1-w">Ship Management</div></div></div>
+      </div>
+      <div id="svc2" class="clip" data-start="10.01" data-duration="1.05" data-track-index="0">
+        
+        <div class="shade-bottom"></div>
+        <div class="svc-text"><div class="mask"><div class="line svc-word" id="svc2-w">Crew Management</div></div></div>
+      </div>
+      <div id="svc3" class="clip" data-start="11.06" data-duration="1.06" data-track-index="0">
+        
+        <div class="shade-bottom"></div>
+        <div class="svc-text"><div class="mask"><div class="line svc-word" id="svc3-w">Marine Services</div></div></div>
+      </div>
+      <div id="svc4" class="clip" data-start="12.12" data-duration="2.1" data-track-index="0">
+        
+        <div class="shade-bottom"></div>
+        <div class="svc-text">
+          <div class="mask"><div class="line svc-sub svc4-l">From India</div></div>
+          <div class="mask"><div class="line svc-sub svc4-l"><span class="mint">to West Africa.</span></div></div>
+        </div>
+      </div>
+
+      <!-- 4. Clients: 14.22-20.02, logos land on their spoken names -->
+      <div id="clients" class="clip" data-start="14.22" data-duration="5.8" data-track-index="0">
+        <div id="clients-glow"></div>
+        <div class="mask" id="clients-kicker-wrap" style="position:absolute;left:140px;top:110px;"><div id="clients-kicker" class="line" style="position:static;">Trusted by</div></div>
+        <div id="hero-row">
+          <div class="hero" id="h-navy"><div class="hero-tile"><img src="assets/logos/indian-navy.webp" alt="Indian Navy" /></div><div class="hero-name">Indian Navy</div></div>
+          <div class="hero" id="h-adani"><div class="hero-tile"><img src="assets/logos/adani.webp" alt="Adani Ports and SEZ" /></div><div class="hero-name">Adani Ports &amp; SEZ</div></div>
+          <div class="hero" id="h-jsw"><div class="hero-tile"><img src="assets/logos/jsw-icon.webp" alt="JSW Group" /></div><div class="hero-name">JSW Group</div></div>
+        </div>
+        <div id="wall">
+          <div class="tile"><img src="assets/logos/ge.webp" alt="GE" /></div>
+          <div class="tile"><img src="assets/logos/reliance.webp" alt="Reliance Industries" /></div>
+          <div class="tile"><img src="assets/logos/punj-lloyd.webp" alt="Punj Lloyd" /></div>
+          <div class="tile"><img src="assets/logos/vizag-port.webp" alt="Visakhapatnam Port Authority" /></div>
+          <div class="tile"><img src="assets/logos/aker-floating-production.webp" alt="Aker Floating Production" /></div>
+          <div class="tile"><img src="assets/logos/gsez.webp" alt="GSEZ" /></div>
+          <div class="tile"><img src="assets/logos/olam.webp" alt="Olam Group" /></div>
+          <div class="tile"><img src="assets/logos/leighton.webp" alt="Leighton Contractors" /></div>
+          <div class="tile"><img src="assets/logos/setaf-saget.webp" alt="SETAF SAGET" /></div>
+          <div class="tile"><img src="assets/logos/tag-offshore.webp" alt="TAG Offshore" /></div>
+          <div class="tile"><img src="assets/logos/trimex.webp" alt="TRIMEX" /></div>
+          <div class="tile"><img src="assets/logos/ocs.webp" alt="OCS" /></div>
+          <div class="tile"><img src="assets/logos/isd.webp" alt="ISD" /></div>
+          <div class="tile"><img src="assets/logos/ehl.webp" alt="EHL" /></div>
+          <div class="tile"><img src="assets/logos/eta-group.webp" alt="ETA Group" /></div>
+        </div>
+      </div>
+
+      <!-- 5. End card: 20.02-25.00 -->
+      <div id="end" class="clip" data-start="20.02" data-duration="4.98" data-track-index="0">
+        
+        <div class="shade-full"></div>
+        <div id="end-stack">
+          <div id="end-logo"><img src="assets/img/logo.webp" alt="Libraa Group logo" /></div>
+          <div class="mask"><div id="end-name" class="line">LIBRAA GROUP</div></div>
+          <div class="mask"><div id="end-tag" class="line">Ship Management, Crew Management and Marine Services.</div></div>
+          <div class="mask"><div id="end-url" class="line">libraa.com</div></div>
+        </div>
+      </div>
+
+      <audio id="soundtrack" src="assets/audio/soundtrack.wav" data-start="0" data-duration="25" data-track-index="3" data-volume="1"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const rise = (sel, at, dur = 0.55, stagger = 0) =>
+        tl.fromTo(sel, { y: 140, opacity: 0 }, { y: 0, opacity: 1, duration: dur, ease: "power3.out", stagger }, at);
+
+      // 1. hook - slow push, kicker on "Every", headline on "starts" (vo1 at 0.00)
+      tl.fromTo("#v-hook", { scale: 1.12 }, { scale: 1.0, duration: 3.7, ease: "none" }, 0);
+      rise("#hook-kicker", 0.1, 0.5);
+      rise(".hook-l", 1.5, 0.55, 0.12);
+
+      // 2. brand - beat-locked: 3.70s strong cue
+      tl.fromTo("#brand-logo", { scale: 0.55, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, 3.7);
+      rise("#brand-name", 3.84, 0.6);
+      rise("#brand-since", 4.24, 0.5); // on "2009" (vo2 3.95 + 0.33)
+      tl.fromTo("#brand-rule", { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: "power2.inOut" }, 3.8);
+      tl.to("#brand-stack", { scale: 1.04, duration: 4.2, ease: "none" }, 3.7);
+
+      // 3. services - beat-grid cuts: 7.91, 10.01, 11.06, 12.12
+      tl.fromTo("#v-svc1", { scale: 1.1 }, { scale: 1.0, duration: 2.1, ease: "none" }, 7.91);
+      rise("#svc1-w", 8.12, 0.45); // "ships" at 8.64
+      tl.fromTo("#v-svc2", { scale: 1.12 }, { scale: 1.02, duration: 1.05, ease: "none" }, 10.01);
+      rise("#svc2-w", 10.01, 0.3); // "crews" at 10.07
+      tl.fromTo("#v-svc3", { scale: 1.12 }, { scale: 1.02, duration: 1.06, ease: "none" }, 11.06);
+      rise("#svc3-w", 11.06, 0.3); // "marine services" at 11.20
+      tl.fromTo("#v-svc4", { scale: 1.1 }, { scale: 1.0, duration: 2.1, ease: "none" }, 12.12);
+      rise(".svc4-l", 12.4, 0.5, 0.18); // "from Indian ports to West Africa" 12.44-14.18
+
+      // 4. clients - vo4 at 14.35: Navy 15.47, Adani 16.75, JSW 17.57
+      rise("#clients-kicker", 14.3, 0.5);
+      const land = (sel, at) => tl.fromTo(sel, { y: 60, opacity: 0, scale: 0.94 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }, at);
+      land("#h-navy", 15.4);
+      land("#h-adani", 16.68);
+      land("#h-jsw", 17.5);
+      tl.to("#hero-row", { y: -60, duration: 0.6, ease: "power2.inOut" }, 18.1);
+      tl.fromTo("#wall .tile", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", stagger: 0.045 }, 18.3);
+
+      // keep the clients stage moving between logo arrivals
+      tl.fromTo("#clients-glow", { x: 0, y: 0 }, { x: 900, y: 120, duration: 5.8, ease: "none" }, 14.22);
+      tl.fromTo("#hero-row", { scale: 1 }, { scale: 1.05, duration: 5.8, ease: "none" }, 14.22);
+      tl.fromTo("#wall", { scale: 1 }, { scale: 1.04, duration: 1.72, ease: "none" }, 18.3);
+
+      // 5. end - vo5 at 20.20
+      tl.fromTo("#v-end", { scale: 1.08 }, { scale: 1.0, duration: 4.98, ease: "none" }, 20.02);
+      tl.fromTo("#end-logo", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, 20.08);
+      rise("#end-name", 20.2, 0.6);
+      rise("#end-tag", 21.3, 0.55); // "ship management" at 21.42
+      rise("#end-url", 22.1, 0.5);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -4,3 +4,29 @@ out/
 voice-raw/
 .venv/
 kokoro-models/
+
+# Credentials and local configuration
+.env.*
+!.env.example
+!.env.sample
+.aws/
+*.pem
+*.key
+*.p12
+*.pfx
+.npmrc
+.pypirc
+
+# Local agent installations and session state
+.agents/
+.claude/
+.codex/
+.freebuff/
+.kiro/
+.qwen/
+.windsurf/
+
+# Generated previews, renders, and logs (keep composition source/assets)
+brag-output*/brag.mp4
+brag-output*/brag.jpg
+*.log

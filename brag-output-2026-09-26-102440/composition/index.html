@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Display"; font-weight: 800; font-style: italic; src: url("assets/fonts/inter-tight-latin-800-italic.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Display"; font-weight: 900; font-style: italic; src: url("assets/fonts/inter-tight-latin-900-italic.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Body"; font-weight: 600; src: url("assets/fonts/inter-tight-latin-600-normal.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Mono"; font-weight: 500; src: url("assets/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2"); font-display: block; }
+      :root {
+        --navy: #0a0e2a;
+        --panel: #131a4a;
+        --green: #159449;
+        --mint: #8fe0ac;
+        --white: #ffffff;
+        --dim: rgba(255, 255, 255, 0.34);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--navy); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--navy); color: var(--white); font-family: "Body", system-ui, sans-serif; }
+      .clip { position: absolute; inset: 0; overflow: hidden; }
+      .navy { background: var(--navy); }
+      .green { background: var(--green); color: var(--navy); }
+      .d { font-family: "Display", sans-serif; font-weight: 900; font-style: italic; letter-spacing: -0.045em; line-height: 0.95; }
+      .mono { font-family: "Mono", monospace; font-weight: 500; font-size: 34px; letter-spacing: 0.02em; }
+      .kick { position: absolute; left: 160px; top: 170px; color: var(--mint); }
+      .cursor { display: inline-block; width: 18px; height: 38px; margin-left: 6px; vertical-align: -6px; background: var(--mint); }
+      .hl { position: relative; display: inline-block; }
+      .hl .bar { position: absolute; left: -14px; right: -18px; top: 8%; bottom: 2%; background: var(--green); transform-origin: 0 50%; z-index: 0; }
+      .hl .t { position: relative; z-index: 1; }
+
+      /* 1 hook */
+      #s1-lines { position: absolute; left: 160px; top: 290px; font-size: 200px; line-height: 1.12; }
+      #s1-b { margin-top: 24px; }
+
+      /* 2 + 7 green slams */
+      .slam { position: absolute; left: 160px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; }
+      .tag { display: inline-block; align-self: flex-start; padding: 8px 16px; background: var(--navy); color: var(--green); }
+      .logo-tile { width: 150px; height: 150px; background: var(--white); display: flex; align-items: center; justify-content: center; margin-bottom: 40px; }
+      .logo-tile img { width: 128px; height: auto; }
+      #s2-name { font-size: 230px; margin-top: 30px; }
+
+      /* 3 services list */
+      #s3-list { position: absolute; left: 160px; top: 300px; font-size: 150px; }
+      #s3-list .row { margin-bottom: 26px; }
+
+      /* 4 route */
+      #s4-from { position: absolute; left: 160px; top: 330px; font-size: 190px; }
+      #s4-to { position: absolute; right: 160px; top: 650px; font-size: 190px; text-align: right; color: var(--mint); }
+      .dot { position: absolute; width: 22px; height: 22px; background: var(--mint); }
+      .dot.big { width: 40px; height: 40px; background: var(--green); }
+
+      /* 5 clients */
+      #s5-hero { position: absolute; left: 160px; top: 290px; display: flex; gap: 40px; }
+      .hero { display: flex; flex-direction: column; }
+      .hero-tile { width: 500px; height: 250px; background: var(--white); display: flex; align-items: center; justify-content: center; }
+      .hero-tile img { height: 104px; width: auto; }
+      .hero-name { margin-top: 18px; font-size: 36px; color: var(--white); }
+      #s5-wall { position: absolute; left: 160px; top: 690px; display: grid; grid-template-columns: repeat(8, 185px); gap: 14px; }
+      .tile { width: 185px; height: 84px; background: var(--white); display: flex; align-items: center; justify-content: center; }
+      .tile img { max-height: 60px; max-width: 160px; width: auto; height: auto; }
+
+      /* 6 counter */
+      #s6-num { position: absolute; left: 160px; top: 300px; width: 900px; height: 440px; font-size: 440px; line-height: 1; color: var(--mint); }
+      #s6-num span { position: absolute; left: 0; top: 0; opacity: 0; }
+      #s6-label { position: absolute; left: 160px; top: 790px; font-size: 120px; }
+
+      /* 7 end */
+      #s7-name { font-size: 210px; margin-top: 10px; }
+      #s7-tag { margin-top: 34px; font-family: "Body", sans-serif; font-weight: 600; font-size: 50px; letter-spacing: -0.01em; }
+      #s7-url { margin-top: 40px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="23" data-width="1920" data-height="1080">
+      <!-- 1. hook 0.00-3.70 -->
+      <div id="s1" class="clip navy" data-start="0" data-duration="3.7" data-track-index="0">
+        <div class="kick mono"><span id="s1-type"></span><span class="cursor" id="s1-cursor"></span></div>
+        <div id="s1-lines" class="d">
+          <div id="s1-a">starts long</div>
+          <div id="s1-b" class="hl"><span class="bar" id="s1-bar"></span><span class="t">before port.</span></div>
+        </div>
+      </div>
+
+      <!-- 2. brand slam 3.70-5.80 (beat-locked: 3.70s strong cue) -->
+      <div id="s2" class="clip green" data-start="3.7" data-duration="2.1" data-track-index="0">
+        <div class="slam" id="s2-stack">
+          <div class="logo-tile" id="s2-logo"><img src="assets/img/logo.webp" alt="Libraa Group logo" /></div>
+          <div class="tag mono" id="s2-tag">SINCE 2009</div>
+          <div class="d" id="s2-name">LIBRAA GROUP</div>
+        </div>
+      </div>
+
+      <!-- 3. what we do 5.80-9.98 -->
+      <div id="s3" class="clip navy" data-start="5.8" data-duration="4.18" data-track-index="0">
+        <div class="kick mono" id="s3-kick">what we do:</div>
+        <div id="s3-list" class="d">
+          <div class="row" id="s3-r1">ship management.</div>
+          <div class="row" id="s3-r2">crew management.</div>
+          <div class="row" id="s3-r3">marine services.</div>
+        </div>
+      </div>
+
+      <!-- 4. where 9.98-12.07 -->
+      <div id="s4" class="clip navy" data-start="9.98" data-duration="2.09" data-track-index="0">
+        <div class="kick mono" id="s4-kick">where we work:</div>
+        <div id="s4-from" class="d">from India</div>
+        <div id="s4-dots"></div>
+        <div id="s4-to" class="d">to West Africa.</div>
+      </div>
+
+      <!-- 5. clients 12.07-16.25 -->
+      <div id="s5" class="clip navy" data-start="12.07" data-duration="4.18" data-track-index="0">
+        <div class="kick mono" id="s5-kick">trusted by:</div>
+        <div id="s5-hero">
+          <div class="hero" id="h1"><div class="hero-tile"><img src="assets/logos/indian-navy.webp" alt="Indian Navy" /></div><div class="hero-name">Indian Navy</div></div>
+          <div class="hero" id="h2"><div class="hero-tile"><img src="assets/logos/adani.webp" alt="Adani Ports and SEZ" /></div><div class="hero-name">Adani Ports &amp; SEZ</div></div>
+          <div class="hero" id="h3"><div class="hero-tile"><img src="assets/logos/jsw-icon.webp" alt="JSW Group" /></div><div class="hero-name">JSW Group</div></div>
+        </div>
+        <div id="s5-wall">
+          <div class="tile"><img src="assets/logos/ge.webp" alt="GE" /></div>
+          <div class="tile"><img src="assets/logos/reliance.webp" alt="Reliance Industries" /></div>
+          <div class="tile"><img src="assets/logos/punj-lloyd.webp" alt="Punj Lloyd" /></div>
+          <div class="tile"><img src="assets/logos/vizag-port.webp" alt="Visakhapatnam Port Authority" /></div>
+          <div class="tile"><img src="assets/logos/aker-floating-production.webp" alt="Aker Floating Production" /></div>
+          <div class="tile"><img src="assets/logos/gsez.webp" alt="GSEZ" /></div>
+          <div class="tile"><img src="assets/logos/olam.webp" alt="Olam Group" /></div>
+          <div class="tile"><img src="assets/logos/leighton.webp" alt="Leighton Contractors" /></div>
+          <div class="tile"><img src="assets/logos/setaf-saget.webp" alt="SETAF SAGET" /></div>
+          <div class="tile"><img src="assets/logos/tag-offshore.webp" alt="TAG Offshore" /></div>
+          <div class="tile"><img src="assets/logos/trimex.webp" alt="TRIMEX" /></div>
+          <div class="tile"><img src="assets/logos/ocs.webp" alt="OCS" /></div>
+          <div class="tile"><img src="assets/logos/isd.webp" alt="ISD" /></div>
+          <div class="tile"><img src="assets/logos/ehl.webp" alt="EHL" /></div>
+          <div class="tile"><img src="assets/logos/eta-group.webp" alt="ETA Group" /></div>
+        </div>
+      </div>
+
+      <!-- 6. counter 16.25-18.34 -->
+      <div id="s6" class="clip navy" data-start="16.25" data-duration="2.09" data-track-index="0">
+        <div class="kick mono" id="s6-kick">since 2009:</div>
+        <div id="s6-num" class="d"></div>
+        <div id="s6-label" class="d">years and counting.</div>
+      </div>
+
+      <!-- 7. end card 18.34-23.00 (beat-locked: 18.34s bar) -->
+      <div id="s7" class="clip green" data-start="18.34" data-duration="4.66" data-track-index="0">
+        <div class="slam" id="s7-stack">
+          <div class="logo-tile" id="s7-logo"><img src="assets/img/logo.webp" alt="Libraa Group logo" /></div>
+          <div class="d" id="s7-name">LIBRAA GROUP</div>
+          <div id="s7-tag">Ship Management, Crew Management and Marine Services.</div>
+          <div class="mono" id="s7-url">libraa.com</div>
+        </div>
+      </div>
+
+      <audio id="soundtrack" src="assets/audio/soundtrack.wav" data-start="0" data-duration="23" data-track-index="3" data-volume="1"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const slam = (sel, at) => tl.fromTo(sel, { scale: 1.18, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.32, ease: "power4.out" }, at);
+      const up = (sel, at, d = 0.35) => tl.fromTo(sel, { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: d, ease: "power3.out" }, at);
+
+      // 1. hook - kicker types in, then the two heavy lines, then the highlight bar
+      const KICK = "every reliable voyage";
+      const typeEl = document.getElementById("s1-type");
+      [...KICK].forEach((ch, i) => {
+        const s = document.createElement("span");
+        s.textContent = ch;
+        s.style.opacity = "0";
+        typeEl.appendChild(s);
+        tl.set(s, { opacity: 1 }, 0.25 + i * 0.038);
+      });
+      [0.4, 0.9, 1.4, 1.9, 2.4, 2.9, 3.4].forEach((t) => tl.set("#s1-cursor", { opacity: 0 }, t).set("#s1-cursor", { opacity: 1 }, t + 0.25));
+      up("#s1-a", 1.2);
+      up("#s1-b", 1.55);
+      tl.fromTo("#s1-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.inOut" }, 2.15);
+
+      // 2. brand slam on the 3.70s strong cue
+      slam("#s2-stack", 3.7);
+      tl.to("#s2-stack", { scale: 1.04, duration: 1.8, ease: "none" }, 4.02);
+
+      // 3. services - one row per two beats (5.90, 7.37, 8.94); previous rows dim
+      up("#s3-kick", 5.85, 0.3);
+      up("#s3-r1", 5.9);
+      up("#s3-r2", 7.37);
+      tl.to("#s3-r1", { opacity: 0.34, duration: 0.2 }, 7.37);
+      up("#s3-r3", 8.94);
+      tl.to("#s3-r2", { opacity: 0.34, duration: 0.2 }, 8.94);
+
+      // 4. route - dots walk an arc from India to West Africa
+      up("#s4-kick", 10.0, 0.3);
+      up("#s4-from", 10.05);
+      const dots = document.getElementById("s4-dots");
+      const N = 9;
+      for (let i = 0; i <= N; i++) {
+        const t = i / N;
+        const x = 1110 + 440 * t;
+        const y = 480 + 110 * t - 130 * Math.sin(Math.PI * t);
+        const d = document.createElement("div");
+        d.className = "dot" + (i === 0 || i === N ? " big" : "");
+        d.style.left = x + "px";
+        d.style.top = y + "px";
+        d.style.opacity = "0";
+        dots.appendChild(d);
+        tl.fromTo(d, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.15, ease: "back.out(2)" }, 10.2 + i * 0.07);
+      }
+      up("#s4-to", 10.9);
+
+      // 5. clients - hero tiles on beats 12.59 / 13.12 / 13.64, wall from 14.16
+      up("#s5-kick", 12.12, 0.3);
+      up("#h1", 12.59);
+      up("#h2", 13.12);
+      up("#h3", 13.64);
+      tl.fromTo("#s5-wall .tile", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out", stagger: 0.035 }, 14.16);
+
+      // 6. counter 0 -> 17 (2009 -> 2026), slams on 17
+      up("#s6-kick", 16.28, 0.3);
+      const num = document.getElementById("s6-num");
+      for (let n = 0; n <= 17; n++) {
+        const s = document.createElement("span");
+        s.textContent = String(n);
+        num.appendChild(s);
+        const at = 16.35 + n * 0.045;
+        tl.set(s, { opacity: 1 }, at);
+        if (n < 17) tl.set(s, { opacity: 0 }, at + 0.045);
+      }
+      tl.fromTo("#s6-num", { scale: 1 }, { scale: 1.06, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" }, 17.12);
+      up("#s6-label", 16.45);
+
+      // 7. end card on the 18.34s bar
+      slam("#s7-logo", 18.34);
+      slam("#s7-name", 18.4);
+      up("#s7-tag", 18.9);
+      up("#s7-url", 19.5);
+      tl.to("#s7-stack", { scale: 1.03, duration: 4.5, ease: "none" }, 18.5);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
