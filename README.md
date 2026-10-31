@@ -2,6 +2,12 @@
 
 Source code and production assets for two Libraa Group films, built with React, TypeScript, and Remotion.
 
+| Two-minute brand film | 30-second motion piece |
+| --- | --- |
+| [![Watch the two-minute Libraa Group brand film](https://img.youtube.com/vi/c7UrvW0q9yM/hqdefault.jpg)](https://youtu.be/c7UrvW0q9yM) | [![Watch the 30-second Libraa Group motion piece](https://img.youtube.com/vi/13FCEajRA9A/hqdefault.jpg)](https://youtu.be/13FCEajRA9A) |
+
+Click a preview to watch on YouTube.
+
 | Version | Watch | Composition | Source | Duration |
 | --- | --- | --- | --- | --- |
 | Brand film | [Watch on YouTube](https://youtu.be/c7UrvW0q9yM) | `LibraaFilm` | [`src/Film.tsx`](src/Film.tsx) | 2 minutes |
@@ -109,6 +115,8 @@ Review the preview before rendering, especially where scene visuals are timed to
 | `TRANSCRIPT.md` | Generated transcript of the narrated film |
 | `CREDITS.md` | Media sources and license notes |
 
-## Media and permissions
+## License
 
-See [`CREDITS.md`](CREDITS.md) for stock footage, music, fonts, and narration sources. Company photographs, branding, and third-party assets retain their respective rights. Public access to this repository does not grant permission to reuse those materials.
+The original source code is licensed under the [MIT License](LICENSE).
+
+The MIT License does not cover photographs, footage, music, fonts, narration recordings, logos, or other branding, including assets in `public/` and the Hyperframes composition folders. Those materials retain their respective rights and license terms. See [`CREDITS.md`](CREDITS.md) for media sources and license notes. Dependencies remain under their own licenses.
