@@ -2,10 +2,10 @@
 
 Source code and production assets for two Libraa Group films, built with React, TypeScript, and Remotion.
 
-| Version | Composition | Source | Duration |
-| --- | --- | --- | --- |
-| Brand film | `LibraaFilm` | [`src/Film.tsx`](src/Film.tsx) | 2 minutes |
-| Motion piece | `LibraaMotion30` | [`src/motion/Motion30.tsx`](src/motion/Motion30.tsx) | 30 seconds |
+| Version | Watch | Composition | Source | Duration |
+| --- | --- | --- | --- | --- |
+| Brand film | [Watch on YouTube](https://youtu.be/c7UrvW0q9yM) | `LibraaFilm` | [`src/Film.tsx`](src/Film.tsx) | 2 minutes |
+| Motion piece | [Watch on YouTube](https://youtu.be/13FCEajRA9A) | `LibraaMotion30` | [`src/motion/Motion30.tsx`](src/motion/Motion30.tsx) | 30 seconds |
 
 The brand film combines vessel and team photography, stock footage, narration, and burned-in subtitles. The motion piece uses animated type, maps, line art, and music, without narration. Both compositions run at 1920 × 1080 and 30 fps. The motion render script exports at 4K by default.
 
